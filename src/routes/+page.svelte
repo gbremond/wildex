@@ -8,8 +8,10 @@
 		loadSpeciesInMemory,
 		searchSpecies
 	} from '$lib/species/species.repository';
+	import SpeciesListItem from '$lib/species/SpeciesListItem.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { ItemGroup } from '$lib/components/ui/item';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
@@ -87,18 +89,15 @@
 		placeholder="Search a bird"
 		bind:value={query}
 		oninput={rememberQueryInUrl}
+		class="ml-4 max-w-[80%]"
 	/>
 
 	{#if visibleSpecies.length > 0}
-		<ul class="list-disc pl-5">
+		<ItemGroup class="gap-2 p-4">
 			{#each visibleSpecies as species (species.id)}
-				<li>
-					<a href={resolve('/species/[id]', { id: species.id })}>
-						{species.frenchName} - <em>{species.scientificName}</em>
-					</a>
-				</li>
+				<SpeciesListItem {species} />
 			{/each}
-		</ul>
+		</ItemGroup>
 	{:else if !isSearching}
 		<p>No bird matches “{query}”</p>
 	{/if}
