@@ -2,6 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
+	import { version } from '$app/environment';
 	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 
 	let { children } = $props();
@@ -27,3 +28,5 @@
 		You are offline, showing species saved on this device.
 	</p>
 {/if}
+
+<footer class="mt-6 text-xs text-muted-foreground">Wildex | Version {version}</footer>
