@@ -16,17 +16,25 @@
 	onMount(updateNetworkStatus);
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+</svelte:head>
 <svelte:window ononline={updateNetworkStatus} onoffline={updateNetworkStatus} />
 
-{@render children()}
+<main role="main">
+	{@render children()}
+</main>
 
-<PwaUpdatePrompt />
+<footer role="contentinfo">
+	<PwaUpdatePrompt />
 
-{#if isOffline}
-	<p role="status" class="mt-4 rounded bg-primary px-3 py-2 text-sm text-primary-foreground">
-		You are offline, showing species saved on this device.
-	</p>
-{/if}
+	{#if isOffline}
+		<p role="status" class="mt-4 rounded bg-primary px-3 py-2 text-sm text-primary-foreground">
+			You are offline, showing species saved on this device.
+		</p>
+	{/if}
 
-<footer class="mt-6 text-xs text-muted-foreground">Wildex | Version {version}</footer>
+	<div class="mt-6 text-xs text-muted-foreground">
+		Wildex | Version {version}
+	</div>
+</footer>

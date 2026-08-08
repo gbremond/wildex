@@ -50,7 +50,7 @@
 	<ul class="list-disc pl-5">
 		{#each storedSpecies as species (species.id)}
 			<li>
-				{species.commonName} — <em>{species.scientificName}</em>
+				{species.frenchName} - <em>{species.scientificName}</em>
 			</li>
 		{/each}
 	</ul>
