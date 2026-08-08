@@ -20,7 +20,7 @@
 {@render children()}
 
 {#if isOffline}
-	<p role="status" class="mt-4 rounded bg-amber-100 px-3 py-2 text-sm text-amber-900">
+	<p role="status" class="mt-4 rounded bg-primary text-primary-foreground px-3 py-2 text-sm">
 		You are offline, showing species saved on this device.
 	</p>
 {/if}

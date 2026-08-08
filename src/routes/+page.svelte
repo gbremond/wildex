@@ -8,6 +8,7 @@
 		getSpeciesList,
 		loadSpeciesInMemory
 	} from '$lib/species/species.repository';
+	import {Button} from "$lib/components/ui/button";
 
 	let storedCount = $state<number | null>(null);
 	let storedSpecies = $state<Species[]>([]);
@@ -35,11 +36,11 @@
 	}
 </script>
 
-<h1>Welcome to Wildex</h1>
+<h1 class="text-3xl">Welcome to Wildex</h1>
 
-<button onclick={downloadSpecies} disabled={isDownloading} class="btn btn-blue">
+<Button onclick={downloadSpecies} disabled={isDownloading}>
 	{isDownloading ? 'Downloading…' : 'Download species'}
-</button>
+</Button>
 
 {#if storedCount !== null}
 	<p>{storedCount} species stored offline</p>
