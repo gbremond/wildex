@@ -10,12 +10,24 @@
 	} from '$lib/species/species.repository';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { afterNavigate, replaceState } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
 	let isDownloading = $state(false);
 	let isSearching = $state(false);
 	let query = $state('');
+
+	// `location`, not `page.url`: shallow routing writes the query to the history entry
+	// without adopting it as the page URL, so only the browser knows it.
+	afterNavigate(() => {
+		query = new URLSearchParams(location.search).get('q') ?? '';
+	});
+
+	function rememberQueryInUrl() {
+		replaceState(resolve(query ? `/?q=${encodeURIComponent(query)}` : '/'), {});
+	}
 
 	// Bumped by every search so a slow answer cannot overwrite a newer one.
 	let latestSearch = 0;
@@ -70,13 +82,20 @@
 {/if}
 
 {#if storedCount}
-	<Input type="search" placeholder="Search a bird" bind:value={query} />
+	<Input
+		type="search"
+		placeholder="Search a bird"
+		bind:value={query}
+		oninput={rememberQueryInUrl}
+	/>
 
 	{#if visibleSpecies.length > 0}
 		<ul class="list-disc pl-5">
 			{#each visibleSpecies as species (species.id)}
 				<li>
-					{species.frenchName} - <em>{species.scientificName}</em>
+					<a href={resolve('/species/[id]', { id: species.id })}>
+						{species.frenchName} - <em>{species.scientificName}</em>
+					</a>
 				</li>
 			{/each}
 		</ul>

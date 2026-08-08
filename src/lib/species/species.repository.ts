@@ -34,4 +34,15 @@ async function countAvailableSpecies(): Promise<number> {
 	return speciesById.size;
 }
 
-export { loadSpeciesInMemory, addSpecies, getSpeciesList, searchSpecies, countAvailableSpecies };
+async function findSpeciesById(id: string): Promise<Species | undefined> {
+	return speciesById.get(id);
+}
+
+export {
+	loadSpeciesInMemory,
+	addSpecies,
+	getSpeciesList,
+	searchSpecies,
+	countAvailableSpecies,
+	findSpeciesById
+};

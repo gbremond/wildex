@@ -55,6 +55,12 @@ export function isSpecies(value: unknown): value is Species {
 	);
 }
 
+export function readableLabel(value: Habitat | Status): string {
+	const words = value.toLowerCase().replaceAll('_', ' ');
+
+	return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 export function avibaseUrl(species: Species): string | null {
 	if (!species.avibaseId) return null;
 
