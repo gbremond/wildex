@@ -5,23 +5,46 @@
 	import {
 		addSpecies,
 		countAvailableSpecies,
-		getSpeciesList,
-		loadSpeciesInMemory
+		loadSpeciesInMemory,
+		searchSpecies
 	} from '$lib/species/species.repository';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	let storedCount = $state<number | null>(null);
-	let storedSpecies = $state<Species[]>([]);
+	let visibleSpecies = $state<Species[]>([]);
 	let isDownloading = $state(false);
+	let isSearching = $state(false);
+	let query = $state('');
+
+	// Bumped by every search so a slow answer cannot overwrite a newer one.
+	let latestSearch = 0;
+
+	$effect(() => {
+		runSearch(query);
+	});
 
 	onMount(async () => {
 		await loadSpeciesInMemory();
 		await refreshStoredSpecies();
 	});
 
+	async function runSearch(searchedQuery: string) {
+		const searchId = ++latestSearch;
+
+		isSearching = true;
+
+		const found = await searchSpecies(searchedQuery);
+
+		if (searchId !== latestSearch) return;
+
+		visibleSpecies = found;
+		isSearching = false;
+	}
+
 	async function refreshStoredSpecies() {
 		storedCount = await countAvailableSpecies();
-		storedSpecies = await getSpeciesList();
+		await runSearch(query);
 	}
 
 	async function downloadSpecies() {
@@ -46,12 +69,18 @@
 	<p>{storedCount} species stored offline</p>
 {/if}
 
-{#if storedSpecies.length > 0}
-	<ul class="list-disc pl-5">
-		{#each storedSpecies as species (species.id)}
-			<li>
-				{species.frenchName} - <em>{species.scientificName}</em>
-			</li>
-		{/each}
-	</ul>
+{#if storedCount}
+	<Input type="search" placeholder="Search a bird" bind:value={query} />
+
+	{#if visibleSpecies.length > 0}
+		<ul class="list-disc pl-5">
+			{#each visibleSpecies as species (species.id)}
+				<li>
+					{species.frenchName} - <em>{species.scientificName}</em>
+				</li>
+			{/each}
+		</ul>
+	{:else if !isSearching}
+		<p>No bird matches “{query}”</p>
+	{/if}
 {/if}
