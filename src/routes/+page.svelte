@@ -8,7 +8,7 @@
 		getSpeciesList,
 		loadSpeciesInMemory
 	} from '$lib/species/species.repository';
-	import {Button} from "$lib/components/ui/button";
+	import { Button } from '$lib/components/ui/button';
 
 	let storedCount = $state<number | null>(null);
 	let storedSpecies = $state<Species[]>([]);

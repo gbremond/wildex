@@ -2,6 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
+	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 
 	let { children } = $props();
 
@@ -19,8 +20,10 @@
 
 {@render children()}
 
+<PwaUpdatePrompt />
+
 {#if isOffline}
-	<p role="status" class="mt-4 rounded bg-primary text-primary-foreground px-3 py-2 text-sm">
+	<p role="status" class="mt-4 rounded bg-primary px-3 py-2 text-sm text-primary-foreground">
 		You are offline, showing species saved on this device.
 	</p>
 {/if}
