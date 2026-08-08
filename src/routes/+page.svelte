@@ -37,7 +37,7 @@
 
 <h1>Welcome to Wildex</h1>
 
-<button onclick={downloadSpecies} disabled={isDownloading}>
+<button onclick={downloadSpecies} disabled={isDownloading} class="btn btn-blue">
 	{isDownloading ? 'Downloading…' : 'Download species'}
 </button>
 
