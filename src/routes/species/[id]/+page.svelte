@@ -2,11 +2,13 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { avibaseUrl, readableLabel, type Species } from '$lib/species/species.model';
+	import { avibaseUrl, readableLabel, xenoCantoUrl, type Species } from '$lib/species/species.model';
 	import { findSpeciesById, loadSpeciesInMemory } from '$lib/species/species.repository';
 	import { speciesImageUrl, speciesPhotoTransitionName } from '$lib/species/species-image';
 	import { markSpeciesTransition } from '$lib/species/species-transition.svelte';
+	import { iucnBadgeVariant, iucnIcon } from '$lib/species/species-badge';
 	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
 	import type { PageProps } from './$types';
 
@@ -18,6 +20,7 @@
 	let heroImageFailed = $state(false);
 
 	let referenceUrl = $derived(species ? avibaseUrl(species) : null);
+	let soundUrl = $derived(species ? xenoCantoUrl(species) : null);
 	let heroImageUrl = $derived(species ? speciesImageUrl(species.scientificName, 'medium') : null);
 
 	$effect(() => {
@@ -96,9 +99,24 @@
 			<dt class="text-muted-foreground">Habitat</dt>
 			<dd>{readableLabel(species.habitat)}</dd>
 
+			{#if species.iucnCategory}
+				{@const IucnIcon = iucnIcon(species.iucnCategory)}
+				<dt class="text-muted-foreground">IUCN status</dt>
+				<dd>
+					<Badge variant={iucnBadgeVariant(species.iucnCategory)}>
+						<IucnIcon data-icon="inline-start" />
+						{readableLabel(species.iucnCategory)}
+					</Badge>
+				</dd>
+			{/if}
+
 			<dt class="text-muted-foreground">Status</dt>
 			<dd>{readableLabel(species.status)}</dd>
 		</dl>
+
+		{#if species.description}
+			<p class="mt-4 text-sm">{species.description}</p>
+		{/if}
 
 		{#if referenceUrl}
 			<a
@@ -108,6 +126,17 @@
 				class="mt-6 inline-block text-sm hover:underline"
 			>
 				See on Avibase ↗
+			</a>
+		{/if}
+
+		{#if soundUrl}
+			<a
+				href={soundUrl}
+				target="_blank"
+				rel="external noreferrer"
+				class="mt-2 block text-sm hover:underline"
+			>
+				Listen on Xeno-canto ↗
 			</a>
 		{/if}
 	{:else}

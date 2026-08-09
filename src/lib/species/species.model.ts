@@ -18,8 +18,20 @@ export const STATUSES = [
 	'OCCASIONAL'
 ] as const;
 
+export const IUCN_CATEGORIES = [
+	'LEAST_CONCERN',
+	'NEAR_THREATENED',
+	'VULNERABLE',
+	'ENDANGERED',
+	'CRITICALLY_ENDANGERED',
+	'EXTINCT_IN_THE_WILD',
+	'EXTINCT',
+	'DATA_DEFICIENT'
+] as const;
+
 export type Habitat = (typeof HABITATS)[number];
 export type Status = (typeof STATUSES)[number];
+export type IucnCategory = (typeof IUCN_CATEGORIES)[number];
 
 export type Species = {
 	id: string;
@@ -31,6 +43,8 @@ export type Species = {
 	habitat: Habitat;
 	status: Status;
 	avibaseId?: string;
+	description?: string;
+	iucnCategory?: IucnCategory;
 };
 
 function isOneOf<Value extends string>(values: readonly Value[], value: unknown): value is Value {
@@ -51,11 +65,13 @@ export function isSpecies(value: unknown): value is Species {
 		typeof species.family === 'string' &&
 		isOneOf(HABITATS, species.habitat) &&
 		isOneOf(STATUSES, species.status) &&
-		(species.avibaseId === undefined || typeof species.avibaseId === 'string')
+		(species.avibaseId === undefined || typeof species.avibaseId === 'string') &&
+		(species.description === undefined || typeof species.description === 'string') &&
+		(species.iucnCategory === undefined || isOneOf(IUCN_CATEGORIES, species.iucnCategory))
 	);
 }
 
-export function readableLabel(value: Habitat | Status): string {
+export function readableLabel(value: Habitat | Status | IucnCategory): string {
 	const words = value.toLowerCase().replaceAll('_', ' ');
 
 	return words.charAt(0).toUpperCase() + words.slice(1);
@@ -65,4 +81,8 @@ export function avibaseUrl(species: Species): string | null {
 	if (!species.avibaseId) return null;
 
 	return `https://avibase.bsc-eoc.org/species.jsp?lang=FR&avibaseid=${species.avibaseId}`;
+}
+
+export function xenoCantoUrl(species: Species): string {
+	return `https://xeno-canto.org/species/${species.scientificName.replace(' ', '-')}`;
 }

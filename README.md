@@ -41,11 +41,17 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
+## Rebuilding the bird list
+
+`static/birds.json` is generated from a [TAXREF release](https://inpn.mnhn.fr/telechargement/referentielEspece/taxref) plus live Wikipedia/IUCN lookups. Get a free token at https://api.iucnredlist.org/, then:
+
+```sh
+IUCN_API_TOKEN=<token> node scripts/build-birds.mjs ~/Downloads/TAXREF_v18_2025
+```
+
 ## PWA icons
 
-Icons in `static/` are generated from `static/favicon.svg` with
-[`@vite-pwa/assets-generator`](https://vite-pwa-org.netlify.app/assets-generator/). Regenerate them
-after changing the source SVG:
+Icons in `static/` are generated from `static/favicon.svg` with [`@vite-pwa/assets-generator`](https://vite-pwa-org.netlify.app/assets-generator/). Regenerate them after changing the source SVG:
 
 ```sh
 npx @vite-pwa/assets-generator --preset minimal-2023 static/favicon.svg

@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
 // Rebuilds static/birds.json from a TAXREF release (https://inpn.mnhn.fr/telechargement/referentielEspece/taxref).
-// Usage: node scripts/build-birds.mjs ~/Downloads/TAXREF_v18_2025
+// Usage: IUCN_API_TOKEN=<token> node scripts/build-birds.mjs ~/Downloads/TAXREF_v18_2025
+// IUCN_API_TOKEN: free token from https://api.iucnredlist.org/
 
 import { createReadStream } from 'node:fs';
 import { readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
+import { fetchDescription } from './lib/wikipedia.mjs';
+import { fetchIucnCategory } from './lib/iucn.mjs';
 
 const OUTPUT_FILE = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'static', 'birds.json');
 
@@ -140,6 +143,51 @@ async function readAvibaseIds(linksFile, birdIds) {
 	return avibaseIds;
 }
 
+async function mapWithConcurrency(items, limit, mapper) {
+	const results = new Array(items.length);
+	let nextIndex = 0;
+
+	async function worker() {
+		while (nextIndex < items.length) {
+			const index = nextIndex++;
+			results[index] = await mapper(items[index]);
+		}
+	}
+
+	await Promise.all(Array.from({ length: limit }, worker));
+
+	return results;
+}
+
+async function enrichBirds(birds, iucnToken) {
+	let completed = 0;
+	let iucnHits = 0;
+	let descriptionHits = 0;
+
+	await mapWithConcurrency(birds, 3, async (bird) => {
+		const [description, iucnCategory] = await Promise.all([
+			fetchDescription(bird.scientificName).catch(() => undefined),
+			fetchIucnCategory(bird.scientificName, iucnToken).catch(() => undefined)
+		]);
+
+		if (description) {
+			bird.description = description;
+			descriptionHits++;
+		}
+		if (iucnCategory) {
+			bird.iucnCategory = iucnCategory;
+			iucnHits++;
+		}
+
+		completed++;
+		process.stdout.write(
+			`\renriching ${completed}/${birds.length} (iucn ${iucnHits}, description ${descriptionHits})`
+		);
+	});
+
+	process.stdout.write('\n');
+}
+
 function countBy(birds, field) {
 	const counts = new Map();
 
@@ -160,6 +208,8 @@ function report(birds) {
 	console.log(`  habitat  ${countBy(birds, 'habitat')}`);
 	console.log(`  taxonomy ${distinct('order')} orders, ${distinct('family')} families`);
 	console.log(`  avibase  ${birds.filter((bird) => bird.avibaseId).length}/${birds.length}`);
+	console.log(`  iucn     ${birds.filter((bird) => bird.iucnCategory).length}/${birds.length}`);
+	console.log(`  description ${birds.filter((bird) => bird.description).length}/${birds.length}`);
 	console.log(`  fallback ${birds.filter((bird) => !named(bird)).length} without a French name`);
 }
 
@@ -168,6 +218,11 @@ async function main() {
 
 	if (!taxrefDirectory) {
 		throw new Error('Usage: node scripts/build-birds.mjs <taxref-directory>');
+	}
+
+	const iucnToken = process.env.IUCN_API_TOKEN;
+	if (!iucnToken) {
+		throw new Error('Usage: IUCN_API_TOKEN=<token> node scripts/build-birds.mjs <taxref-directory>');
 	}
 
 	const birds = await readBirds(await findTaxrefFile(taxrefDirectory));
@@ -180,6 +235,8 @@ async function main() {
 		const avibaseId = avibaseIds.get(bird.id);
 		if (avibaseId) bird.avibaseId = avibaseId;
 	});
+
+	await enrichBirds(birds, iucnToken);
 
 	await writeFile(OUTPUT_FILE, `${JSON.stringify(birds, null, '\t')}\n`);
 	report(birds);

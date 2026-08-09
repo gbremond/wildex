@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { readableLabel, type Species, type Status } from './species.model';
+	import { iucnBadgeVariant, iucnIcon } from './species-badge';
 	import SpeciesAvatar from './SpeciesAvatar.svelte';
 	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
 	import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions } from '$lib/components/ui/item';
@@ -34,6 +35,13 @@
 					<ItemDescription class="line-clamp-1"><em>{species.scientificName}</em></ItemDescription>
 				</ItemContent>
 				<ItemActions>
+					{#if species.iucnCategory && species.iucnCategory !== 'LEAST_CONCERN'}
+						{@const IucnIcon = iucnIcon(species.iucnCategory)}
+						<Badge variant={iucnBadgeVariant(species.iucnCategory)}>
+							<IucnIcon data-icon="inline-start" />
+							{readableLabel(species.iucnCategory)}
+						</Badge>
+					{/if}
 					<Badge variant={statusBadgeVariant(species.status)}>
 						{readableLabel(species.status)}
 					</Badge>
