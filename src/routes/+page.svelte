@@ -5,9 +5,11 @@
 	import {
 		addSpecies,
 		countAvailableSpecies,
+		getSpeciesList,
 		loadSpeciesInMemory,
 		searchSpecies
 	} from '$lib/species/species.repository';
+	import { cacheSpeciesImages, countCachedImages } from '$lib/species/species-image-cache';
 	import SpeciesListItem from '$lib/species/SpeciesListItem.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -21,6 +23,10 @@
 	let isDownloading = $state(false);
 	let isSearching = $state(false);
 	let query = $state('');
+
+	let cachedImageCount = $state<number | null>(null);
+	let isDownloadingImages = $state(false);
+	let imageDownloadProgress = $state<{ done: number; total: number } | null>(null);
 
 	// `location`, not `page.url`: shallow routing writes the query to the history entry
 	// without adopting it as the page URL, so only the browser knows it.
@@ -42,6 +48,7 @@
 	onMount(async () => {
 		await loadSpeciesInMemory();
 		await refreshStoredSpecies();
+		await refreshCachedImageCount();
 	});
 
 	async function runSearch(searchedQuery: string) {
@@ -72,6 +79,24 @@
 			isDownloading = false;
 		}
 	}
+
+	async function refreshCachedImageCount() {
+		cachedImageCount = await countCachedImages();
+	}
+
+	async function downloadImages() {
+		isDownloadingImages = true;
+		imageDownloadProgress = null;
+
+		try {
+			await cacheSpeciesImages(await getSpeciesList(), (done, total) => {
+				imageDownloadProgress = { done, total };
+			});
+			await refreshCachedImageCount();
+		} finally {
+			isDownloadingImages = false;
+		}
+	}
 </script>
 
 <div class="flex h-dvh flex-col">
@@ -86,6 +111,16 @@
 	{/if}
 
 	{#if storedCount}
+		<Button onclick={downloadImages} disabled={isDownloadingImages}>
+			{isDownloadingImages
+				? `Downloading images… ${imageDownloadProgress?.done ?? 0}/${imageDownloadProgress?.total ?? 0}`
+				: 'Download images'}
+		</Button>
+
+		{#if cachedImageCount}
+			<p>{cachedImageCount} images stored offline</p>
+		{/if}
+
 		<Input
 			type="search"
 			placeholder="Search a bird"

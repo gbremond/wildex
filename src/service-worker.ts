@@ -11,6 +11,8 @@
 /// <reference types="../.svelte-kit/ambient.d.ts" />
 
 import { base, build, files, prerendered, version } from '$service-worker';
+import { BIRD_IMAGE_HOST } from '$lib/species/species-image';
+import { BIRD_IMAGE_CACHE } from '$lib/species/species-image-cache';
 
 // This gives `self` the correct types
 const self = globalThis.self as unknown as ServiceWorkerGlobalScope;
@@ -70,6 +72,23 @@ self.addEventListener('fetch', (event) => {
 
 	async function respond() {
 		const url = new URL(event.request.url);
+
+		// Bird photos don't change and Cornell's endpoint is a small research service:
+		// serve from cache once fetched at all, instead of re-fetching on every view.
+		if (url.hostname === BIRD_IMAGE_HOST) {
+			const imageCache = await caches.open(BIRD_IMAGE_CACHE);
+			const cached = await imageCache.match(event.request);
+
+			if (cached) {
+				return cached;
+			}
+
+			const response = await fetch(event.request);
+			imageCache.put(event.request, response.clone());
+
+			return response;
+		}
+
 		const cache = await caches.open(CACHE);
 
 		// `build`/`files` can always be served from the cache
