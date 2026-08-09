@@ -35,12 +35,12 @@
 				scientificName={species.scientificName}
 				class="w-24 shrink-0 self-stretch"
 			/>
-			<div class="flex flex-1 items-center gap-3.5 px-4 py-3.5">
-				<ItemContent>
-					<ItemTitle class="w-full truncate">{species.frenchName}</ItemTitle>
+			<div class="flex min-w-0 flex-1 items-center gap-3.5 px-4 py-3.5">
+				<ItemContent class="min-w-0">
+					<ItemTitle class="block w-full truncate">{species.frenchName}</ItemTitle>
 					<ItemDescription class="line-clamp-1"><em>{species.scientificName}</em></ItemDescription>
 				</ItemContent>
-				<ItemActions>
+				<ItemActions class="flex-col items-end gap-1">
 					{#if species.iucnCategory && species.iucnCategory !== 'LEAST_CONCERN'}
 						{@const IucnIcon = iucnIcon(species.iucnCategory)}
 						<Badge variant={iucnBadgeVariant(species.iucnCategory)}>
