@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
+	import {
+		Item,
+		ItemMedia,
+		ItemContent,
+		ItemTitle,
+		ItemDescription,
+		ItemActions
+	} from '$lib/components/ui/item';
+	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
 
 	let waitingWorker = $state<ServiceWorker | null>(null);
 
@@ -46,5 +55,18 @@
 </script>
 
 {#if waitingWorker}
-	<Button onclick={triggerUpdate}>Update to the latest version</Button>
+	<div class="fixed inset-x-4 bottom-4 z-50">
+		<Item variant="outline" class="mx-auto max-w-[480px] bg-background shadow-lg">
+			<ItemMedia variant="icon" class="self-center! translate-y-0!">
+				<RefreshCwIcon class="text-primary" />
+			</ItemMedia>
+			<ItemContent>
+				<ItemTitle>Update available</ItemTitle>
+				<ItemDescription>A new version of Wildex is ready.</ItemDescription>
+			</ItemContent>
+			<ItemActions>
+				<Button onclick={triggerUpdate} size="sm">Update</Button>
+			</ItemActions>
+		</Item>
+	</div>
 {/if}
