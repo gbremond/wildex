@@ -2,15 +2,9 @@
 	import { readableLabel, type Species, type Status } from './species.model';
 	import SpeciesAvatar from './SpeciesAvatar.svelte';
 	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
-	import {
-		Item,
-		ItemMedia,
-		ItemContent,
-		ItemTitle,
-		ItemDescription,
-		ItemActions
-	} from '$lib/components/ui/item';
+	import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions } from '$lib/components/ui/item';
 	import { resolve } from '$app/paths';
+	import { markSpeciesTransition } from './species-transition.svelte';
 
 	let { species }: { species: Species } = $props();
 
@@ -22,21 +16,29 @@
 	}
 </script>
 
-<Item variant="outline">
+<Item variant="outline" class="gap-0 overflow-hidden p-0">
 	{#snippet child({ props })}
-		<a {...props} href={resolve('/species/[id]', { id: species.id })}>
-			<ItemMedia>
-				<SpeciesAvatar seed={species.id} scientificName={species.scientificName} />
-			</ItemMedia>
-			<ItemContent>
-				<ItemTitle>{species.frenchName}</ItemTitle>
-				<ItemDescription><em>{species.scientificName}</em></ItemDescription>
-			</ItemContent>
-			<ItemActions>
-				<Badge variant={statusBadgeVariant(species.status)}>
-					{readableLabel(species.status)}
-				</Badge>
-			</ItemActions>
+		<a
+			{...props}
+			href={resolve('/species/[id]', { id: species.id })}
+			onclick={() => markSpeciesTransition(species.id)}
+		>
+			<SpeciesAvatar
+				seed={species.id}
+				scientificName={species.scientificName}
+				class="w-24 shrink-0 self-stretch"
+			/>
+			<div class="flex flex-1 items-center gap-3.5 px-4 py-3.5">
+				<ItemContent>
+					<ItemTitle>{species.frenchName}</ItemTitle>
+					<ItemDescription><em>{species.scientificName}</em></ItemDescription>
+				</ItemContent>
+				<ItemActions>
+					<Badge variant={statusBadgeVariant(species.status)}>
+						{readableLabel(species.status)}
+					</Badge>
+				</ItemActions>
+			</div>
 		</a>
 	{/snippet}
 </Item>

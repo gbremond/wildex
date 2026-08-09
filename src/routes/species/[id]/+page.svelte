@@ -4,7 +4,8 @@
 	import { resolve } from '$app/paths';
 	import { avibaseUrl, readableLabel, type Species } from '$lib/species/species.model';
 	import { findSpeciesById, loadSpeciesInMemory } from '$lib/species/species.repository';
-	import { speciesImageUrl } from '$lib/species/species-image';
+	import { speciesImageUrl, speciesPhotoTransitionName } from '$lib/species/species-image';
+	import { markSpeciesTransition } from '$lib/species/species-transition.svelte';
 	import type { PageProps } from './$types';
 
 	let { params }: PageProps = $props();
@@ -16,6 +17,10 @@
 
 	let referenceUrl = $derived(species ? avibaseUrl(species) : null);
 	let heroImageUrl = $derived(species ? speciesImageUrl(species.scientificName, 'medium') : null);
+
+	$effect(() => {
+		if (species) markSpeciesTransition(species.id);
+	});
 
 	afterNavigate(({ from }) => {
 		canGoBack = from !== null;
@@ -48,7 +53,10 @@
 		<p>Loading…</p>
 	{:else if species}
 		{#if heroImageUrl && !heroImageFailed}
-			<div class="relative mt-4">
+			<div
+				class="relative mt-4"
+				style="view-transition-name: {speciesPhotoTransitionName(species.id)}"
+			>
 				<img
 					src={heroImageUrl}
 					alt={species.scientificName}

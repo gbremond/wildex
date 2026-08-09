@@ -3,6 +3,7 @@
 	import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
+	import { onNavigate } from '$app/navigation';
 	import { version } from '$app/environment';
 	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 
@@ -15,6 +16,17 @@
 	}
 
 	onMount(updateNetworkStatus);
+
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <svelte:head>
