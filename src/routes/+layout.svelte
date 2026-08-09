@@ -35,11 +35,11 @@
 </svelte:head>
 <svelte:window ononline={updateNetworkStatus} onoffline={updateNetworkStatus} />
 
-<main role="main">
+<main>
 	{@render children()}
 </main>
 
-<footer role="contentinfo">
+<footer>
 	<PwaUpdatePrompt />
 
 	{#if isOffline}

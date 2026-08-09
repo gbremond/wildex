@@ -6,6 +6,8 @@
 	import { findSpeciesById, loadSpeciesInMemory } from '$lib/species/species.repository';
 	import { speciesImageUrl, speciesPhotoTransitionName } from '$lib/species/species-image';
 	import { markSpeciesTransition } from '$lib/species/species-transition.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
 	import type { PageProps } from './$types';
 
 	let { params }: PageProps = $props();
@@ -40,21 +42,27 @@
 	});
 </script>
 
-<div class="mx-auto max-w-[480px]">
-	<a
-		href={resolve('/')}
-		onclick={returnToSearch}
-		class="text-sm text-muted-foreground hover:underline"
-	>
-		← Back to search
-	</a>
+<div class="bg-primary">
+	<div class="mx-auto max-w-[480px] p-2">
+		<Button
+			href={resolve('/')}
+			onclick={returnToSearch}
+			variant="link"
+			class="-ml-3 text-primary-foreground hover:text-primary-foreground"
+		>
+			<ArrowLeftIcon data-icon="inline-start" />
+			Back to search
+		</Button>
+	</div>
+</div>
 
+<div class="mx-auto max-w-[480px]">
 	{#if isLoading}
 		<p>Loading…</p>
 	{:else if species}
 		{#if heroImageUrl && !heroImageFailed}
 			<div
-				class="relative mt-4"
+				class="relative"
 				style="view-transition-name: {speciesPhotoTransitionName(species.id)}"
 			>
 				<img
