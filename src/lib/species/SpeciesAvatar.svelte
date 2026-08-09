@@ -2,12 +2,11 @@
 	import Feather from '@lucide/svelte/icons/feather';
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { speciesAvatarGradient } from './species-avatar';
+	import { speciesImageUrl } from './species-image';
 
 	let { seed, scientificName }: { seed: string; scientificName: string } = $props();
 
-	let imageUrl = $derived(
-		`https://birdnet.cornell.edu/taxonomy/api/image/${encodeURIComponent(scientificName)}?size=thumb`
-	);
+	let imageUrl = $derived(speciesImageUrl(scientificName, 'thumb'));
 </script>
 
 <Avatar size="lg" class="rounded-lg after:rounded-lg">
