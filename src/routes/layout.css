@@ -20,6 +20,10 @@
 @plugin '@tailwindcss/typography';
 
 :root {
+	/* Opt out of Chrome for Android's auto dark theme, which algorithmically
+	   inverts pages that do not declare a scheme. */
+	color-scheme: light;
+
 	--background: oklch(0.9507 0.0783 94.95);
 	--foreground: oklch(0.3268 0.0579 182.45);
 	--card: oklch(0.9775 0.036 95.01);
@@ -34,9 +38,11 @@
 	--muted-foreground: oklch(0.5 0.058 182.45);
 	--accent: oklch(0.89 0.085 95);
 	--accent-foreground: oklch(0.3268 0.0579 182.45);
-	--destructive: oklch(0.5748 0.1862 25.23);
-	--success: oklch(0.5601 0.1243 159.66);
-	--warning: oklch(0.7535 0.1554 81.58);
+	/* Badges render these as text on a 10% tint of themselves, so each one has to
+	   clear WCAG AA (4.5:1) against that tint at text-xs. See theme-contrast.spec.ts. */
+	--destructive: oklch(0.5158 0.1862 25.23);
+	--success: oklch(0.4825 0.1108 159.66);
+	--warning: oklch(0.5013 0.1046 81.58);
 	--border: oklch(0.6 0.055 182.45);
 	--input: oklch(0.56 0.055 182.45);
 	--ring: oklch(0.5 0.075 182.45);
@@ -57,6 +63,8 @@
 }
 
 .dark {
+	color-scheme: dark;
+
 	--background: oklch(0.145 0 0);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.205 0 0);
