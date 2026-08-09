@@ -8,7 +8,11 @@ const SUMMARY_URL = (title) =>
 const HEADERS = { 'User-Agent': 'Wildex (https://github.com/gbremond/wildex)' };
 
 export async function fetchDescription(scientificName, fetchImpl = fetch) {
-	const response = await fetchWithRetry(SUMMARY_URL(scientificName), { headers: HEADERS }, fetchImpl);
+	const response = await fetchWithRetry(
+		SUMMARY_URL(scientificName),
+		{ headers: HEADERS },
+		fetchImpl
+	);
 
 	if (!response.ok) return undefined;
 

@@ -2,7 +2,12 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { avibaseUrl, readableLabel, xenoCantoUrl, type Species } from '$lib/species/species.model';
+	import {
+		avibaseUrl,
+		readableLabel,
+		xenoCantoUrl,
+		type Species
+	} from '$lib/species/species.model';
 	import { findSpeciesById, loadSpeciesInMemory } from '$lib/species/species.repository';
 	import { speciesImageUrl, speciesPhotoTransitionName } from '$lib/species/species-image';
 	import { markSpeciesTransition } from '$lib/species/species-transition.svelte';
@@ -64,10 +69,7 @@
 		<p>Loading…</p>
 	{:else if species}
 		{#if heroImageUrl && !heroImageFailed}
-			<div
-				class="relative"
-				style="view-transition-name: {speciesPhotoTransitionName(species.id)}"
-			>
+			<div class="relative" style="view-transition-name: {speciesPhotoTransitionName(species.id)}">
 				<img
 					src={heroImageUrl}
 					alt={species.scientificName}
@@ -78,7 +80,7 @@
 					class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-4 pt-16 pb-4"
 				>
 					<h1 class="text-3xl text-white">{species.frenchName}</h1>
-					<p class="italic text-white/85">{species.scientificName}</p>
+					<p class="text-white/85 italic">{species.scientificName}</p>
 				</div>
 			</div>
 		{:else}

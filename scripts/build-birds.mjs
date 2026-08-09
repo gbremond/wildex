@@ -222,7 +222,9 @@ async function main() {
 
 	const iucnToken = process.env.IUCN_API_TOKEN;
 	if (!iucnToken) {
-		throw new Error('Usage: IUCN_API_TOKEN=<token> node scripts/build-birds.mjs <taxref-directory>');
+		throw new Error(
+			'Usage: IUCN_API_TOKEN=<token> node scripts/build-birds.mjs <taxref-directory>'
+		);
 	}
 
 	const birds = await readBirds(await findTaxrefFile(taxrefDirectory));

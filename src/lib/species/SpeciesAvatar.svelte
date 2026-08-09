@@ -18,10 +18,7 @@
 	);
 </script>
 
-<div
-	class={cn('relative overflow-hidden rounded-l-2xl', className)}
-	style={transitionStyle}
->
+<div class={cn('relative overflow-hidden rounded-l-2xl', className)} style={transitionStyle}>
 	{#if !imageFailed}
 		<img
 			src={imageUrl}
@@ -29,7 +26,9 @@
 			class="size-full object-cover"
 			onerror={() => (imageFailed = true)}
 		/>
-		<div class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-background/0 to-background"></div>
+		<div
+			class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-background/0 to-background"
+		></div>
 	{:else}
 		<div
 			class="flex size-full items-center justify-center text-white/90"

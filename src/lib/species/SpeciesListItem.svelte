@@ -3,7 +3,13 @@
 	import { iucnBadgeVariant, iucnIcon } from './species-badge';
 	import SpeciesAvatar from './SpeciesAvatar.svelte';
 	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
-	import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions } from '$lib/components/ui/item';
+	import {
+		Item,
+		ItemContent,
+		ItemTitle,
+		ItemDescription,
+		ItemActions
+	} from '$lib/components/ui/item';
 	import { resolve } from '$app/paths';
 	import { markSpeciesTransition } from './species-transition.svelte';
 
@@ -17,7 +23,7 @@
 	}
 </script>
 
-<Item variant="outline" class="gap-0 overflow-hidden p-0 flex-nowrap">
+<Item variant="outline" class="flex-nowrap gap-0 overflow-hidden p-0">
 	{#snippet child({ props })}
 		<a
 			{...props}
