@@ -16,7 +16,7 @@
 	}
 </script>
 
-<Item variant="outline" class="gap-0 overflow-hidden p-0">
+<Item variant="outline" class="gap-0 overflow-hidden p-0 flex-nowrap">
 	{#snippet child({ props })}
 		<a
 			{...props}
@@ -30,8 +30,8 @@
 			/>
 			<div class="flex flex-1 items-center gap-3.5 px-4 py-3.5">
 				<ItemContent>
-					<ItemTitle>{species.frenchName}</ItemTitle>
-					<ItemDescription><em>{species.scientificName}</em></ItemDescription>
+					<ItemTitle class="w-full truncate">{species.frenchName}</ItemTitle>
+					<ItemDescription class="line-clamp-1"><em>{species.scientificName}</em></ItemDescription>
 				</ItemContent>
 				<ItemActions>
 					<Badge variant={statusBadgeVariant(species.status)}>
