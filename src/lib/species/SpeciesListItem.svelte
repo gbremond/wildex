@@ -26,7 +26,7 @@
 	{#snippet child({ props })}
 		<a {...props} href={resolve('/species/[id]', { id: species.id })}>
 			<ItemMedia>
-				<SpeciesAvatar seed={species.id} />
+				<SpeciesAvatar seed={species.id} scientificName={species.scientificName} />
 			</ItemMedia>
 			<ItemContent>
 				<ItemTitle>{species.frenchName}</ItemTitle>
