@@ -11,9 +11,10 @@
 	import SpeciesListItem from '$lib/species/SpeciesListItem.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { ItemGroup } from '$lib/components/ui/item';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
+	import { fade } from 'svelte/transition';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
@@ -73,32 +74,39 @@
 	}
 </script>
 
-<h1 class="text-3xl">Welcome to Wildex</h1>
+<div class="flex h-dvh flex-col">
+	<h1 class="text-3xl">Welcome to Wildex</h1>
 
-<Button onclick={downloadSpecies} disabled={isDownloading}>
-	{isDownloading ? 'Downloading…' : 'Download species'}
-</Button>
+	<Button onclick={downloadSpecies} disabled={isDownloading}>
+		{isDownloading ? 'Downloading…' : 'Download species'}
+	</Button>
 
-{#if storedCount !== null}
-	<p>{storedCount} species stored offline</p>
-{/if}
-
-{#if storedCount}
-	<Input
-		type="search"
-		placeholder="Search a bird"
-		bind:value={query}
-		oninput={rememberQueryInUrl}
-		class="ml-4 max-w-[80%]"
-	/>
-
-	{#if visibleSpecies.length > 0}
-		<ItemGroup class="gap-2 p-4">
-			{#each visibleSpecies as species (species.id)}
-				<SpeciesListItem {species} />
-			{/each}
-		</ItemGroup>
-	{:else if !isSearching}
-		<p>No bird matches “{query}”</p>
+	{#if storedCount !== null}
+		<p>{storedCount} species stored offline</p>
 	{/if}
-{/if}
+
+	{#if storedCount}
+		<Input
+			type="search"
+			placeholder="Search a bird"
+			bind:value={query}
+			oninput={rememberQueryInUrl}
+			class="m-4 max-w-[80%]"
+		/>
+
+		{#if visibleSpecies.length > 0}
+			<SvelteVirtualList
+				items={visibleSpecies}
+				defaultEstimatedItemHeight={88}
+			>
+				{#snippet renderItem(species)}
+					<div class="pb-2 px-2" in:fade={{ duration: 120 }}>
+						<SpeciesListItem {species} />
+					</div>
+				{/snippet}
+			</SvelteVirtualList>
+		{:else if !isSearching}
+			<p>No bird matches “{query}”</p>
+		{/if}
+	{/if}
+</div>
