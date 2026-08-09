@@ -29,6 +29,7 @@
 	let cachedImageCount = $state<number | null>(null);
 	let isDownloadingImages = $state(false);
 	let imageDownloadProgress = $state<{ done: number; total: number } | null>(null);
+	let failedImageCount = $state(0);
 
 	// `location`, not `page.url`: shallow routing writes the query to the history entry
 	// without adopting it as the page URL, so only the browser knows it.
@@ -94,11 +95,14 @@
 	async function downloadImages() {
 		isDownloadingImages = true;
 		imageDownloadProgress = null;
+		failedImageCount = 0;
 
 		try {
-			await cacheSpeciesImages(await getSpeciesList(), (done, total) => {
+			const report = await cacheSpeciesImages(await getSpeciesList(), (done, total) => {
 				imageDownloadProgress = { done, total };
 			});
+
+			failedImageCount = report.failed;
 			await refreshCachedImageCount();
 		} finally {
 			isDownloadingImages = false;
@@ -128,6 +132,10 @@
 			<p>{cachedImageCount} images stored offline</p>
 		{:else}
 			<p>0 images stored offline</p>
+		{/if}
+
+		{#if failedImageCount}
+			<p>{failedImageCount} images could not be downloaded — check your connection and retry.</p>
 		{/if}
 
 		<InputGroup.Root class="my-4 w-full">
