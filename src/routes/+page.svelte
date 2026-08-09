@@ -138,23 +138,36 @@
 			<p>{failedImageCount} images could not be downloaded — check your connection and retry.</p>
 		{/if}
 
-		<InputGroup.Root class="my-4 w-full">
-			<InputGroup.Addon>
-				<SearchIcon />
-			</InputGroup.Addon>
-			<InputGroup.Input
-				placeholder="Search a bird"
-				bind:value={query}
-				oninput={rememberQueryInUrl}
-			/>
-			{#if query}
-				<InputGroup.Addon align="inline-end">
-					<InputGroup.Button onclick={clearQuery} size="icon-sm" aria-label="Clear search">
-						<XIcon />
-					</InputGroup.Button>
+		<div class="relative my-4 w-full">
+			<InputGroup.Root class="w-full">
+				<InputGroup.Addon>
+					<SearchIcon />
 				</InputGroup.Addon>
+				<InputGroup.Input
+					placeholder="Search a bird"
+					class={query ? 'pr-9' : ''}
+					bind:value={query}
+					oninput={rememberQueryInUrl}
+				/>
+			</InputGroup.Root>
+			{#if query}
+				<!--
+					A real, plain <button> as a sibling here (not nested inside InputGroup.Root
+					alongside the input) — on Chrome's mobile viewport, a <button> directly next
+					to the focused search <input> aborts any in-flight View Transition when a
+					result link is clicked afterwards. Positioned absolutely to keep the same
+					look as before.
+				-->
+				<InputGroup.Button
+					onclick={clearQuery}
+					size="icon-sm"
+					aria-label="Clear search"
+					class="absolute top-1/2 right-2 -translate-y-1/2"
+				>
+					<XIcon />
+				</InputGroup.Button>
 			{/if}
-		</InputGroup.Root>
+		</div>
 
 		{#if visibleSpecies.length > 0}
 			<SvelteVirtualList items={visibleSpecies} defaultEstimatedItemHeight={88}>
