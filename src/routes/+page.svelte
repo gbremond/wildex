@@ -5,37 +5,50 @@
 	import {
 		addSpecies,
 		countAvailableSpecies,
+		getSpeciesList,
 		loadSpeciesInMemory,
 		searchStoredSpecies
 	} from '$lib/species/data/repository';
 	import ImageDownloadPanel from '$lib/species/ui/ImageDownloadPanel.svelte';
 	import SpeciesSearchField from '$lib/species/ui/SpeciesSearchField.svelte';
+	import SpeciesFilterPanel from '$lib/species/ui/SpeciesFilterPanel.svelte';
 	import SpeciesList from '$lib/species/ui/SpeciesList.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import {
+		NO_FILTERS,
+		countSelectedFilters,
+		distinctOrders,
+		type SpeciesFilters
+	} from '$lib/species/model/filters';
+	import { readSearchParams, toSearchPath } from '$lib/species/model/search-url';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
+	let orders = $state<string[]>([]);
 	let isDownloading = $state(false);
 	let isSearching = $state(false);
 	let query = $state('');
+	let filters = $state<SpeciesFilters>({ ...NO_FILTERS });
 
-	// `location`, not `page.url`: shallow routing writes the query to the history entry
+	// `location`, not `page.url`: shallow routing writes the search to the history entry
 	// without adopting it as the page URL, so only the browser knows it.
 	afterNavigate(() => {
-		query = new URLSearchParams(location.search).get('q') ?? '';
+		({ query, filters } = readSearchParams(new URLSearchParams(location.search)));
 	});
 
-	function rememberQueryInUrl() {
-		replaceState(resolve(query ? `/?q=${encodeURIComponent(query)}` : '/'), {});
+	function rememberSearchInUrl() {
+		replaceState(resolve(toSearchPath(query, filters)), {});
 	}
 
 	// Bumped by every search so a slow answer cannot overwrite a newer one.
 	let latestSearch = 0;
 
+	// Snapshotting reads every facet now: what a `$effect` reads after an `await`
+	// is no longer tracked.
 	$effect(() => {
-		runSearch(query);
+		runSearch(query, $state.snapshot(filters));
 	});
 
 	onMount(async () => {
@@ -43,12 +56,12 @@
 		await refreshStoredSpecies();
 	});
 
-	async function runSearch(searchedQuery: string) {
+	async function runSearch(searchedQuery: string, searchedFilters: SpeciesFilters) {
 		const searchId = ++latestSearch;
 
 		isSearching = true;
 
-		const found = await searchStoredSpecies(searchedQuery);
+		const found = await searchStoredSpecies(searchedQuery, searchedFilters);
 
 		if (searchId !== latestSearch) return;
 
@@ -58,7 +71,8 @@
 
 	async function refreshStoredSpecies() {
 		storedCount = await countAvailableSpecies();
-		await runSearch(query);
+		orders = distinctOrders(await getSpeciesList());
+		await runSearch(query, $state.snapshot(filters));
 	}
 
 	async function downloadAndStoreSpecies() {
@@ -87,8 +101,15 @@
 	{#if storedCount}
 		<ImageDownloadPanel />
 
-		<SpeciesSearchField bind:query onchange={rememberQueryInUrl} />
+		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />
 
-		<SpeciesList species={visibleSpecies} {isSearching} {query} />
+		<SpeciesFilterPanel bind:filters {orders} onchange={rememberSearchInUrl} />
+
+		<SpeciesList
+			species={visibleSpecies}
+			{isSearching}
+			{query}
+			hasFilters={countSelectedFilters(filters) > 0}
+		/>
 	{/if}
 </div>

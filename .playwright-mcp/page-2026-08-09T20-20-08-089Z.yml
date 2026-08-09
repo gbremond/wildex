@@ -1,0 +1,13 @@
+- generic [ref=f2e2]:
+  - main [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - heading "Welcome to Wildex" [level=1] [ref=f2e5]
+      - button "Download species" [ref=f2e6]
+  - contentinfo [ref=f2e7]:
+    - generic [ref=f2e8]: Wildex | Version 6ae05e9
+    - list [ref=f2e9]:
+      - listitem [ref=f2e10]: TAXREF 2026. Référentiel taxonomique pour la France. UMS PatriNat (OFB-CNRS-MNHN), Paris. <inpn.mnhn.fr>
+      - listitem [ref=f2e11]: IUCN 2026. IUCN Red List of Threatened Species. Version 2026-1 <www.iucnredlist.org>
+      - listitem [ref=f2e12]: "Xeno-canto Foundation 2026. Xeno-canto: bird sounds from around the world. <xeno-canto.org>"
+      - listitem [ref=f2e13]: "Lepage D. 2026. Avibase: the world bird database. Bird Studies Canada. <avibase.bsc-eoc.org>"
+      - listitem [ref=f2e14]: Wikipedia contributors 2026. Wikipedia, the free encyclopedia. CC BY-SA 4.0. <wikipedia.org>

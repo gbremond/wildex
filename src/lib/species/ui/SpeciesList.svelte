@@ -4,8 +4,19 @@
 	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
 	import { fade } from 'svelte/transition';
 
-	let { species, isSearching, query }: { species: Species[]; isSearching: boolean; query: string } =
-		$props();
+	let {
+		species,
+		isSearching,
+		query,
+		hasFilters
+	}: { species: Species[]; isSearching: boolean; query: string; hasFilters: boolean } = $props();
+
+	const emptyMessage = $derived.by(() => {
+		if (query && hasFilters) return `No bird matches “${query}” with these filters`;
+		if (query) return `No bird matches “${query}”`;
+
+		return 'No bird matches these filters';
+	});
 </script>
 
 {#if species.length > 0}
@@ -17,5 +28,5 @@
 		{/snippet}
 	</SvelteVirtualList>
 {:else if !isSearching}
-	<p>No bird matches “{query}”</p>
+	<p>{emptyMessage}</p>
 {/if}
