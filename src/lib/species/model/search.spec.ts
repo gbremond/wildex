@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { Species } from './species.model';
-import { fold, searchSpecies } from './species.search';
+import type { Species } from './model';
+import { fold, searchSpecies } from './search';
 
 function bird(
 	id: string,

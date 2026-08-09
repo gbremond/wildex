@@ -1,5 +1,5 @@
-import { isSpecies, type Species } from '$lib/species/species.model';
-import { searchSpecies as search } from '$lib/species/species.search';
+import { isSpecies, type Species } from '../model/model';
+import { searchSpecies } from '../model/search';
 
 const STORAGE_KEY = 'speciesList';
 
@@ -26,8 +26,8 @@ async function getSpeciesList(): Promise<Species[]> {
 	return [...speciesById.values()];
 }
 
-async function searchSpecies(query: string): Promise<Species[]> {
-	return search([...speciesById.values()], query);
+async function searchStoredSpecies(query: string): Promise<Species[]> {
+	return searchSpecies([...speciesById.values()], query);
 }
 
 async function countAvailableSpecies(): Promise<number> {
@@ -42,7 +42,7 @@ export {
 	loadSpeciesInMemory,
 	addSpecies,
 	getSpeciesList,
-	searchSpecies,
+	searchStoredSpecies,
 	countAvailableSpecies,
 	findSpeciesById
 };

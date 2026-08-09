@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isSpecies, xenoCantoUrl, type Species } from './species.model';
+import { isSpecies } from './model';
 
 function validSpecies(overrides: Record<string, unknown> = {}): unknown {
 	return {
@@ -32,13 +32,5 @@ describe('isSpecies', () => {
 
 	it('rejects an iucnCategory outside IUCN_CATEGORIES', () => {
 		expect(isSpecies(validSpecies({ iucnCategory: 'NOT_A_CATEGORY' }))).toBe(false);
-	});
-});
-
-describe('xenoCantoUrl', () => {
-	it('builds a species page URL from the scientific name', () => {
-		const species = validSpecies() as Species;
-
-		expect(xenoCantoUrl(species)).toBe('https://xeno-canto.org/species/Acanthis-flammea');
 	});
 });

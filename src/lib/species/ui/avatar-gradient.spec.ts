@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { speciesAvatarGradient } from './species-avatar';
+import { speciesAvatarGradient } from './avatar-gradient';
 
 describe('speciesAvatarGradient', () => {
 	it('returns the same gradient for the same seed', () => {

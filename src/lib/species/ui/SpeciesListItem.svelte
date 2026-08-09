@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { readableLabel, type Species, type Status } from './species.model';
-	import { iucnBadgeVariant, iucnIcon } from './species-badge';
+	import type { Species } from '../model/model';
+	import { statusBadgeVariant } from './badge-variants';
+	import { readableLabel } from './labels';
 	import SpeciesAvatar from './SpeciesAvatar.svelte';
-	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
+	import IucnBadge from './IucnBadge.svelte';
+	import { Badge } from '$lib/components/ui/badge';
 	import {
 		Item,
 		ItemContent,
@@ -11,16 +13,9 @@
 		ItemActions
 	} from '$lib/components/ui/item';
 	import { resolve } from '$app/paths';
-	import { markSpeciesTransition } from './species-transition.svelte';
+	import { markSpeciesTransition } from './transition.svelte';
 
 	let { species }: { species: Species } = $props();
-
-	function statusBadgeVariant(status: Status): BadgeVariant {
-		if (status === 'INVASIVE') return 'destructive';
-		if (status === 'INTRODUCED' || status === 'OCCASIONAL') return 'warning';
-
-		return 'success';
-	}
 </script>
 
 <Item variant="outline" class="flex-nowrap gap-0 overflow-hidden p-0">
@@ -42,11 +37,7 @@
 				</ItemContent>
 				<ItemActions class="flex-col items-end gap-1">
 					{#if species.iucnCategory && species.iucnCategory !== 'LEAST_CONCERN'}
-						{@const IucnIcon = iucnIcon(species.iucnCategory)}
-						<Badge variant={iucnBadgeVariant(species.iucnCategory)}>
-							<IucnIcon data-icon="inline-start" />
-							{readableLabel(species.iucnCategory)}
-						</Badge>
+						<IucnBadge category={species.iucnCategory} />
 					{/if}
 					<Badge variant={statusBadgeVariant(species.status)}>
 						{readableLabel(species.status)}

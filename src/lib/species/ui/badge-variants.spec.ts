@@ -1,6 +1,27 @@
 import { describe, it, expect } from 'vitest';
-import { iucnBadgeVariant, iucnIcon } from './species-badge';
-import { IUCN_CATEGORIES } from './species.model';
+import { iucnBadgeVariant, iucnIcon, statusBadgeVariant } from './badge-variants';
+import { IUCN_CATEGORIES, STATUSES } from '../model/model';
+
+describe('statusBadgeVariant', () => {
+	it('maps the naturally occurring statuses to success', () => {
+		expect(statusBadgeVariant('NATIVE')).toBe('success');
+		expect(statusBadgeVariant('ENDEMIC')).toBe('success');
+		expect(statusBadgeVariant('SUBENDEMIC')).toBe('success');
+	});
+
+	it('maps introduced and occasional to warning', () => {
+		expect(statusBadgeVariant('INTRODUCED')).toBe('warning');
+		expect(statusBadgeVariant('OCCASIONAL')).toBe('warning');
+	});
+
+	it('maps invasive to destructive', () => {
+		expect(statusBadgeVariant('INVASIVE')).toBe('destructive');
+	});
+
+	it('covers every status', () => {
+		expect(STATUSES.every((status) => statusBadgeVariant(status))).toBe(true);
+	});
+});
 
 describe('iucnBadgeVariant', () => {
 	it('maps least-concern and near-threatened to success', () => {

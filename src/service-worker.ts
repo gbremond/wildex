@@ -11,7 +11,7 @@
 /// <reference types="../.svelte-kit/ambient.d.ts" />
 
 import { base, build, files, prerendered, version } from '$service-worker';
-import { BIRD_IMAGE_CACHE, BIRD_IMAGE_HOST } from '$lib/species/species-image';
+import { SPECIES_IMAGE_CACHE, SPECIES_IMAGE_HOST } from '$lib/species/data/image';
 import { isObsoleteCache } from '$lib/cache-policy';
 
 // This gives `self` the correct types
@@ -48,14 +48,13 @@ self.addEventListener('fetch', (event) => {
 
 	const url = new URL(event.request.url);
 
-	if (url.hostname === BIRD_IMAGE_HOST) {
-		event.respondWith(serveBirdImage(event));
+	if (url.hostname === SPECIES_IMAGE_HOST) {
+		event.respondWith(serveSpeciesImage(event));
 		return;
 	}
 
 	event.respondWith(serveAppRequest(event, url));
 });
-
 
 // GitHub Pages serves the fallback with a 404 status, which `addAll` would reject
 async function fetchFallbackAsOk(): Promise<Response> {
@@ -101,12 +100,12 @@ function isCacheableImage(response: Response): boolean {
 	return response.type === 'opaque' || response.ok;
 }
 
-// Bird photos never change and Cornell's endpoint is a small research service:
+// Species photos never change and Cornell's endpoint is a small research service:
 // serve one from cache once fetched, instead of re-fetching it on every view.
 // This is also what fills the cache when the user downloads photos for offline
-// use, so it is the single place bird images are written.
-async function serveBirdImage(event: FetchEvent): Promise<Response> {
-	const cache = await caches.open(BIRD_IMAGE_CACHE);
+// use, so it is the single place species images are written.
+async function serveSpeciesImage(event: FetchEvent): Promise<Response> {
+	const cache = await caches.open(SPECIES_IMAGE_CACHE);
 	const cached = await cache.match(event.request);
 
 	if (cached) {

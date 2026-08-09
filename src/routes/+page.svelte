@@ -1,35 +1,25 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { downloadBirds } from '$lib/species/species.api';
-	import type { Species } from '$lib/species/species.model';
+	import { downloadSpecies } from '$lib/species/data/api';
+	import type { Species } from '$lib/species/model/model';
 	import {
 		addSpecies,
 		countAvailableSpecies,
-		getSpeciesList,
 		loadSpeciesInMemory,
-		searchSpecies
-	} from '$lib/species/species.repository';
-	import { cacheSpeciesImages, countCachedImages } from '$lib/species/species-image-cache';
-	import SpeciesListItem from '$lib/species/SpeciesListItem.svelte';
+		searchStoredSpecies
+	} from '$lib/species/data/repository';
+	import ImageDownloadPanel from '$lib/species/ui/ImageDownloadPanel.svelte';
+	import SpeciesSearchField from '$lib/species/ui/SpeciesSearchField.svelte';
+	import SpeciesList from '$lib/species/ui/SpeciesList.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import * as InputGroup from '$lib/components/ui/input-group';
-	import SearchIcon from '@lucide/svelte/icons/search';
-	import XIcon from '@lucide/svelte/icons/x';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
-	import { fade } from 'svelte/transition';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
 	let isDownloading = $state(false);
 	let isSearching = $state(false);
 	let query = $state('');
-
-	let cachedImageCount = $state<number | null>(null);
-	let isDownloadingImages = $state(false);
-	let imageDownloadProgress = $state<{ done: number; total: number } | null>(null);
-	let failedImageCount = $state(0);
 
 	// `location`, not `page.url`: shallow routing writes the query to the history entry
 	// without adopting it as the page URL, so only the browser knows it.
@@ -39,11 +29,6 @@
 
 	function rememberQueryInUrl() {
 		replaceState(resolve(query ? `/?q=${encodeURIComponent(query)}` : '/'), {});
-	}
-
-	function clearQuery() {
-		query = '';
-		rememberQueryInUrl();
 	}
 
 	// Bumped by every search so a slow answer cannot overwrite a newer one.
@@ -56,7 +41,6 @@
 	onMount(async () => {
 		await loadSpeciesInMemory();
 		await refreshStoredSpecies();
-		await refreshCachedImageCount();
 	});
 
 	async function runSearch(searchedQuery: string) {
@@ -64,7 +48,7 @@
 
 		isSearching = true;
 
-		const found = await searchSpecies(searchedQuery);
+		const found = await searchStoredSpecies(searchedQuery);
 
 		if (searchId !== latestSearch) return;
 
@@ -77,35 +61,14 @@
 		await runSearch(query);
 	}
 
-	async function downloadSpecies() {
+	async function downloadAndStoreSpecies() {
 		isDownloading = true;
 
 		try {
-			await addSpecies(await downloadBirds());
+			await addSpecies(await downloadSpecies());
 			await refreshStoredSpecies();
 		} finally {
 			isDownloading = false;
-		}
-	}
-
-	async function refreshCachedImageCount() {
-		cachedImageCount = await countCachedImages();
-	}
-
-	async function downloadImages() {
-		isDownloadingImages = true;
-		imageDownloadProgress = null;
-		failedImageCount = 0;
-
-		try {
-			const report = await cacheSpeciesImages(await getSpeciesList(), (done, total) => {
-				imageDownloadProgress = { done, total };
-			});
-
-			failedImageCount = report.failed;
-			await refreshCachedImageCount();
-		} finally {
-			isDownloadingImages = false;
 		}
 	}
 </script>
@@ -113,7 +76,7 @@
 <div class="flex h-dvh flex-col">
 	<h1 class="text-3xl">Welcome to Wildex</h1>
 
-	<Button onclick={downloadSpecies} disabled={isDownloading}>
+	<Button onclick={downloadAndStoreSpecies} disabled={isDownloading}>
 		{isDownloading ? 'Downloading…' : 'Download species'}
 	</Button>
 
@@ -122,63 +85,10 @@
 	{/if}
 
 	{#if storedCount}
-		<Button onclick={downloadImages} disabled={isDownloadingImages}>
-			{isDownloadingImages
-				? `Downloading images… ${imageDownloadProgress?.done ?? 0}/${imageDownloadProgress?.total ?? 0}`
-				: 'Download images'}
-		</Button>
+		<ImageDownloadPanel />
 
-		{#if cachedImageCount}
-			<p>{cachedImageCount} images stored offline</p>
-		{:else}
-			<p>0 images stored offline</p>
-		{/if}
+		<SpeciesSearchField bind:query onchange={rememberQueryInUrl} />
 
-		{#if failedImageCount}
-			<p>{failedImageCount} images could not be downloaded — check your connection and retry.</p>
-		{/if}
-
-		<div class="relative my-4 w-full">
-			<InputGroup.Root class="w-full">
-				<InputGroup.Addon>
-					<SearchIcon />
-				</InputGroup.Addon>
-				<InputGroup.Input
-					placeholder="Search a bird"
-					class={query ? 'pr-9' : ''}
-					bind:value={query}
-					oninput={rememberQueryInUrl}
-				/>
-			</InputGroup.Root>
-			{#if query}
-				<!--
-					A real, plain <button> as a sibling here (not nested inside InputGroup.Root
-					alongside the input) — on Chrome's mobile viewport, a <button> directly next
-					to the focused search <input> aborts any in-flight View Transition when a
-					result link is clicked afterwards. Positioned absolutely to keep the same
-					look as before.
-				-->
-				<InputGroup.Button
-					onclick={clearQuery}
-					size="icon-sm"
-					aria-label="Clear search"
-					class="absolute top-1/2 right-2 -translate-y-1/2"
-				>
-					<XIcon />
-				</InputGroup.Button>
-			{/if}
-		</div>
-
-		{#if visibleSpecies.length > 0}
-			<SvelteVirtualList items={visibleSpecies} defaultEstimatedItemHeight={88}>
-				{#snippet renderItem(species)}
-					<div class="px-2 pb-2" in:fade={{ duration: 120 }}>
-						<SpeciesListItem {species} />
-					</div>
-				{/snippet}
-			</SvelteVirtualList>
-		{:else if !isSearching}
-			<p>No bird matches “{query}”</p>
-		{/if}
+		<SpeciesList species={visibleSpecies} {isSearching} {query} />
 	{/if}
 </div>

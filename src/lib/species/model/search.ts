@@ -1,4 +1,4 @@
-import type { Species } from '$lib/species/species.model';
+import type { Species } from './model';
 
 export const MIN_QUERY_LENGTH = 2;
 

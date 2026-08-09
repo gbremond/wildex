@@ -70,19 +70,3 @@ export function isSpecies(value: unknown): value is Species {
 		(species.iucnCategory === undefined || isOneOf(IUCN_CATEGORIES, species.iucnCategory))
 	);
 }
-
-export function readableLabel(value: Habitat | Status | IucnCategory): string {
-	const words = value.toLowerCase().replaceAll('_', ' ');
-
-	return words.charAt(0).toUpperCase() + words.slice(1);
-}
-
-export function avibaseUrl(species: Species): string | null {
-	if (!species.avibaseId) return null;
-
-	return `https://avibase.bsc-eoc.org/species.jsp?lang=FR&avibaseid=${species.avibaseId}`;
-}
-
-export function xenoCantoUrl(species: Species): string {
-	return `https://xeno-canto.org/species/${species.scientificName.replace(' ', '-')}`;
-}

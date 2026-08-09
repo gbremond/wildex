@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { isObsoleteCache } from './cache-policy';
-import { BIRD_IMAGE_CACHE } from './species/species-image';
+import { SPECIES_IMAGE_CACHE } from './species/data/image';
 
 const CURRENT_APP_CACHE = 'cache-abc123';
 
@@ -14,7 +14,7 @@ describe('isObsoleteCache', () => {
 	});
 
 	it('keeps downloaded bird images across a deployment', () => {
-		expect(isObsoleteCache(BIRD_IMAGE_CACHE, CURRENT_APP_CACHE)).toBe(false);
+		expect(isObsoleteCache(SPECIES_IMAGE_CACHE, CURRENT_APP_CACHE)).toBe(false);
 	});
 
 	it('deletes a cache left over from an earlier implementation', () => {

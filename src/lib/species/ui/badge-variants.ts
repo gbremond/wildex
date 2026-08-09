@@ -8,7 +8,16 @@ import GhostIcon from '@lucide/svelte/icons/ghost';
 import SkullIcon from '@lucide/svelte/icons/skull';
 import CircleQuestionMarkIcon from '@lucide/svelte/icons/circle-question-mark';
 import type { BadgeVariant } from '$lib/components/ui/badge';
-import type { IucnCategory } from './species.model';
+import type { IucnCategory, Status } from '../model/model';
+
+const VARIANT_BY_STATUS: Record<Status, BadgeVariant> = {
+	NATIVE: 'success',
+	ENDEMIC: 'success',
+	SUBENDEMIC: 'success',
+	INTRODUCED: 'warning',
+	OCCASIONAL: 'warning',
+	INVASIVE: 'destructive'
+};
 
 const VARIANT_BY_CATEGORY: Record<IucnCategory, BadgeVariant> = {
 	LEAST_CONCERN: 'success',
@@ -33,6 +42,10 @@ const ICON_BY_CATEGORY: Record<IucnCategory, Component> = {
 	EXTINCT: SkullIcon,
 	DATA_DEFICIENT: CircleQuestionMarkIcon
 };
+
+export function statusBadgeVariant(status: Status): BadgeVariant {
+	return VARIANT_BY_STATUS[status];
+}
 
 export function iucnBadgeVariant(category: IucnCategory): BadgeVariant {
 	return VARIANT_BY_CATEGORY[category];

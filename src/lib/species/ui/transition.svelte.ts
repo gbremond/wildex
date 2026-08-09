@@ -7,3 +7,7 @@ export function markSpeciesTransition(id: string): void {
 export function isSpeciesTransitioning(id: string): boolean {
 	return transitioningSpeciesId === id;
 }
+
+export function speciesPhotoTransitionName(id: string): string {
+	return `species-photo-${id}`;
+}

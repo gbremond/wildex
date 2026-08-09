@@ -1,5 +1,5 @@
-import type { Species } from './species.model';
-import { BIRD_IMAGE_CACHE, speciesImageUrl } from './species-image';
+import type { Species } from '../model/model';
+import { SPECIES_IMAGE_CACHE, speciesImageUrl } from './image';
 
 const CONCURRENCY = 6;
 
@@ -19,7 +19,7 @@ async function runWithConcurrencyLimit<T>(
 	await Promise.all(Array.from({ length: limit }, worker));
 }
 
-// The service worker caches every bird image it serves, so requesting one is
+// The service worker caches every species image it serves, so requesting one is
 // all it takes to store it for offline use.
 async function requestImage(url: string): Promise<boolean> {
 	try {
@@ -55,7 +55,7 @@ export async function cacheSpeciesImages(
 }
 
 export async function countCachedImages(): Promise<number> {
-	const cache = await caches.open(BIRD_IMAGE_CACHE);
+	const cache = await caches.open(SPECIES_IMAGE_CACHE);
 
 	return (await cache.keys()).length;
 }

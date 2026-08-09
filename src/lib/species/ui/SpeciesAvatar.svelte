@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Feather from '@lucide/svelte/icons/feather';
 	import { cn } from '$lib/utils';
-	import { speciesAvatarGradient } from './species-avatar';
-	import { speciesImageUrl, speciesPhotoTransitionName } from './species-image';
-	import { isSpeciesTransitioning } from './species-transition.svelte';
+	import { speciesAvatarGradient } from './avatar-gradient';
+	import { speciesImageUrl } from '../data/image';
+	import { isSpeciesTransitioning, speciesPhotoTransitionName } from './transition.svelte';
 
 	let {
 		seed,
