@@ -6,7 +6,6 @@ import {
 	type IucnCategory,
 	type Status
 } from '../model/model';
-import { UNKNOWN_IUCN, type IucnFilterValue } from '../model/filters';
 import { readableLabel } from './labels';
 
 export type FacetOption<Value extends string = string> = { value: Value; label: string };
@@ -19,10 +18,7 @@ export const STATUS_OPTIONS: FacetOption<Status>[] = STATUSES.map(toOption);
 
 export const HABITAT_OPTIONS: FacetOption<Habitat>[] = HABITATS.map(toOption);
 
-export const IUCN_OPTIONS: FacetOption<IucnFilterValue>[] = [
-	...IUCN_CATEGORIES.map(toOption),
-	{ value: UNKNOWN_IUCN, label: 'Unknown' }
-];
+export const IUCN_OPTIONS: FacetOption<IucnCategory>[] = IUCN_CATEGORIES.map(toOption);
 
 // Orders are already written as readable names by the source.
 export function toOrderOptions(orders: string[]): FacetOption[] {

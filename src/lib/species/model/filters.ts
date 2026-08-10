@@ -1,22 +1,10 @@
-import {
-	IUCN_CATEGORIES,
-	type Habitat,
-	type IucnCategory,
-	type Species,
-	type Status
-} from './model';
-
-export const UNKNOWN_IUCN = 'UNKNOWN';
-
-export type IucnFilterValue = IucnCategory | typeof UNKNOWN_IUCN;
-
-export const IUCN_FILTER_VALUES = [...IUCN_CATEGORIES, UNKNOWN_IUCN] as const;
+import type { Habitat, IucnCategory, Species, Status } from './model';
 
 export type SpeciesFilters = {
 	status: Status[];
 	order: string[];
 	habitat: Habitat[];
-	iucn: IucnFilterValue[];
+	iucn: IucnCategory[];
 };
 
 export const NO_FILTERS: SpeciesFilters = { status: [], order: [], habitat: [], iucn: [] };
@@ -27,16 +15,12 @@ function matchesFacet<Value>(selected: Value[], value: Value): boolean {
 	return selected.length === 0 || selected.includes(value);
 }
 
-function iucnValue(species: Species): IucnFilterValue {
-	return species.iucnCategory ?? UNKNOWN_IUCN;
-}
-
 function matchesEveryFacet(species: Species, filters: SpeciesFilters): boolean {
 	return (
 		matchesFacet(filters.status, species.status) &&
 		matchesFacet(filters.order, species.order) &&
 		matchesFacet(filters.habitat, species.habitat) &&
-		matchesFacet(filters.iucn, iucnValue(species))
+		matchesFacet(filters.iucn, species.iucnCategory)
 	);
 }
 

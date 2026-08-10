@@ -12,6 +12,7 @@ function species(overrides: Partial<Species> = {}): Species {
 		family: 'Fringillidae',
 		habitat: 'TERRESTRIAL',
 		status: 'NATIVE',
+		iucnCategory: 'LEAST_CONCERN',
 		...overrides
 	};
 }

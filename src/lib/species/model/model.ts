@@ -26,7 +26,8 @@ export const IUCN_CATEGORIES = [
 	'CRITICALLY_ENDANGERED',
 	'EXTINCT_IN_THE_WILD',
 	'EXTINCT',
-	'DATA_DEFICIENT'
+	'DATA_DEFICIENT',
+	'UNKNOWN'
 ] as const;
 
 export type Habitat = (typeof HABITATS)[number];
@@ -42,9 +43,9 @@ export type Species = {
 	family: string;
 	habitat: Habitat;
 	status: Status;
+	iucnCategory: IucnCategory;
 	avibaseId?: string;
 	description?: string;
-	iucnCategory?: IucnCategory;
 };
 
 function isOneOf<Value extends string>(values: readonly Value[], value: unknown): value is Value {
@@ -65,8 +66,8 @@ export function isSpecies(value: unknown): value is Species {
 		typeof species.family === 'string' &&
 		isOneOf(HABITATS, species.habitat) &&
 		isOneOf(STATUSES, species.status) &&
+		isOneOf(IUCN_CATEGORIES, species.iucnCategory) &&
 		(species.avibaseId === undefined || typeof species.avibaseId === 'string') &&
-		(species.description === undefined || typeof species.description === 'string') &&
-		(species.iucnCategory === undefined || isOneOf(IUCN_CATEGORIES, species.iucnCategory))
+		(species.description === undefined || typeof species.description === 'string')
 	);
 }

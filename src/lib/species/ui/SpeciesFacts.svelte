@@ -19,10 +19,8 @@
 	<dt class="text-muted-foreground">Habitat</dt>
 	<dd>{readableLabel(species.habitat)}</dd>
 
-	{#if species.iucnCategory}
-		<dt class="text-muted-foreground">IUCN status</dt>
-		<dd><IucnBadge category={species.iucnCategory} /></dd>
-	{/if}
+	<dt class="text-muted-foreground">IUCN status</dt>
+	<dd><IucnBadge category={species.iucnCategory} /></dd>
 
 	<dt class="text-muted-foreground">Status</dt>
 	<dd>{readableLabel(species.status)}</dd>

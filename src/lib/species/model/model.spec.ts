@@ -11,19 +11,22 @@ function validSpecies(overrides: Record<string, unknown> = {}): unknown {
 		family: 'Fringillidae',
 		habitat: 'TERRESTRIAL',
 		status: 'NATIVE',
+		iucnCategory: 'LEAST_CONCERN',
 		...overrides
 	};
 }
 
 describe('isSpecies', () => {
-	it('accepts a species without description or iucnCategory', () => {
+	it('accepts a species without description', () => {
 		expect(isSpecies(validSpecies())).toBe(true);
 	});
 
-	it('accepts a species with a valid description and iucnCategory', () => {
-		expect(
-			isSpecies(validSpecies({ description: 'A small finch.', iucnCategory: 'LEAST_CONCERN' }))
-		).toBe(true);
+	it('accepts a species with a valid description', () => {
+		expect(isSpecies(validSpecies({ description: 'A small finch.' }))).toBe(true);
+	});
+
+	it('accepts UNKNOWN as an iucnCategory', () => {
+		expect(isSpecies(validSpecies({ iucnCategory: 'UNKNOWN' }))).toBe(true);
 	});
 
 	it('rejects a non-string description', () => {
@@ -32,5 +35,9 @@ describe('isSpecies', () => {
 
 	it('rejects an iucnCategory outside IUCN_CATEGORIES', () => {
 		expect(isSpecies(validSpecies({ iucnCategory: 'NOT_A_CATEGORY' }))).toBe(false);
+	});
+
+	it('rejects a species without an iucnCategory', () => {
+		expect(isSpecies(validSpecies({ iucnCategory: undefined }))).toBe(false);
 	});
 });

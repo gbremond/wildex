@@ -36,7 +36,7 @@
 					<ItemDescription class="line-clamp-1"><em>{species.scientificName}</em></ItemDescription>
 				</ItemContent>
 				<ItemActions class="flex-col items-end gap-1">
-					{#if species.iucnCategory && species.iucnCategory !== 'LEAST_CONCERN'}
+					{#if species.iucnCategory !== 'LEAST_CONCERN' && species.iucnCategory !== 'UNKNOWN'}
 						<IucnBadge category={species.iucnCategory} />
 					{/if}
 					<Badge variant={statusBadgeVariant(species.status)}>

@@ -22,7 +22,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "D23A3F75CCD56E6B",
-		"description": "The redpoll is a species of small passerine bird in the finch family Fringillidae. It is the only species placed in the genus Acanthis. It breeds in the Arctic and north temperate Holarctic tundra and taiga. The redpoll was formerly widely treated as three species: the common or mealy redpoll, the arctic or hoary redpoll, and the lesser redpoll."
+		"description": "The redpoll is a species of small passerine bird in the finch family Fringillidae. It is the only species placed in the genus Acanthis. It breeds in the Arctic and north temperate Holarctic tundra and taiga. The redpoll was formerly widely treated as three species: the common or mealy redpoll, the arctic or hoary redpoll, and the lesser redpoll.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2891",
@@ -702,7 +703,8 @@
 		"habitat": "TERRESTRIAL_AND_FRESHWATER",
 		"status": "OCCASIONAL",
 		"avibaseId": "E196D6F9AB1DFF7E",
-		"description": "The sandhill crane is a species of large crane of North America and extreme northeastern Siberia. The common name of this bird refers to its habitat, such as the Platte River, on the edge of Nebraska's Sandhills on the American Great Plains. Sandhill cranes are known to frequent the edges of bodies of water. The central Platte River Valley in Nebraska is the most important stopover area for the nominotypical subspecies, the lesser sandhill crane (A. c. canadensis), with up to 450,000 of these birds migrating through annually."
+		"description": "The sandhill crane is a species of large crane of North America and extreme northeastern Siberia. The common name of this bird refers to its habitat, such as the Platte River, on the edge of Nebraska's Sandhills on the American Great Plains. Sandhill cranes are known to frequent the edges of bodies of water. The central Platte River Valley in Nebraska is the most important stopover area for the nominotypical subspecies, the lesser sandhill crane (A. c. canadensis), with up to 450,000 of these birds migrating through annually.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "199399",
@@ -1083,7 +1085,8 @@
 		"family": "Phasianidae",
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
-		"description": "The hazel grouse, sometimes called the hazel hen, is one of the smaller members of the grouse tribe of birds. It is a sedentary species, breeding across the Palearctic as far east as Hokkaido, and as far west as eastern and central Europe, in dense, damp, mixed coniferous woodland, preferably with some spruce. The bird is sometimes referred to as \"rabchick\" by early 20th century English speaking travellers to Russia."
+		"description": "The hazel grouse, sometimes called the hazel hen, is one of the smaller members of the grouse tribe of birds. It is a sedentary species, breeding across the Palearctic as far east as Hokkaido, and as far west as eastern and central Europe, in dense, damp, mixed coniferous woodland, preferably with some spruce. The bird is sometimes referred to as \"rabchick\" by early 20th century English speaking travellers to Russia.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2473",
@@ -1312,7 +1315,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "86D45B8F04F61F0E",
-		"description": "The green heron is a small heron of North and Central America. Butorides is from Middle English butor \"bittern\" and Ancient Greek -oides, \"resembling\", and virescens is Latin for \"greenish\"."
+		"description": "The green heron is a small heron of North and Central America. Butorides is from Middle English butor \"bittern\" and Ancient Greek -oides, \"resembling\", and virescens is Latin for \"greenish\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3649",
@@ -1850,7 +1854,8 @@
 		"order": "Charadriiformes",
 		"family": "Charadriidae",
 		"habitat": "TERRESTRIAL",
-		"status": "NATIVE"
+		"status": "NATIVE",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3150",
@@ -2056,7 +2061,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "27CE7132A1848BCD",
-		"description": "The slender-billed gull is a mid-sized gull which breeds very locally around the Mediterranean and the north of the western Indian Ocean on islands and coastal lagoons. Most of the population is somewhat migratory, wintering further south to as far as North Africa and India. A few birds have wandered to western Europe. A vagrant individual was reportedly seen on Antigua, April 24, 1976."
+		"description": "The slender-billed gull is a mid-sized gull which breeds very locally around the Mediterranean and the north of the western Indian Ocean on islands and coastal lagoons. Most of the population is somewhat migratory, wintering further south to as far as North Africa and India. A few birds have wandered to western Europe. A vagrant individual was reportedly seen on Antigua, April 24, 1976.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "534682",
@@ -2068,7 +2074,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "0337440E2A88E638",
-		"description": "Bonaparte's gull is a gull found mainly in northern North America. At 28 to 38 cm in length, it is one of the smallest species of gull. Its plumage is mainly white with grey upperparts. During breeding season, Bonaparte's gull gains a slaty-black hood. The sexes are similar in appearance."
+		"description": "Bonaparte's gull is a gull found mainly in northern North America. At 28 to 38 cm in length, it is one of the smallest species of gull. Its plumage is mainly white with grey upperparts. During breeding season, Bonaparte's gull gains a slaty-black hood. The sexes are similar in appearance.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "530157",
@@ -2080,7 +2087,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "FB02DD9658CC1EC6",
-		"description": "The black-headed gull is a small gull that breeds in much of the Palearctic in Europe and Asia, and also locally in smaller numbers in coastal eastern Canada. Most of the population is migratory and winters further south, but many also remain in the milder areas of northwestern Europe. It was formerly sometimes cited as \"common black-headed gull\" to distinguish it from \"great black-headed gull\"."
+		"description": "The black-headed gull is a small gull that breeds in much of the Palearctic in Europe and Asia, and also locally in smaller numbers in coastal eastern Canada. Most of the population is migratory and winters further south, but many also remain in the milder areas of northwestern Europe. It was formerly sometimes cited as \"common black-headed gull\" to distinguish it from \"great black-headed gull\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2517",
@@ -2649,7 +2657,8 @@
 		"habitat": "CONTINENTAL",
 		"status": "NATIVE",
 		"avibaseId": "504B2FD466B8E1D8",
-		"description": "The middle spotted woodpecker is a mainly European woodpecker belonging to the genus Dendrocoptes."
+		"description": "The middle spotted woodpecker is a mainly European woodpecker belonging to the genus Dendrocoptes.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3630",
@@ -2661,7 +2670,8 @@
 		"habitat": "CONTINENTAL",
 		"status": "NATIVE",
 		"avibaseId": "AB2F4BC0659B6630",
-		"description": "The lesser spotted woodpecker is a member of the woodpecker family Picidae. It was formerly assigned to the genus Dendrocopos. Some taxonomic authorities continue to list the species there."
+		"description": "The lesser spotted woodpecker is a member of the woodpecker family Picidae. It was formerly assigned to the genus Dendrocopos. Some taxonomic authorities continue to list the species there.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "441861",
@@ -3566,7 +3576,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "76B512B1EE9B10EC",
-		"description": "Rüppell's vulture, also called Rüppell's griffon vulture or Rüppell's griffon, a species of vulture named after Eduard Rüppell, is a large, resident bird of prey, mainly native to the Sahel region and East Africa. It is considered to be the highest-flying bird, with confirmed evidence of a flight at an altitude of 11,300 m (37,000 ft), where the average temperature is about −56 °C (−69 °F). The former population of 22,000 individuals has been decreasing due to loss of habitat, incidental poisoning, and other factors. It is therefore listed as Critically Endangered on the IUCN Red List."
+		"description": "Rüppell's vulture, also called Rüppell's griffon vulture or Rüppell's griffon, a species of vulture named after Eduard Rüppell, is a large, resident bird of prey, mainly native to the Sahel region and East Africa. It is considered to be the highest-flying bird, with confirmed evidence of a flight at an altitude of 11,300 m (37,000 ft), where the average temperature is about −56 °C (−69 °F). The former population of 22,000 individuals has been decreasing due to loss of habitat, incidental poisoning, and other factors. It is therefore listed as Critically Endangered on the IUCN Red List.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3106",
@@ -3768,7 +3779,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "F7B9355E42C3F987",
-		"description": "Audouin's gull is a large gull restricted to the Mediterranean and the western coast of Saharan Africa and the Iberian Peninsula. The genus name is from Ancient Greek ikhthus, \"fish\", and aetos, \"eagle\", and \nthe specific audouinii and the English name are after the French naturalist Jean Victoire Audouin."
+		"description": "Audouin's gull is a large gull restricted to the Mediterranean and the western coast of Saharan Africa and the Iberian Peninsula. The genus name is from Ancient Greek ikhthus, \"fish\", and aetos, \"eagle\", and \nthe specific audouinii and the English name are after the French naturalist Jean Victoire Audouin.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "627741",
@@ -3780,7 +3792,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "EF930CDC7CE618F7",
-		"description": "Pallas's gull, also known as the great black-headed gull, is a large bird species. As is the case with many gulls, it has traditionally been placed in the genus Larus. The scientific name is from Ancient Greek. Ichthyaetus is from ikhthus, \"fish\", and aetos, \"eagle\"."
+		"description": "Pallas's gull, also known as the great black-headed gull, is a large bird species. As is the case with many gulls, it has traditionally been placed in the genus Larus. The scientific name is from Ancient Greek. Ichthyaetus is from ikhthus, \"fish\", and aetos, \"eagle\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "627745",
@@ -3792,7 +3805,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "052BFA8A77EED5AF",
-		"description": "The Mediterranean gull is a small gull. The scientific name is from Ancient Greek. The genus Ichthyaetus is from ikhthus, \"fish\", and aetos, \"eagle\", and the specific melanocephalus is from melas, \"black\", and -kephalos \"-headed\"."
+		"description": "The Mediterranean gull is a small gull. The scientific name is from Ancient Greek. The genus Ichthyaetus is from ikhthus, \"fish\", and aetos, \"eagle\", and the specific melanocephalus is from melas, \"black\", and -kephalos \"-headed\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "199465",
@@ -4163,7 +4177,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "6CDC3C9C8B50EA71",
-		"description": "The laughing gull is a medium-sized gull of North and South America. Named from its laugh-like call, it is an opportunistic omnivore and scavenger. It breeds in large colonies mostly along the Atlantic coast of North America, the Caribbean, and northern South America. Two subspecies are accepted, L. a. atricilla, which occurs from the West Indies to the Venezuelan islands, and L. a. megalopterus, which occurs from southeast Canada down to Central America. The laughing gull was long placed in the genus Larus until its present placement in Leucophaeus."
+		"description": "The laughing gull is a medium-sized gull of North and South America. Named from its laugh-like call, it is an opportunistic omnivore and scavenger. It breeds in large colonies mostly along the Atlantic coast of North America, the Caribbean, and northern South America. Two subspecies are accepted, L. a. atricilla, which occurs from the West Indies to the Venezuelan islands, and L. a. megalopterus, which occurs from southeast Canada down to Central America. The laughing gull was long placed in the genus Larus until its present placement in Leucophaeus.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "627334",
@@ -4174,7 +4189,8 @@
 		"family": "Laridae",
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "OCCASIONAL",
-		"description": "Franklin's gull is a small gull. The genus name Leucophaeus is from Ancient Greek leukos, \"white\", and phaios, \"dusky\". The specific pipixcan is a Nahuatl name for a type of gull. The English common name was given to commemorate the arctic explorer Sir John Franklin, who led an expedition in 1825 on which the type was collected."
+		"description": "Franklin's gull is a small gull. The genus name Leucophaeus is from Ancient Greek leukos, \"white\", and phaios, \"dusky\". The specific pipixcan is a Nahuatl name for a type of gull. The English common name was given to commemorate the arctic explorer Sir John Franklin, who led an expedition in 1825 on which the type was collected.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2557",
@@ -4263,7 +4279,8 @@
 		"habitat": "CONTINENTAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "4C3CF429E3FEFBA2",
-		"description": "Pallas's grasshopper warbler, also known as the rusty-rumped warbler, is an Old World warbler in the genus Helopsaltes. It breeds in the eastern Palearctic: from the Altai Mountains, Mongolia and Transbaikalia to northeastern China, the Korean Peninsula, and islands in the Sea of Okhotsk. It is migratory, wintering from India eastward to Indonesia. It is a rare migrant in Sri Lanka."
+		"description": "Pallas's grasshopper warbler, also known as the rusty-rumped warbler, is an Old World warbler in the genus Helopsaltes. It breeds in the eastern Palearctic: from the Altai Mountains, Mongolia and Transbaikalia to northeastern China, the Korean Peninsula, and islands in the Sea of Okhotsk. It is migratory, wintering from India eastward to Indonesia. It is a rare migrant in Sri Lanka.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4170",
@@ -4839,7 +4856,8 @@
 		"family": "Muscicapidae",
 		"habitat": "TERRESTRIAL",
 		"status": "SUBENDEMIC",
-		"description": "The Mediterranean flycatcher is a small passerine bird in the Old World flycatcher family. It breeds on the Balearic Islands, Corsica and Sardinia, and is migratory, wintering in Africa. The International Ornithologists' Union has split the species from the spotted flycatcher, but other taxonomic authorities considered it still conspecific."
+		"description": "The Mediterranean flycatcher is a small passerine bird in the Old World flycatcher family. It breeds on the Balearic Islands, Corsica and Sardinia, and is migratory, wintering in Africa. The International Ornithologists' Union has split the species from the spotted flycatcher, but other taxonomic authorities considered it still conspecific.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "199392",
@@ -4849,7 +4867,8 @@
 		"order": "Psittaciformes",
 		"family": "Psittacidae",
 		"habitat": "TERRESTRIAL",
-		"status": "INTRODUCED"
+		"status": "INTRODUCED",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2856",
@@ -5016,7 +5035,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "DF26171F",
-		"description": "The eastern black-eared wheatear is a wheatear, a small migratory passerine bird that was formerly classed as a member of the thrush family Turdidae, but is now considered to be an Old World flycatcher. It was formerly considered conspecific with the western black-eared wheatear."
+		"description": "The eastern black-eared wheatear is a wheatear, a small migratory passerine bird that was formerly classed as a member of the thrush family Turdidae, but is now considered to be an Old World flycatcher. It was formerly considered conspecific with the western black-eared wheatear.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4064",
@@ -5386,7 +5406,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "CECC7B264A61BD22",
-		"description": "The European shag or common shag is a species of cormorant. It is the only member of the monotypic genus Gulosus. It breeds around the rocky coasts of western and southern Europe, southwest Asia and north Africa, mainly wintering in its breeding range except for the northernmost birds. In Britain this seabird is usually referred to as simply the shag. The scientific genus name derives from the Latin for glutton. The species name aristotelis commemorates the Greek philosopher Aristotle."
+		"description": "The European shag or common shag is a species of cormorant. It is the only member of the monotypic genus Gulosus. It breeds around the rocky coasts of western and southern Europe, southwest Asia and north Africa, mainly wintering in its breeding range except for the northernmost birds. In Britain this seabird is usually referred to as simply the shag. The scientific genus name derives from the Latin for glutton. The species name aristotelis commemorates the Greek philosopher Aristotle.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "199323",
@@ -5398,7 +5419,8 @@
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "3AC46C54EE4A6251",
-		"description": "The double-crested cormorant is a member of the cormorant family of water birds. It is found near rivers and lakes and in coastal areas and is widely distributed across North America, from the Aleutian Islands in Alaska down to Florida and Mexico. Measuring 70–90 cm (28–35 in) in length, it is entirely black except for a bare patch of orange-yellow facial skin and some extra plumage that it exhibits in the breeding season when it grows a double crest in which black feathers are mingled with white. Five subspecies are recognized. It mainly eats fish and hunts by swimming and diving. Its feathers, like all cormorants, are not waterproof, and it must dry them out after spending time in the water. Once threatened by the use of DDT, the numbers of this bird have increased markedly in recent years."
+		"description": "The double-crested cormorant is a member of the cormorant family of water birds. It is found near rivers and lakes and in coastal areas and is widely distributed across North America, from the Aleutian Islands in Alaska down to Florida and Mexico. Measuring 70–90 cm (28–35 in) in length, it is entirely black except for a bare patch of orange-yellow facial skin and some extra plumage that it exhibits in the breeding season when it grows a double crest in which black feathers are mingled with white. Five subspecies are recognized. It mainly eats fish and hunts by swimming and diving. Its feathers, like all cormorants, are not waterproof, and it must dry them out after spending time in the water. Once threatened by the use of DDT, the numbers of this bird have increased markedly in recent years.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2440",
@@ -6096,7 +6118,8 @@
 		"family": "Psittaculidae",
 		"habitat": "TERRESTRIAL",
 		"status": "INTRODUCED",
-		"description": "The Alexandrine parakeet, also known as the Alexandrine parrot, is a medium-sized parrot in the genus Psittacula of the family Psittaculidae, native to South Asia and Southeast Asia. It is named after Alexander the Great, who transported numerous birds from Punjab to various European and Mediterranean countries and regions, where they were prized by the royalty, nobility and warlords."
+		"description": "The Alexandrine parakeet, also known as the Alexandrine parrot, is a medium-sized parrot in the genus Psittacula of the family Psittaculidae, native to South Asia and Southeast Asia. It is named after Alexander the Great, who transported numerous birds from Punjab to various European and Mediterranean countries and regions, where they were prized by the royalty, nobility and warlords.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3448",
@@ -6108,7 +6131,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "INTRODUCED",
 		"avibaseId": "6B1CFC3CFA400D78",
-		"description": "The rose-ringed parakeet, also known as the ring-necked parakeet, or colloquially as the Indian Ringneck, is a medium-sized parrot in the genus Psittacula, of the family Psittaculidae. It has a disjunct native range in tropical northern Africa and the Indian subcontinent, and is now introduced into many other parts of the world where populations have established themselves having been bred for the exotic pet trade and then escaped."
+		"description": "The rose-ringed parakeet, also known as the ring-necked parakeet, or colloquially as the Indian Ringneck, is a medium-sized parrot in the genus Psittacula, of the family Psittaculidae. It has a disjunct native range in tropical northern Africa and the Indian subcontinent, and is now introduced into many other parts of the world where populations have established themselves having been bred for the exotic pet trade and then escaped.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3408",
@@ -6365,7 +6389,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "DB645AF550561B05",
-		"description": "The Siberian stonechat or Asian stonechat is a recently validated species of the Old World flycatcher family (Muscicapidae). Like the other thrush-like flycatchers, it was often placed in the Turdidae in the past. It breeds in the East Palearctic including in easternmost Europe and winters in the Old World tropics."
+		"description": "The Siberian stonechat or Asian stonechat is a recently validated species of the Old World flycatcher family (Muscicapidae). Like the other thrush-like flycatchers, it was often placed in the Turdidae in the past. It breeds in the East Palearctic including in easternmost Europe and winters in the Old World tropics.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4049",
@@ -6390,7 +6415,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
 		"avibaseId": "0EA8F8B905405FB3",
-		"description": "The European stonechat is a small passerine bird that was formerly classed as a subspecies of the common stonechat. Long considered a member of the thrush family, Turdidae, genetic evidence has placed it and its relatives in the Old World flycatcher family, Muscicapidae. It is found across Europe, as far east as Ukraine and the South Caucasus, and in parts of North Africa."
+		"description": "The European stonechat is a small passerine bird that was formerly classed as a subspecies of the common stonechat. Long considered a member of the thrush family, Turdidae, genetic evidence has placed it and its relatives in the Old World flycatcher family, Muscicapidae. It is found across Europe, as far east as Ukraine and the South Caucasus, and in parts of North Africa.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "442346",
@@ -6682,7 +6708,8 @@
 		"family": "Stercorariidae",
 		"habitat": "MARINE_AND_TERRESTRIAL",
 		"status": "NATIVE",
-		"description": "The great skua, sometimes known by the name bonxie in Britain, is a large seabird in the skua family Stercorariidae. It is roughly the size of a herring gull. It mainly eats fish caught at the sea surface or taken from other birds."
+		"description": "The great skua, sometimes known by the name bonxie in Britain, is a large seabird in the skua family Stercorariidae. It is roughly the size of a herring gull. It mainly eats fish caught at the sea surface or taken from other birds.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3364",
@@ -6784,7 +6811,8 @@
 		"family": "Columbidae",
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
-		"description": "The laughing dove is a small pigeon that is a resident breeder in Africa, the Middle East, South Asia, and Western Australia where it has established itself in the wild after being released from Perth Zoo in 1898. This small long-tailed dove is found in dry scrub and semi-desert habitats where pairs can often be seen feeding on the ground. It is closely related to the spotted dove which is distinguished by a white and black chequered necklace. Other names include laughing turtle dove, palm dove and Senegal dove while in Asia the name little brown dove is often used."
+		"description": "The laughing dove is a small pigeon that is a resident breeder in Africa, the Middle East, South Asia, and Western Australia where it has established itself in the wild after being released from Perth Zoo in 1898. This small long-tailed dove is found in dry scrub and semi-desert habitats where pairs can often be seen feeding on the ground. It is closely related to the spotted dove which is distinguished by a white and black chequered necklace. Other names include laughing turtle dove, palm dove and Senegal dove while in Asia the name little brown dove is often used.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3439",
@@ -6922,7 +6950,8 @@
 		"family": "Sylviidae",
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
-		"description": "The common whitethroat or greater whitethroat is a common and widespread Old World warbler which breeds throughout Europe and across much of temperate western Asia. This small passerine bird is strongly migratory, and winters in tropical Africa, Arabia, and Pakistan."
+		"description": "The common whitethroat or greater whitethroat is a common and widespread Old World warbler which breeds throughout Europe and across much of temperate western Asia. This small passerine bird is strongly migratory, and winters in tropical Africa, Arabia, and Pakistan.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4227",
@@ -6933,7 +6962,8 @@
 		"family": "Sylviidae",
 		"habitat": "CONTINENTAL",
 		"status": "NATIVE",
-		"description": "The spectacled warbler is a species of passerine bird in the warbler genus Curruca in the family Sylviidae. The specific conspicillata is from Latin conspicillum, a place to look from, equivalent to \"spectacled\"."
+		"description": "The spectacled warbler is a species of passerine bird in the warbler genus Curruca in the family Sylviidae. The specific conspicillata is from Latin conspicillum, a place to look from, equivalent to \"spectacled\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "199467",
@@ -6945,7 +6975,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "D1EF44026464C88E",
-		"description": "Tristram's warbler is a species of Old World warbler in the family Sylviidae.\nIt is found in Algeria, Libya, Mauritania, Morocco, Tunisia, and Western Sahara.\nIts natural habitat is subtropical dry shrubland."
+		"description": "Tristram's warbler is a species of Old World warbler in the family Sylviidae.\nIt is found in Algeria, Libya, Mauritania, Morocco, Tunisia, and Western Sahara.\nIts natural habitat is subtropical dry shrubland.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4232",
@@ -6956,7 +6987,8 @@
 		"family": "Sylviidae",
 		"habitat": "CONTINENTAL",
 		"status": "NATIVE",
-		"description": "The Sardinian warbler is a common and widespread Sylviidae warbler from the Mediterranean region. Like most Curruca species, it has distinct male and female plumages. The adult male has a grey back, whitish underparts, black head, white throat and red eyes. Plumages are somewhat variable even in the same locality, with the intensity of a reddish hue on upper- and/or underside that varies from absent to pronounced. The female is mainly brown above and buff below, with a grey head. The Sardinian warbler's song is fast and rattling, and is very characteristic of the Mediterranean areas where this bird breeds."
+		"description": "The Sardinian warbler is a common and widespread Sylviidae warbler from the Mediterranean region. Like most Curruca species, it has distinct male and female plumages. The adult male has a grey back, whitish underparts, black head, white throat and red eyes. Plumages are somewhat variable even in the same locality, with the intensity of a reddish hue on upper- and/or underside that varies from absent to pronounced. The female is mainly brown above and buff below, with a grey head. The Sardinian warbler's song is fast and rattling, and is very characteristic of the Mediterranean areas where this bird breeds.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4239",
@@ -6967,7 +6999,8 @@
 		"family": "Sylviidae",
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
-		"description": "The Asian desert warbler is an Old World warbler which breeds in the deserts of central and western Asia and the extreme east of Europe, and migrating to similar habitats in southwestern Asia and the far northeast of Africa in winter. Until recently it was considered conspecific with the African desert warbler, but is now given specific status. The two are still each other's closest living relatives, and their relationships to other typical warblers are not clear. They may be fairly close to the common whitethroat; particularly, female whitethroats look much like a richly coloured Asian desert warbler. But it seems that all these three taxa are fairly basal members of the genus."
+		"description": "The Asian desert warbler is an Old World warbler which breeds in the deserts of central and western Asia and the extreme east of Europe, and migrating to similar habitats in southwestern Asia and the far northeast of Africa in winter. Until recently it was considered conspecific with the African desert warbler, but is now given specific status. The two are still each other's closest living relatives, and their relationships to other typical warblers are not clear. They may be fairly close to the common whitethroat; particularly, female whitethroats look much like a richly coloured Asian desert warbler. But it seems that all these three taxa are fairly basal members of the genus.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4245",
@@ -6979,7 +7012,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "1EA60B94FAFE0C5C",
-		"description": "The barred warbler is a species of bird in the warbler family Sylviidae which breeds across temperate regions of central and eastern Europe and western and central Asia. This passerine bird is strongly migratory, and winters in tropical eastern Africa."
+		"description": "The barred warbler is a species of bird in the warbler family Sylviidae which breeds across temperate regions of central and eastern Europe and western and central Asia. This passerine bird is strongly migratory, and winters in tropical eastern Africa.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "891598",
@@ -6990,7 +7024,8 @@
 		"family": "Sylviidae",
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
-		"description": "Rüppell's warbler is a passerine bird of the genus Curruca. It breeds in Greece, Turkey and neighbouring islands. It is migratory, wintering in northeast Africa. This is a rare vagrant to western Europe. The name is occasionally cited as \"Rueppell's warbler\"."
+		"description": "Rüppell's warbler is a passerine bird of the genus Curruca. It breeds in Greece, Turkey and neighbouring islands. It is migratory, wintering in northeast Africa. This is a rare vagrant to western Europe. The name is occasionally cited as \"Rueppell's warbler\".",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "824026",
@@ -7001,7 +7036,8 @@
 		"family": "Sylviidae",
 		"habitat": "TERRESTRIAL",
 		"status": "NATIVE",
-		"description": "Moltoni's warbler is a small bird species belonging to the family Sylviidae, often referred to as the typical warblers. This species is native to Italy and islands of the Tyrrhenian Sea."
+		"description": "Moltoni's warbler is a small bird species belonging to the family Sylviidae, often referred to as the typical warblers. This species is native to Italy and islands of the Tyrrhenian Sea.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "4221",
@@ -7012,7 +7048,8 @@
 		"family": "Sylviidae",
 		"habitat": "CONTINENTAL",
 		"status": "NATIVE",
-		"description": "The Dartford warbler is a Sylviid warbler from the warmer parts of western Europe and northwestern Africa. It is a small warbler with a long thin tail and a thin pointed bill. The adult male has grey-brown upperparts and is dull reddish-brown below except for the centre of the belly which has a dirty white patch. It has light speckles on the throat and a red eye-ring. The sexes are similar but the adult female is usually less grey above and paler below."
+		"description": "The Dartford warbler is a Sylviid warbler from the warmer parts of western Europe and northwestern Africa. It is a small warbler with a long thin tail and a thin pointed bill. The adult male has grey-brown upperparts and is dull reddish-brown below except for the centre of the belly which has a dirty white patch. It has light speckles on the throat and a red eye-ring. The sexes are similar but the adult female is usually less grey above and paler below.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "3000",
@@ -7229,7 +7266,8 @@
 		"habitat": "TERRESTRIAL",
 		"status": "OCCASIONAL",
 		"avibaseId": "B559AAD829F8C5F6",
-		"description": "The lappet-faced vulture or  Nubian vulture is an Old World vulture belonging to the bird order Accipitriformes, which also includes eagles, kites, buzzards and hawks. It is the only extant member of the genus Torgos. It is not closely related to the superficially similar New World vultures, and does not share the good sense of smell of some members of that family of birds."
+		"description": "The lappet-faced vulture or  Nubian vulture is an Old World vulture belonging to the bird order Accipitriformes, which also includes eagles, kites, buzzards and hawks. It is the only extant member of the genus Torgos. It is not closely related to the superficially similar New World vultures, and does not share the good sense of smell of some members of that family of birds.",
+		"iucnCategory": "UNKNOWN"
 	},
 	{
 		"id": "2584",

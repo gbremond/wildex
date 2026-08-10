@@ -56,3 +56,13 @@ Icons in `static/` are generated from `static/favicon.svg` with [`@vite-pwa/asse
 ```sh
 npx @vite-pwa/assets-generator --preset minimal-2023 static/favicon.svg
 ```
+
+## TODOs
+
+- [ ] Add a bottom navbar for navigation between pages
+- [ ] Separate downloads to a dedicated page
+- [ ] Add game "Guess the Bird" from picture page
+- [ ] Find a better database than localStorage for list of birds
+- [ ] Add observations (species, location, date, proof) feature (page + button)
+- [ ] Experiment with BirdNet sound recognition to create observations
+- [ ] Find a model for picture recognition of animals to create observations

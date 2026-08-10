@@ -20,6 +20,10 @@ const METROPOLITAN_FRANCE = 'FR';
 const AVIBASE = 'Avibase';
 const AVIBASE_ID = /avibaseid=([0-9A-Za-z]+)/;
 
+// The Red List lookup fails in several indistinguishable ways (no such taxon, no global
+// assessment, an unmapped code, a network error), so absence is recorded rather than assumed.
+const UNKNOWN_IUCN = 'UNKNOWN';
+
 const STATUS_BY_CODE = {
 	P: 'NATIVE',
 	E: 'ENDEMIC',
@@ -174,10 +178,8 @@ async function enrichBirds(birds, iucnToken) {
 			bird.description = description;
 			descriptionHits++;
 		}
-		if (iucnCategory) {
-			bird.iucnCategory = iucnCategory;
-			iucnHits++;
-		}
+		bird.iucnCategory = iucnCategory ?? UNKNOWN_IUCN;
+		if (iucnCategory) iucnHits++;
 
 		completed++;
 		process.stdout.write(
@@ -208,7 +210,9 @@ function report(birds) {
 	console.log(`  habitat  ${countBy(birds, 'habitat')}`);
 	console.log(`  taxonomy ${distinct('order')} orders, ${distinct('family')} families`);
 	console.log(`  avibase  ${birds.filter((bird) => bird.avibaseId).length}/${birds.length}`);
-	console.log(`  iucn     ${birds.filter((bird) => bird.iucnCategory).length}/${birds.length}`);
+	const assessed = birds.filter((bird) => bird.iucnCategory !== UNKNOWN_IUCN);
+
+	console.log(`  iucn     ${assessed.length}/${birds.length}`);
 	console.log(`  description ${birds.filter((bird) => bird.description).length}/${birds.length}`);
 	console.log(`  fallback ${birds.filter((bird) => !named(bird)).length} without a French name`);
 }

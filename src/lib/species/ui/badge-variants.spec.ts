@@ -43,12 +43,25 @@ describe('iucnBadgeVariant', () => {
 	it('maps data-deficient to secondary', () => {
 		expect(iucnBadgeVariant('DATA_DEFICIENT')).toBe('secondary');
 	});
+
+	it('maps unknown to secondary', () => {
+		expect(iucnBadgeVariant('UNKNOWN')).toBe('secondary');
+	});
 });
 
-describe('iucnIcon', () => {
-	it('gives every category its own distinct icon', () => {
-		const icons = IUCN_CATEGORIES.map(iucnIcon);
+// Distinctness is what keeps severity readable when colour collapses under colour-blindness,
+// so it is required of the categories that carry severity. UNKNOWN and DATA_DEFICIENT carry
+// none — both say "no usable assessment" — and deliberately share the neutral question mark.
+const ASSESSED_CATEGORIES = IUCN_CATEGORIES.filter((category) => category !== 'UNKNOWN');
 
-		expect(new Set(icons).size).toBe(IUCN_CATEGORIES.length);
+describe('iucnIcon', () => {
+	it('gives every assessed category its own distinct icon', () => {
+		const icons = ASSESSED_CATEGORIES.map(iucnIcon);
+
+		expect(new Set(icons).size).toBe(ASSESSED_CATEGORIES.length);
+	});
+
+	it('reuses the data-deficient icon for unknown', () => {
+		expect(iucnIcon('UNKNOWN')).toBe(iucnIcon('DATA_DEFICIENT'));
 	});
 });

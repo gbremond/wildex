@@ -5,14 +5,7 @@
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import SlidersHorizontalIcon from '@lucide/svelte/icons/sliders-horizontal';
 	import XIcon from '@lucide/svelte/icons/x';
-	import CircleDashedIcon from '@lucide/svelte/icons/circle-dashed';
-	import {
-		NO_FILTERS,
-		UNKNOWN_IUCN,
-		countSelectedFilters,
-		type IucnFilterValue,
-		type SpeciesFilters
-	} from '../model/filters';
+	import { NO_FILTERS, countSelectedFilters, type SpeciesFilters } from '../model/filters';
 	import {
 		HABITAT_OPTIONS,
 		IUCN_OPTIONS,
@@ -21,7 +14,7 @@
 		type FacetOption
 	} from './facet-options';
 	import { statusBadgeVariant } from './badge-variants';
-	import type { Status } from '../model/model';
+	import type { IucnCategory, Status } from '../model/model';
 	import IucnBadge from './IucnBadge.svelte';
 	import SpeciesFacetFilter from './SpeciesFacetFilter.svelte';
 
@@ -46,15 +39,8 @@
 	<Badge variant={statusBadgeVariant(option.value)}>{option.label}</Badge>
 {/snippet}
 
-{#snippet iucnOptionBadge(option: FacetOption<IucnFilterValue>)}
-	{#if option.value === UNKNOWN_IUCN}
-		<Badge variant="secondary">
-			<CircleDashedIcon data-icon="inline-start" />
-			{option.label}
-		</Badge>
-	{:else}
-		<IucnBadge category={option.value} />
-	{/if}
+{#snippet iucnOptionBadge(option: FacetOption<IucnCategory>)}
+	<IucnBadge category={option.value} />
 {/snippet}
 
 <Collapsible.Root bind:open={isOpen}>

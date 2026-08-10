@@ -1,5 +1,5 @@
-import { HABITATS, STATUSES } from './model';
-import { IUCN_FILTER_VALUES, type SpeciesFilters } from './filters';
+import { HABITATS, IUCN_CATEGORIES, STATUSES } from './model';
+import type { SpeciesFilters } from './filters';
 
 const QUERY_KEY = 'q';
 
@@ -21,7 +21,7 @@ export function readSearchParams(params: URLSearchParams): {
 			status: keepKnown(STATUSES, params.getAll('status')),
 			order: params.getAll('order'),
 			habitat: keepKnown(HABITATS, params.getAll('habitat')),
-			iucn: keepKnown(IUCN_FILTER_VALUES, params.getAll('iucn'))
+			iucn: keepKnown(IUCN_CATEGORIES, params.getAll('iucn'))
 		}
 	};
 }

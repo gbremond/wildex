@@ -27,7 +27,8 @@ const VARIANT_BY_CATEGORY: Record<IucnCategory, BadgeVariant> = {
 	CRITICALLY_ENDANGERED: 'destructive',
 	EXTINCT_IN_THE_WILD: 'destructive',
 	EXTINCT: 'destructive',
-	DATA_DEFICIENT: 'secondary'
+	DATA_DEFICIENT: 'secondary',
+	UNKNOWN: 'secondary'
 };
 
 // Distinct per category, not per variant: success/warning collapse under
@@ -40,7 +41,8 @@ const ICON_BY_CATEGORY: Record<IucnCategory, Component> = {
 	CRITICALLY_ENDANGERED: SirenIcon,
 	EXTINCT_IN_THE_WILD: GhostIcon,
 	EXTINCT: SkullIcon,
-	DATA_DEFICIENT: CircleQuestionMarkIcon
+	DATA_DEFICIENT: CircleQuestionMarkIcon,
+	UNKNOWN: CircleQuestionMarkIcon
 };
 
 export function statusBadgeVariant(status: Status): BadgeVariant {

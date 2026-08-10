@@ -16,7 +16,8 @@ function bird(
 		order: 'Passeriformes',
 		family: 'Turdidae',
 		habitat: 'TERRESTRIAL',
-		status: 'NATIVE'
+		status: 'NATIVE',
+		iucnCategory: 'LEAST_CONCERN'
 	};
 }
 

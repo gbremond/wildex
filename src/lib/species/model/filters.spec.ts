@@ -13,7 +13,7 @@ function bird(
 	order: string,
 	status: Status,
 	habitat: Species['habitat'],
-	iucnCategory?: IucnCategory
+	iucnCategory: IucnCategory
 ): Species {
 	return {
 		id,
@@ -30,10 +30,10 @@ function bird(
 
 const CATALOGUE: Species[] = [
 	bird('blackbird', 'Passeriformes', 'NATIVE', 'TERRESTRIAL', 'LEAST_CONCERN'),
-	bird('robin', 'Passeriformes', 'NATIVE', 'TERRESTRIAL'),
+	bird('robin', 'Passeriformes', 'NATIVE', 'TERRESTRIAL', 'UNKNOWN'),
 	bird('gull', 'Charadriiformes', 'NATIVE', 'MARINE', 'VULNERABLE'),
 	bird('ibis', 'Pelecaniformes', 'INVASIVE', 'FRESHWATER', 'LEAST_CONCERN'),
-	bird('parakeet', 'Psittaciformes', 'INTRODUCED', 'TERRESTRIAL')
+	bird('parakeet', 'Psittaciformes', 'INTRODUCED', 'TERRESTRIAL', 'UNKNOWN')
 ];
 
 function found(filters: Partial<SpeciesFilters>): string[] {
@@ -65,7 +65,7 @@ describe('filterSpecies', () => {
 		expect(found({ order: ['Passeriformes'] })).toEqual(['blackbird', 'robin']);
 	});
 
-	it('matches species without an IUCN category under UNKNOWN', () => {
+	it('matches unassessed species under UNKNOWN', () => {
 		expect(found({ iucn: ['UNKNOWN'] })).toEqual(['robin', 'parakeet']);
 	});
 
