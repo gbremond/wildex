@@ -1,19 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { downloadSpecies } from '$lib/species/data/api';
 	import type { Species } from '$lib/species/model/model';
 	import {
-		addSpecies,
 		countAvailableSpecies,
 		getSpeciesList,
 		loadSpeciesInMemory,
 		searchStoredSpecies
 	} from '$lib/species/data/repository';
-	import ImageDownloadPanel from '$lib/species/ui/ImageDownloadPanel.svelte';
 	import SpeciesSearchField from '$lib/species/ui/SpeciesSearchField.svelte';
 	import SpeciesFilterPanel from '$lib/species/ui/SpeciesFilterPanel.svelte';
 	import SpeciesList from '$lib/species/ui/SpeciesList.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		NO_FILTERS,
 		countSelectedFilters,
@@ -23,11 +19,11 @@
 	import { readSearchParams, toSearchPath } from '$lib/species/model/search-url';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { Button } from '$lib/components/ui/button';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
 	let orders = $state<string[]>([]);
-	let isDownloading = $state(false);
 	let isSearching = $state(false);
 	let query = $state('');
 	let filters = $state<SpeciesFilters>({ ...NO_FILTERS });
@@ -74,33 +70,19 @@
 		orders = distinctOrders(await getSpeciesList());
 		await runSearch(query, $state.snapshot(filters));
 	}
-
-	async function downloadAndStoreSpecies() {
-		isDownloading = true;
-
-		try {
-			await addSpecies(await downloadSpecies());
-			await refreshStoredSpecies();
-		} finally {
-			isDownloading = false;
-		}
-	}
 </script>
 
 <div class="flex h-dvh flex-col">
 	<h1 class="text-3xl">Welcome to Wildex</h1>
 
-	<Button onclick={downloadAndStoreSpecies} disabled={isDownloading}>
-		{isDownloading ? 'Downloading…' : 'Download species'}
+	<Button
+		href={resolve('/downloads')}
+		variant="link"
+	>
+		Download page
 	</Button>
 
-	{#if storedCount !== null}
-		<p>{storedCount} species stored offline</p>
-	{/if}
-
 	{#if storedCount}
-		<ImageDownloadPanel />
-
 		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />
 
 		<SpeciesFilterPanel bind:filters {orders} onchange={rememberSearchInUrl} />
