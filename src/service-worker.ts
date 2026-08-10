@@ -12,7 +12,7 @@
 
 import { base, build, files, prerendered, version } from '$service-worker';
 import { SPECIES_IMAGE_CACHE, SPECIES_IMAGE_HOST } from '$lib/species/data/image';
-import { isObsoleteCache } from '$lib/cache-policy';
+import { isObsoleteCache, toCachePolicy } from '$lib/cache-policy';
 
 // This gives `self` the correct types
 const self = globalThis.self as unknown as ServiceWorkerGlobalScope;
@@ -23,12 +23,11 @@ const APP_CACHE = `cache-${version}`;
 // Served by GitHub Pages for unknown paths, but absent from `build`, `files` and `prerendered`
 const FALLBACK = `${base}/404.html`;
 
-// GitHub Pages does not serve dotfiles: caching `.nojekyll` would 404 and reject the whole install
-const ASSETS = [
-	...build, // the app itself
-	...files.filter((file) => !file.endsWith('/.nojekyll')), // everything in `static`
-	...prerendered // the prerendered HTML pages
-];
+const { precache: ASSETS, cacheFirst: CACHE_FIRST_ASSETS } = toCachePolicy(
+	[...build], // the app itself
+	[...files], // everything in `static`
+	[...prerendered] // the prerendered HTML pages
+);
 
 self.addEventListener('install', (event) => {
 	event.waitUntil(precacheAppShell());
@@ -156,7 +155,7 @@ async function serveAppRequest(event: FetchEvent, url: URL): Promise<Response> {
 	const cache = await caches.open(APP_CACHE);
 
 	// `build`/`files` can always be served from the cache
-	if (ASSETS.includes(url.pathname)) {
+	if (CACHE_FIRST_ASSETS.includes(url.pathname)) {
 		const precached = await cache.match(url.pathname);
 
 		if (precached) {
