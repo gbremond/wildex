@@ -55,7 +55,7 @@
 </script>
 
 {#if waitingWorker}
-	<div class="fixed inset-x-4 bottom-4 z-50">
+	<div class="fixed inset-x-4 bottom-(--bottom-nav-clearance) z-50">
 		<Item variant="outline" class="mx-auto max-w-[480px] bg-background shadow-lg">
 			<ItemMedia variant="icon" class="translate-y-0! self-center!">
 				<RefreshCwIcon class="text-primary" />

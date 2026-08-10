@@ -3,6 +3,7 @@
 	import SpeciesListItem from './SpeciesListItem.svelte';
 	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
 	import { fade } from 'svelte/transition';
+	import { cn } from '$lib/utils';
 
 	let {
 		species,
@@ -21,8 +22,12 @@
 
 {#if species.length > 0}
 	<SvelteVirtualList items={species} defaultEstimatedItemHeight={88}>
-		{#snippet renderItem(item)}
-			<div class="px-2 pb-2" in:fade={{ duration: 120 }}>
+		{#snippet renderItem(item, index)}
+			<!-- The last card carries the room to scroll clear of the bottom nav bar. -->
+			<div
+				class={cn('px-2', index === species.length - 1 ? 'pb-(--bottom-nav-clearance)' : 'pb-2')}
+				in:fade={{ duration: 120 }}
+			>
 				<SpeciesListItem species={item} />
 			</div>
 		{/snippet}

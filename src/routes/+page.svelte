@@ -19,7 +19,6 @@
 	import { readSearchParams, toSearchPath } from '$lib/species/model/search-url';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Button } from '$lib/components/ui/button';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
@@ -74,13 +73,6 @@
 
 <div class="flex h-dvh flex-col">
 	<h1 class="text-3xl">Welcome to Wildex</h1>
-
-	<Button
-		href={resolve('/downloads')}
-		variant="link"
-	>
-		Download page
-	</Button>
 
 	{#if storedCount}
 		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />

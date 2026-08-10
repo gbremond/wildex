@@ -24,6 +24,10 @@
 	   inverts pages that do not declare a scheme. */
 	color-scheme: light;
 
+	/* Room for anything that must clear the fixed bottom nav bar: its own
+	   height, the raised centre button, and the home indicator below both. */
+	--bottom-nav-clearance: calc(7rem + env(safe-area-inset-bottom, 0px));
+
 	--background: oklch(0.9507 0.0783 94.95);
 	--foreground: oklch(0.3268 0.0579 182.45);
 	--card: oklch(0.9775 0.036 95.01);

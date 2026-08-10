@@ -57,7 +57,7 @@
 	</div>
 </div>
 
-<div class="mx-auto max-w-[480px]">
+<div class="mx-auto max-w-[480px] pb-(--bottom-nav-clearance)">
 	{#if isLoading}
 		<p>Loading…</p>
 	{:else if species}
