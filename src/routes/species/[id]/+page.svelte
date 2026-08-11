@@ -44,7 +44,7 @@
 </script>
 
 <div class="bg-primary">
-	<div class="mx-auto max-w-[480px] p-2">
+	<div class="mx-auto max-w-120 p-2">
 		<Button
 			href={resolve('/')}
 			onclick={returnToSearch}
@@ -57,7 +57,7 @@
 	</div>
 </div>
 
-<div class="mx-auto max-w-[480px] pb-(--bottom-nav-clearance)">
+<div class="mx-auto max-w-120 pb-(--bottom-nav-clearance)">
 	{#if isLoading}
 		<p>Loading…</p>
 	{:else if species}

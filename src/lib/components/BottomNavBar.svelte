@@ -32,7 +32,7 @@
 
 <nav aria-label="Main" class="fixed inset-x-0 bottom-0 z-50">
 	<div
-		class="relative mx-auto max-w-[480px] rounded-t-3xl border border-b-0 bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)]"
+		class="relative mx-auto max-w-120 rounded-t-3xl border border-b-0 bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)]"
 	>
 		<!-- The empty middle column is the gutter the raised button sits in. -->
 		<ul class="grid grid-cols-[1fr_1fr_4rem_1fr_1fr]">

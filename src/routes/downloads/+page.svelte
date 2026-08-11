@@ -30,7 +30,7 @@
 	}
 </script>
 
-<div class="mx-auto max-w-[480px] p-4 pb-(--bottom-nav-clearance)">
+<div class="mx-auto max-w-120 p-4 pb-(--bottom-nav-clearance)">
 	<h1 class="text-3xl">Downloads</h1>
 
 	<Button onclick={downloadAndStoreSpecies} disabled={isDownloading}>
