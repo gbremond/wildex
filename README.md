@@ -59,7 +59,7 @@ npx @vite-pwa/assets-generator --preset minimal-2023 static/favicon.svg
 
 ## TODOs
 
-- [ ] Add a bottom navbar for navigation between pages
+- [x] Add a bottom navbar for navigation between pages
 - [x] Separate downloads to a dedicated page
 - [ ] Add game "Guess the Bird" from picture page
 - [ ] Find a better database than localStorage for list of birds
