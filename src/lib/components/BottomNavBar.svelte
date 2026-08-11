@@ -4,15 +4,19 @@
 	import { cn } from '$lib/utils';
 	import { isTabActive } from './bottom-nav';
 	import SearchIcon from '@lucide/svelte/icons/search';
+	import BinocularsIcon from '@lucide/svelte/icons/binoculars';
+	import Gamepad2Icon from '@lucide/svelte/icons/gamepad-2';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 
 	let isHomeActive = $derived(isTabActive(page.route.id, 'home'));
+	let isObservationsActive = $derived(isTabActive(page.route.id, 'observations'));
+	let isGamesActive = $derived(isTabActive(page.route.id, 'games'));
 	let isDownloadsActive = $derived(isTabActive(page.route.id, 'downloads'));
 
 	function tabClass(isActive: boolean) {
 		return cn(
-			'relative flex flex-col items-center gap-1 rounded-md py-3 text-xs',
+			'relative flex min-w-0 flex-col items-center gap-1 rounded-md px-1 py-3 text-[10px]',
 			'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
 			isActive ? 'text-primary' : 'text-muted-foreground'
 		);
@@ -30,8 +34,9 @@
 	<div
 		class="relative mx-auto max-w-[480px] rounded-t-3xl border border-b-0 bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)]"
 	>
-		<ul class="grid grid-cols-2">
-			<li>
+		<!-- The empty middle column is the gutter the raised button sits in. -->
+		<ul class="grid grid-cols-[1fr_1fr_4rem_1fr_1fr]">
+			<li class="min-w-0">
 				<a
 					href={resolve('/')}
 					aria-current={isHomeActive ? 'page' : undefined}
@@ -41,11 +46,39 @@
 						{@render activeIndicator()}
 					{/if}
 					<SearchIcon aria-hidden="true" focusable="false" class="size-5" />
-					Home
+					<span class="w-full truncate text-center">Home</span>
 				</a>
 			</li>
 
-			<li>
+			<li class="min-w-0">
+				<a
+					href={resolve('/observations')}
+					aria-current={isObservationsActive ? 'page' : undefined}
+					class={tabClass(isObservationsActive)}
+				>
+					{#if isObservationsActive}
+						{@render activeIndicator()}
+					{/if}
+					<BinocularsIcon aria-hidden="true" focusable="false" class="size-5" />
+					<span class="w-full truncate text-center">Observations</span>
+				</a>
+			</li>
+
+			<li class="col-start-4 min-w-0">
+				<a
+					href={resolve('/games')}
+					aria-current={isGamesActive ? 'page' : undefined}
+					class={tabClass(isGamesActive)}
+				>
+					{#if isGamesActive}
+						{@render activeIndicator()}
+					{/if}
+					<Gamepad2Icon aria-hidden="true" focusable="false" class="size-5" />
+					<span class="w-full truncate text-center">Games</span>
+				</a>
+			</li>
+
+			<li class="col-start-5 min-w-0">
 				<a
 					href={resolve('/downloads')}
 					aria-current={isDownloadsActive ? 'page' : undefined}
@@ -55,7 +88,7 @@
 						{@render activeIndicator()}
 					{/if}
 					<DownloadIcon aria-hidden="true" focusable="false" class="size-5" />
-					Downloads
+					<span class="w-full truncate text-center">Downloads</span>
 				</a>
 			</li>
 		</ul>

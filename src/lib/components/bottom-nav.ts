@@ -1,10 +1,13 @@
-export type NavTab = 'home' | 'downloads';
+export type NavTab = 'home' | 'observations' | 'games' | 'downloads';
 
 // A species page is reached from the search, so it keeps the home tab lit.
-const HOME_ROUTES = ['/', '/species/[id]'];
+const TAB_ROUTES: Record<NavTab, string[]> = {
+	home: ['/', '/species/[id]'],
+	observations: ['/observations'],
+	games: ['/games'],
+	downloads: ['/downloads']
+};
 
 export function isTabActive(routeId: string | null, tab: NavTab): boolean {
-	if (tab === 'downloads') return routeId === '/downloads';
-
-	return HOME_ROUTES.includes(routeId ?? '');
+	return TAB_ROUTES[tab].includes(routeId ?? '');
 }
