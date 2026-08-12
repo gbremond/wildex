@@ -8,6 +8,9 @@
 	import Gamepad2Icon from '@lucide/svelte/icons/gamepad-2';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import PlusIcon from '@lucide/svelte/icons/plus';
+	import ObservationSheet from '$lib/observations/ui/ObservationSheet.svelte';
+
+	let isSheetOpen = $state(false);
 
 	let isHomeActive = $derived(isTabActive(page.route.id, 'home'));
 	let isObservationsActive = $derived(isTabActive(page.route.id, 'observations'));
@@ -35,7 +38,12 @@
 		class="relative mx-auto max-w-120 rounded-t-3xl border border-b-0 bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)]"
 	>
 		<!-- The empty middle column is the gutter the raised button sits in. -->
-		<ul class="grid grid-cols-[1fr_1fr_4rem_1fr_1fr]">
+		<ul
+			class={cn(
+				'grid grid-cols-[1fr_1fr_4rem_1fr_1fr] transition-opacity duration-200',
+				isSheetOpen && 'opacity-0'
+			)}
+		>
 			<li class="min-w-0">
 				<a
 					href={resolve('/')}
@@ -93,13 +101,21 @@
 			</li>
 		</ul>
 
-		<button
-			type="button"
-			onclick={() => {}}
-			class="absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-		>
-			<PlusIcon aria-hidden="true" focusable="false" class="size-6" />
-			<span class="sr-only">Add</span>
-		</button>
+		<ObservationSheet bind:open={isSheetOpen}>
+			{#snippet trigger(props)}
+				<button
+					{...props}
+					type="button"
+					class={cn(
+						'absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-opacity duration-200',
+						'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+						isSheetOpen && 'opacity-0'
+					)}
+				>
+					<PlusIcon aria-hidden="true" focusable="false" class="size-6" />
+					<span class="sr-only">Add observation</span>
+				</button>
+			{/snippet}
+		</ObservationSheet>
 	</div>
 </nav>
