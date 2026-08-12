@@ -6,6 +6,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import CameraIcon from '@lucide/svelte/icons/camera';
+	import ImageIcon from '@lucide/svelte/icons/image';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
@@ -13,8 +14,8 @@
 	import {
 		IDENTIFICATION_OPTIONS,
 		captureAccept,
-		identificationOption,
-		type IdentificationMethod
+		type IdentificationOption,
+		type IdentificationOptionId
 	} from '../model/identification';
 	import { canSubmitObservation, toDateInputValue } from '../model/draft';
 
@@ -23,87 +24,106 @@
 		trigger
 	}: { open?: boolean; trigger: Snippet<[Record<string, unknown>]> } = $props();
 
-	const METHOD_ICONS: Record<IdentificationMethod, Component> = {
-		photo: CameraIcon,
+	const OPTION_ICONS: Record<IdentificationOptionId, Component> = {
+		camera: CameraIcon,
+		gallery: ImageIcon,
 		sound: MicIcon,
 		manual: PencilIcon
 	};
 
-	let method = $state<IdentificationMethod | null>(null);
+	let chosen = $state<IdentificationOption | null>(null);
 	let species = $state('');
 	let observedOn = $state(toDateInputValue(new Date()));
 	let notes = $state('');
 	let capture = $state<File | null>(null);
+	let previewUrl = $state<string | null>(null);
 	let stepHeight = $state(0);
 
 	let captureInput: HTMLInputElement;
-	let awaitedMethod: IdentificationMethod | null = null;
+	let awaitedOption: IdentificationOption | null = null;
 
-	let accept = $derived(method === null ? null : captureAccept(method));
+	let accept = $derived(chosen === null ? null : captureAccept(chosen.method));
 	let canSubmit = $derived(
-		method !== null && canSubmitObservation({ method, species, observedOn, notes, capture })
+		chosen !== null &&
+			canSubmitObservation({ method: chosen.method, species, observedOn, notes, capture })
 	);
 
+	// Revokes the previous URL whenever the capture changes, and the last one when
+	// the sheet is torn down.
+	$effect(() => {
+		const url = previewUrl;
+		return () => {
+			if (url) URL.revokeObjectURL(url);
+		};
+	});
+
 	function resetDraft() {
-		method = null;
+		chosen = null;
 		species = '';
 		observedOn = toDateInputValue(new Date());
 		notes = '';
 		capture = null;
-		awaitedMethod = null;
+		previewUrl = null;
+		awaitedOption = null;
 	}
 
-	function openCapturePicker(target: IdentificationMethod, needs: string) {
-		awaitedMethod = target;
-		// Both writes have to land before click(): the picker only opens inside this
-		// user gesture, so waiting for Svelte to flush state would be too late.
-		// Clearing the value lets the same file be picked twice in a row.
+	function openCapturePicker(option: IdentificationOption, needs: string) {
+		awaitedOption = option;
+
+		// These writes have to land before click(): the picker only opens inside
+		// this user gesture, so waiting for Svelte to flush state would be too late.
 		captureInput.accept = needs;
+		if (option.wantsCamera) captureInput.setAttribute('capture', 'environment');
+		else captureInput.removeAttribute('capture');
+		// Clearing the value lets the same file be picked twice in a row.
 		captureInput.value = '';
+
 		captureInput.click();
 	}
 
-	function chooseMethod(chosen: IdentificationMethod) {
-		const needs = captureAccept(chosen);
+	function chooseOption(option: IdentificationOption) {
+		const needs = captureAccept(option.method);
 
 		if (needs === null) {
-			method = chosen;
+			chosen = option;
 			return;
 		}
 
-		openCapturePicker(chosen, needs);
+		openCapturePicker(option, needs);
 	}
 
 	// The form is only worth showing once there is something to identify, so the
 	// step advances here rather than on the option click. Cancelling the picker
 	// fires no change event, which leaves the sheet on the option list.
 	function onCaptureChosen(event: Event) {
-		const chosen = (event.currentTarget as HTMLInputElement).files?.[0];
-		if (!chosen) return;
+		const file = (event.currentTarget as HTMLInputElement).files?.[0];
+		if (!file) return;
 
-		capture = chosen;
-		method = awaitedMethod;
+		capture = file;
+		previewUrl = URL.createObjectURL(file);
+		chosen = awaitedOption;
 	}
 
-	function backToMethodChoice() {
-		method = null;
+	function backToOptions() {
+		chosen = null;
 		capture = null;
-		awaitedMethod = null;
+		previewUrl = null;
+		awaitedOption = null;
 	}
 </script>
 
-{#snippet methodChoice()}
+{#snippet optionList()}
 	<Drawer.Header>
 		<Drawer.Title>New observation</Drawer.Title>
 		<Drawer.Description>How do you want to identify the species?</Drawer.Description>
 	</Drawer.Header>
 
 	<Item.Group class="gap-2 px-4 pb-6">
-		{#each IDENTIFICATION_OPTIONS as option (option.method)}
-			{@const Icon = METHOD_ICONS[option.method]}
+		{#each IDENTIFICATION_OPTIONS as option (option.id)}
+			{@const Icon = OPTION_ICONS[option.id]}
 			<Item.Root variant="outline">
 				{#snippet child({ props })}
-					<button {...props} type="button" onclick={() => chooseMethod(option.method)}>
+					<button {...props} type="button" onclick={() => chooseOption(option)}>
 						<Item.Media variant="icon">
 							<Icon aria-hidden="true" focusable="false" class="size-5" />
 						</Item.Media>
@@ -125,8 +145,7 @@
 	</Item.Group>
 {/snippet}
 
-{#snippet observationForm(chosen: IdentificationMethod)}
-	{@const option = identificationOption(chosen)}
+{#snippet observationForm(option: IdentificationOption)}
 	<Drawer.Header
 		class="flex-row items-center gap-1 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left"
 	>
@@ -134,7 +153,7 @@
 			variant="ghost"
 			size="icon-sm"
 			class="rounded-full"
-			onclick={backToMethodChoice}
+			onclick={backToOptions}
 			aria-label="Back to identification methods"
 		>
 			<ChevronLeftIcon aria-hidden="true" focusable="false" />
@@ -150,18 +169,28 @@
 		class="flex flex-col gap-4 px-4 pb-6"
 		onsubmit={(event) => event.preventDefault()}
 	>
-		{#if accept}
+		{#if accept && previewUrl}
 			<div class="flex flex-col gap-1.5">
-				<span class="text-sm font-medium">{chosen === 'photo' ? 'Picture' : 'Sound'}</span>
-				<div class="flex items-center gap-2 rounded-2xl bg-input/50 py-1.5 pr-1.5 pl-3">
-					<span class="min-w-0 flex-1 truncate text-sm">
-						{capture?.name ?? 'Nothing attached'}
-					</span>
+				{#if option.method === 'photo'}
+					<!-- Fixed height so the sheet does not resize again once the image loads. -->
+					<div class="h-48 overflow-hidden rounded-2xl bg-muted/50">
+						<img
+							src={previewUrl}
+							alt="Attached to this observation"
+							class="size-full object-contain"
+						/>
+					</div>
+				{:else}
+					<audio src={previewUrl} controls class="w-full"></audio>
+				{/if}
+
+				<div class="flex items-center gap-2 pl-3 text-sm">
+					<span class="min-w-0 flex-1 truncate text-muted-foreground">{capture?.name}</span>
 					<Button
 						variant="ghost"
 						size="sm"
 						class="rounded-xl"
-						onclick={() => openCapturePicker(chosen, accept)}
+						onclick={() => openCapturePicker(option, accept)}
 					>
 						Change
 					</Button>
@@ -203,9 +232,8 @@
 	<Drawer.Content
 		class="mx-auto max-w-120 rounded-t-3xl border border-b-0 bg-card p-0 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)] before:hidden"
 	>
-		<!-- Hidden, and driven by the option and Change buttons: with no `capture`
-		     attribute the native picker offers the camera as well as the library,
-		     and falls back to a file dialog on desktop. -->
+		<!-- Hidden, and driven by the option and Change buttons, which set `accept`
+		     and `capture` on it to open the camera or the gallery. -->
 		<input
 			bind:this={captureInput}
 			onchange={onCaptureChosen}
@@ -219,10 +247,10 @@
 			style:height="{stepHeight}px"
 		>
 			<div bind:clientHeight={stepHeight}>
-				{#if method === null}
-					{@render methodChoice()}
+				{#if chosen === null}
+					{@render optionList()}
 				{:else}
-					{@render observationForm(method)}
+					{@render observationForm(chosen)}
 				{/if}
 			</div>
 		</div>

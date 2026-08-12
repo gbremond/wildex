@@ -1,15 +1,45 @@
 export type IdentificationMethod = 'photo' | 'sound' | 'manual';
 
+export type IdentificationOptionId = 'camera' | 'gallery' | 'sound' | 'manual';
+
 export type IdentificationOption = {
+	id: IdentificationOptionId;
 	method: IdentificationMethod;
+	/**
+	 * Asks the device for its camera. Android's photo picker offers the gallery
+	 * only, so shooting and picking cannot be folded into one option.
+	 */
+	wantsCamera?: true;
 	label: string;
 	hint: string;
 };
 
 export const IDENTIFICATION_OPTIONS: IdentificationOption[] = [
-	{ method: 'photo', label: 'Add a picture', hint: 'Identify the species with BioCLIP v2' },
-	{ method: 'sound', label: 'Add a sound', hint: 'Identify the bird call with BirdNet' },
-	{ method: 'manual', label: 'From scratch', hint: 'Name the species yourself' }
+	{
+		id: 'camera',
+		method: 'photo',
+		wantsCamera: true,
+		label: 'Take a picture',
+		hint: 'Shoot now, with BioCLIP v2'
+	},
+	{
+		id: 'gallery',
+		method: 'photo',
+		label: 'Pick a picture',
+		hint: 'From the gallery, with BioCLIP v2'
+	},
+	{
+		id: 'sound',
+		method: 'sound',
+		label: 'Add a sound',
+		hint: 'Identify the bird call with BirdNet'
+	},
+	{
+		id: 'manual',
+		method: 'manual',
+		label: 'From scratch',
+		hint: 'Name the species yourself'
+	}
 ];
 
 const CAPTURE_ACCEPT: Record<IdentificationMethod, string | null> = {
@@ -20,8 +50,4 @@ const CAPTURE_ACCEPT: Record<IdentificationMethod, string | null> = {
 
 export function captureAccept(method: IdentificationMethod): string | null {
 	return CAPTURE_ACCEPT[method];
-}
-
-export function identificationOption(method: IdentificationMethod): IdentificationOption {
-	return IDENTIFICATION_OPTIONS.find((option) => option.method === method)!;
 }
