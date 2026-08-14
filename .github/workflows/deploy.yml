@@ -21,6 +21,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # 66 MB from HuggingFace on every run would make their outages our outages.
+      # No restore-keys: a partial hit would leave stale weights on disk, which
+      # fetch-birdnet.mjs treats as already downloaded and skips.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            static/models/birdnet/*.onnx
+            static/models/birdnet/labels.txt
+          key: birdnet-models-${{ hashFiles('scripts/fetch-birdnet.mjs') }}
+      # Must run after `npm ci`: the script also copies the onnxruntime-web
+      # runtime out of node_modules. On a cache hit it only does that copy.
+      - run: npm run fetch:birdnet
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with:

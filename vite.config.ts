@@ -31,6 +31,9 @@ export default defineConfig({
 			}
 		})
 	],
+	// onnxruntime-web resolves its .wasm/.mjs runtime at load time from
+	// ort.env.wasm.wasmPaths, so Vite must not try to pre-bundle it.
+	optimizeDeps: { exclude: ['onnxruntime-web'] },
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

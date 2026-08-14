@@ -24,3 +24,8 @@ vite.config.ts.timestamp-*
 
 # IntelliJ
 .idea
+
+# Fetched at build time by scripts/fetch-birdnet.mjs
+/static/models/birdnet/*
+!/static/models/birdnet/NOTICE
+/static/ort

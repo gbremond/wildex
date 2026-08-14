@@ -1,0 +1,25 @@
+BirdNET model files
+===================
+
+Models:  BirdNET GLOBAL 6K V2.4 (audio classifier + geo/season "MData" model)
+Authors: the BirdNET team — Cornell Lab of Ornithology & Chemnitz University of
+         Technology (Stefan Kahl et al.)
+Source:  https://github.com/birdnet-team/BirdNET-Analyzer
+ONNX export obtained from https://huggingface.co/justinchuby/BirdNET-onnx
+
+LICENCE: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+         (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+The BirdNET *source code* is MIT licensed; the *model weights* in this directory
+are NOT. They are CC BY-NC-SA 4.0, which means:
+
+  - NonCommercial: wildex must not be used commercially while it ships these
+    weights. The BirdNET team states that educational and research purposes
+    count as non-commercial.
+  - ShareAlike: redistributing these files, or derivatives of them, requires
+    the same licence.
+  - Attribution: this notice must travel with the files.
+
+If wildex ever becomes commercial, these weights must be removed. The nearest
+Apache-2.0 alternative is Google's Perch (https://github.com/google-research/perch),
+which has no ready browser export.
