@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { decodeTo48kMono, recordFromMicrophone } from '$lib/birdnet/model/capture';
+	import {
+		decodeTo48kMono,
+		microphoneEnvironment,
+		recordFromMicrophone,
+		type MicrophoneEnvironment
+	} from '$lib/birdnet/model/capture';
+	import {
+		diagnoseMicrophoneError,
+		type MicrophoneDiagnosis
+	} from '$lib/birdnet/model/microphone-errors';
 	import { loadBirdnet, type Identification, type Where } from '$lib/birdnet/model/session';
 	import { birdnetWeek } from '$lib/birdnet/model/week';
 
@@ -9,8 +18,15 @@
 	let status = $state('Idle');
 	let busy = $state(false);
 	let error = $state<string | undefined>();
+	let failure: unknown;
+	let diagnosis = $state<MicrophoneDiagnosis | undefined>();
+	let environment = $state<MicrophoneEnvironment | undefined>();
 	let result = $state<Identification | undefined>();
 	let decodeMs = $state(0);
+
+	async function probeMicrophone() {
+		environment = await microphoneEnvironment();
+	}
 
 	let latitude = $state(48.8566);
 	let longitude = $state(2.3522);
@@ -21,6 +37,7 @@
 	async function identify(source: () => Promise<ArrayBuffer>, label: string) {
 		busy = true;
 		error = undefined;
+		diagnosis = undefined;
 		result = undefined;
 		try {
 			status = 'Loading models…';
@@ -38,7 +55,9 @@
 			result = await birdnet.identify(pcm, where());
 			status = 'Done';
 		} catch (cause) {
-			error = cause instanceof Error ? cause.message : String(cause);
+			failure = cause;
+			// The DOMException name carries which layer refused; the message alone does not.
+			error = cause instanceof DOMException ? `${cause.name}: ${cause.message}` : String(cause);
 			status = 'Failed';
 		} finally {
 			busy = false;
@@ -50,8 +69,12 @@
 		if (file) identify(() => file.arrayBuffer(), `Reading ${file.name}…`);
 	}
 
-	function useMicrophone() {
-		identify(() => recordFromMicrophone(RECORD_SECONDS), `Recording ${RECORD_SECONDS}s…`);
+	async function useMicrophone() {
+		await identify(() => recordFromMicrophone(RECORD_SECONDS), `Recording ${RECORD_SECONDS}s…`);
+		if (error) {
+			diagnosis = diagnoseMicrophoneError(failure);
+			await probeMicrophone();
+		}
 	}
 
 	function useCurrentPosition() {
@@ -130,6 +153,33 @@
 	{#if error}
 		<p class="mt-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
 	{/if}
+
+	{#if diagnosis}
+		<div class="mt-2 rounded-md border p-3 text-sm">
+			<p><span class="font-medium">Cause:</span> {diagnosis.cause}</p>
+			<p class="mt-1"><span class="font-medium">Fix:</span> {diagnosis.fix}</p>
+		</div>
+	{/if}
+
+	<details class="mt-4 text-sm">
+		<summary class="cursor-pointer text-muted-foreground" onclick={probeMicrophone}>
+			Microphone diagnostics
+		</summary>
+		{#if environment}
+			<dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 font-mono text-xs">
+				<dt>origin</dt>
+				<dd class="break-all">{environment.origin}</dd>
+				<dt>secure context</dt>
+				<dd>{environment.secureContext ? 'yes' : 'NO — getUserMedia needs HTTPS'}</dd>
+				<dt>mediaDevices</dt>
+				<dd>{environment.hasMediaDevices ? 'present' : 'MISSING'}</dd>
+				<dt>permission</dt>
+				<dd>{environment.permission}</dd>
+			</dl>
+		{:else}
+			<p class="mt-2 text-muted-foreground">Opening this panel reads the current state.</p>
+		{/if}
+	</details>
 
 	{#if result}
 		<ul class="mt-4 flex flex-col gap-2">

@@ -42,6 +42,41 @@ export async function decodeTo48kMono(data: ArrayBuffer): Promise<Float32Array> 
 	return rendered.getChannelData(0);
 }
 
+export type MicrophoneEnvironment = {
+	origin: string;
+	secureContext: boolean;
+	hasMediaDevices: boolean;
+	/** 'granted' | 'denied' | 'prompt', or why we could not ask. */
+	permission: string;
+};
+
+/**
+ * A refusal can come from the origin, from Chrome's site settings or from
+ * Android itself, and getUserMedia alone cannot tell them apart. Reading each
+ * layer separately is what makes the failing one obvious.
+ */
+export async function microphoneEnvironment(): Promise<MicrophoneEnvironment> {
+	return {
+		origin: location.origin,
+		secureContext: window.isSecureContext,
+		hasMediaDevices: Boolean(navigator.mediaDevices?.getUserMedia),
+		permission: await microphonePermission()
+	};
+}
+
+async function microphonePermission(): Promise<string> {
+	if (!navigator.permissions) return 'no Permissions API';
+	try {
+		const status = await navigator.permissions.query({
+			name: 'microphone' as PermissionName
+		});
+		return status.state;
+	} catch {
+		// Safari does not accept 'microphone' as a permission name.
+		return 'not queryable';
+	}
+}
+
 /** Voice-processing defaults are tuned for speech and will shred birdsong. */
 export const MICROPHONE_CONSTRAINTS: MediaStreamConstraints = {
 	audio: {
