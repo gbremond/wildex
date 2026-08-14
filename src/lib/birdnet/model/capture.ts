@@ -87,7 +87,7 @@ export const MICROPHONE_CONSTRAINTS: MediaStreamConstraints = {
 	}
 };
 
-export async function recordFromMicrophone(seconds: number): Promise<ArrayBuffer> {
+export async function openMicrophone(): Promise<MediaStream> {
 	if (!navigator.mediaDevices?.getUserMedia) {
 		throw new Error(
 			'No microphone API. getUserMedia needs a secure context — over a LAN IP ' +
@@ -95,27 +95,5 @@ export async function recordFromMicrophone(seconds: number): Promise<ArrayBuffer
 		);
 	}
 
-	const stream = await navigator.mediaDevices.getUserMedia(MICROPHONE_CONSTRAINTS);
-	const recorder = new MediaRecorder(stream);
-	const parts: Blob[] = [];
-	recorder.ondataavailable = (event) => parts.push(event.data);
-
-	const recorded = new Promise<Blob>((resolve) => {
-		recorder.onstop = () => resolve(new Blob(parts, { type: recorder.mimeType }));
-	});
-
-	recorder.start();
-	setTimeout(() => recorder.stop(), seconds * 1000);
-
-	const blob = await recorded;
-	for (const track of stream.getTracks()) track.stop();
-
-	if (blob.size === 0) {
-		throw new Error(
-			'The microphone produced an empty recording. This is a known iOS bug for ' +
-				'home-screen web apps — try the same page in the Safari tab.'
-		);
-	}
-
-	return blob.arrayBuffer();
+	return navigator.mediaDevices.getUserMedia(MICROPHONE_CONSTRAINTS);
 }

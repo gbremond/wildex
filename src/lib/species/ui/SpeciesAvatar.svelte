@@ -8,8 +8,9 @@
 	let {
 		seed,
 		scientificName,
+		fade = true,
 		class: className
-	}: { seed: string; scientificName: string; class?: string } = $props();
+	}: { seed: string; scientificName: string; fade?: boolean; class?: string } = $props();
 
 	let imageUrl = $derived(speciesImageUrl(scientificName, 'thumb'));
 	let imageFailed = $state(false);
@@ -26,9 +27,12 @@
 			class="size-full object-cover"
 			onerror={() => (imageFailed = true)}
 		/>
-		<div
-			class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-background/0 to-background"
-		></div>
+		{#if fade}
+			<!-- Bleeds the photo into the card it sits in; wrong on a standalone thumbnail. -->
+			<div
+				class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-background/0 to-background"
+			></div>
+		{/if}
 	{:else}
 		<div
 			class="flex size-full items-center justify-center text-white/90"

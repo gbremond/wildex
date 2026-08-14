@@ -1,28 +1,97 @@
 <script lang="ts">
+	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
+	import MicIcon from '@lucide/svelte/icons/mic';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		decodeTo48kMono,
 		microphoneEnvironment,
-		recordFromMicrophone,
+		openMicrophone,
 		type MicrophoneEnvironment
 	} from '$lib/birdnet/model/capture';
 	import {
 		diagnoseMicrophoneError,
 		type MicrophoneDiagnosis
 	} from '$lib/birdnet/model/microphone-errors';
+	import { onMount } from 'svelte';
+	import { SvelteMap } from 'svelte/reactivity';
+	import { resolve } from '$app/paths';
+	import { LiveListener, type LiveTick } from '$lib/birdnet/model/live';
+	import ListeningIndicator from '$lib/birdnet/ui/ListeningIndicator.svelte';
+	import { findSpeciesByScientificName, loadSpeciesInMemory } from '$lib/species/data/repository';
+	import SpeciesAvatar from '$lib/species/ui/SpeciesAvatar.svelte';
+	import type { Species } from '$lib/species/model/model';
 	import { loadBirdnet, type Identification, type Where } from '$lib/birdnet/model/session';
 	import { birdnetWeek } from '$lib/birdnet/model/week';
 
-	const RECORD_SECONDS = 9;
+	let listener: LiveListener | undefined;
+	let live = $state<LiveTick | undefined>();
+	let listening = $state(false);
+
+	// BirdNET knows 6522 species; only the ones the user downloaded have a local
+	// record, and so a page to link to.
+	const localByName = new SvelteMap<string, Species>();
+
+	onMount(loadSpeciesInMemory);
+
+	async function rememberLocalSpecies(scientific: string) {
+		if (localByName.has(scientific)) return;
+		const species = await findSpeciesByScientificName(scientific);
+		if (species) localByName.set(scientific, species);
+	}
+
+	const elapsed = (seconds: number) =>
+		`${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+
+	async function toggleListening() {
+		if (listening) {
+			listening = false;
+			await listener?.stop();
+			listener = undefined;
+			status = 'Stopped';
+			return;
+		}
+
+		error = undefined;
+		diagnosis = undefined;
+		result = undefined;
+		live = undefined;
+
+		// The microphone must be opened while the tap is still fresh.
+		let stream: MediaStream;
+		try {
+			stream = await openMicrophone();
+		} catch (cause) {
+			error = cause instanceof DOMException ? `${cause.name}: ${cause.message}` : String(cause);
+			await probeMicrophone();
+			diagnosis = diagnoseMicrophoneError(cause);
+			return;
+		}
+
+		try {
+			status = 'Loading models…';
+			const birdnet = await loadBirdnet();
+			listener = new LiveListener(birdnet, where(), (tick) => {
+				live = tick;
+				for (const species of tick.heard) void rememberLocalSpecies(species.scientific);
+			});
+			await listener.start(stream);
+			listening = true;
+			status = 'Listening';
+		} catch (cause) {
+			for (const track of stream.getTracks()) track.stop();
+			error = cause instanceof Error ? cause.message : String(cause);
+			status = 'Failed';
+		}
+	}
 
 	let status = $state('Idle');
 	let busy = $state(false);
 	let error = $state<string | undefined>();
-	let failure: unknown;
 	let diagnosis = $state<MicrophoneDiagnosis | undefined>();
 	let environment = $state<MicrophoneEnvironment | undefined>();
 	let result = $state<Identification | undefined>();
 	let decodeMs = $state(0);
+	let locating = $state(false);
 
 	async function probeMicrophone() {
 		environment = await microphoneEnvironment();
@@ -55,7 +124,6 @@
 			result = await birdnet.identify(pcm, where());
 			status = 'Done';
 		} catch (cause) {
-			failure = cause;
 			// The DOMException name carries which layer refused; the message alone does not.
 			error = cause instanceof DOMException ? `${cause.name}: ${cause.message}` : String(cause);
 			status = 'Failed';
@@ -69,21 +137,21 @@
 		if (file) identify(() => file.arrayBuffer(), `Reading ${file.name}…`);
 	}
 
-	async function useMicrophone() {
-		await identify(() => recordFromMicrophone(RECORD_SECONDS), `Recording ${RECORD_SECONDS}s…`);
-		if (error) {
-			diagnosis = diagnoseMicrophoneError(failure);
-			await probeMicrophone();
-		}
-	}
-
 	function useCurrentPosition() {
+		locating = true;
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				latitude = Number(position.coords.latitude.toFixed(4));
 				longitude = Number(position.coords.longitude.toFixed(4));
+				locating = false;
 			},
-			(cause) => (error = cause.message)
+			(cause) => {
+				error = cause.message;
+				locating = false;
+			},
+			// Without a timeout a cold GPS fix can hang forever, and the spinner with
+			// it. A minute-old position is plenty precise for a range prior.
+			{ timeout: 15000, maximumAge: 60000 }
 		);
 	}
 </script>
@@ -125,14 +193,90 @@
 		</label>
 	</div>
 
-	<Button variant="outline" size="sm" class="mt-2" onclick={useCurrentPosition}>
-		Use my position
+	<Button variant="outline" size="sm" class="mt-2" onclick={useCurrentPosition} disabled={locating}>
+		{#if locating}
+			<LoaderCircleIcon class="animate-spin" />
+			Locating…
+		{:else}
+			Use my position
+		{/if}
 	</Button>
 
 	<div class="mt-6 flex flex-col gap-2">
-		<Button onclick={useMicrophone} disabled={busy}>
-			Record {RECORD_SECONDS}s from microphone
+		<Button onclick={toggleListening} disabled={busy}>
+			{#if listening}
+				<ListeningIndicator />
+				Stop listening
+			{:else}
+				<MicIcon />
+				Listen live
+			{/if}
 		</Button>
+
+		{#if live}
+			<div class="rounded-md border p-3">
+				<h2 class="text-sm font-medium">Heard</h2>
+				{#if live.heard.length}
+					<ul class="mt-2 flex flex-col gap-2">
+						{#each live.heard as species (species.scientific)}
+							{@const local = localByName.get(species.scientific)}
+							<li class="flex items-center gap-3">
+								<SpeciesAvatar
+									seed={local?.id ?? species.scientific}
+									scientificName={species.scientific}
+									fade={false}
+									class="size-12 shrink-0 rounded-md"
+								/>
+								<span class="min-w-0 flex-1">
+									{#if local}
+										<a
+											href={resolve('/species/[id]', { id: local.id })}
+											class="font-medium underline underline-offset-2"
+										>
+											{species.common}
+										</a>
+									{:else}
+										<span class="font-medium">{species.common}</span>
+									{/if}
+									<span class="block truncate text-sm text-muted-foreground italic">
+										{species.scientific}
+									</span>
+								</span>
+								<span class="shrink-0 text-right text-sm tabular-nums">
+									{(species.score * 100).toFixed(0)}%
+									<span class="block text-xs text-muted-foreground">
+										at {elapsed(species.firstHeardSeconds)}
+									</span>
+								</span>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<p class="mt-2 text-sm text-muted-foreground">
+						Nothing confirmed yet — a species needs two separate windows.
+					</p>
+				{/if}
+
+				{#if live.now.length}
+					<div class="mt-3 border-t pt-2">
+						<h3 class="text-xs text-muted-foreground">Now</h3>
+						<ul class="mt-1 flex flex-col gap-1">
+							{#each live.now as species (species.scientific)}
+								<li class="flex items-baseline justify-between gap-2 text-sm text-muted-foreground">
+									<span>{species.common}</span>
+									<span class="shrink-0 tabular-nums">{(species.score * 100).toFixed(0)}%</span>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
+				<p class="mt-2 text-xs text-muted-foreground tabular-nums">
+					{live.windows} windows · {live.lastInferenceMs.toFixed(0)} ms last
+					{#if live.dropped}· {live.dropped} dropped{/if}
+				</p>
+			</div>
+		{/if}
 
 		<label class="text-sm text-muted-foreground">
 			…or pick an audio file (the oracle — use it whenever the mic looks wrong)

@@ -50,6 +50,18 @@ export class Birdnet {
 		);
 	}
 
+	get speciesLabels(): string[] {
+		return this.labels;
+	}
+
+	/** Scores one 3-second window. Ungated — the caller owns the geo prior. */
+	async scoreWindow(pcm: Float32Array): Promise<Float32Array> {
+		const { Identity_0 } = await this.audio.run({
+			INPUT: new ort.Tensor('float32', pcm, [1, CHUNK_SAMPLES])
+		});
+		return peakScores(Identity_0.data as Float32Array, SPECIES_COUNT);
+	}
+
 	/** Occurrence probability per species for a place and week (1..48). */
 	async prior({ latitude, longitude, week }: Where): Promise<Float32Array> {
 		const input = new ort.Tensor('float32', Float32Array.from([latitude, longitude, week]), [1, 3]);

@@ -39,11 +39,17 @@ async function findSpeciesById(id: string): Promise<Species | undefined> {
 	return speciesById.get(id);
 }
 
+/** Identification models name a taxon, not a wildex id, so this bridges the two. */
+async function findSpeciesByScientificName(name: string): Promise<Species | undefined> {
+	return [...speciesById.values()].find((species) => species.scientificName === name);
+}
+
 export {
 	loadSpeciesInMemory,
 	addSpecies,
 	getSpeciesList,
 	searchStoredSpecies,
 	countAvailableSpecies,
-	findSpeciesById
+	findSpeciesById,
+	findSpeciesByScientificName
 };
