@@ -31,8 +31,8 @@ export const IDENTIFICATION_OPTIONS: IdentificationOption[] = [
 	{
 		id: 'sound',
 		method: 'sound',
-		label: 'Add a sound',
-		hint: 'Identify the bird call with BirdNet'
+		label: 'Listen',
+		hint: 'Identify birds by their calls, with BirdNET'
 	},
 	{
 		id: 'manual',

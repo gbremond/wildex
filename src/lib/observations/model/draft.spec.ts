@@ -1,4 +1,72 @@
+import { canSubmitObservations, toObservations } from './draft';
 import { describe, expect, it } from 'vitest';
+
+const wav = (name: string) => new File([new ArrayBuffer(8)], name, { type: 'audio/wav' });
+const shared = { method: 'sound' as const, observedOn: '2026-08-15', notes: 'dawn chorus' };
+
+describe('toObservations', () => {
+	it('makes one observation per species heard', () => {
+		const drafts = toObservations(shared, [
+			{ species: 'Eurasian Blackbird', capture: wav('a.wav') },
+			{ species: 'Great Tit', capture: wav('b.wav') }
+		]);
+
+		expect(drafts.map((draft) => draft.species)).toEqual(['Eurasian Blackbird', 'Great Tit']);
+	});
+
+	it('gives each observation the recording that identified it', () => {
+		const blackbird = wav('blackbird.wav');
+		const tit = wav('tit.wav');
+
+		const drafts = toObservations(shared, [
+			{ species: 'Eurasian Blackbird', capture: blackbird },
+			{ species: 'Great Tit', capture: tit }
+		]);
+
+		expect(drafts[0].capture).toBe(blackbird);
+		expect(drafts[1].capture).toBe(tit);
+	});
+
+	it('repeats the date and notes across every observation', () => {
+		const drafts = toObservations(shared, [
+			{ species: 'A', capture: wav('a.wav') },
+			{ species: 'B', capture: wav('b.wav') }
+		]);
+
+		expect(drafts.every((d) => d.observedOn === '2026-08-15' && d.notes === 'dawn chorus')).toBe(
+			true
+		);
+	});
+
+	it('yields nothing when no species was selected', () => {
+		expect(toObservations(shared, [])).toEqual([]);
+	});
+});
+
+describe('canSubmitObservations', () => {
+	it('refuses an empty batch', () => {
+		expect(canSubmitObservations([])).toBe(false);
+	});
+
+	it('accepts a batch where every observation is complete', () => {
+		const drafts = toObservations(shared, [
+			{ species: 'A', capture: wav('a.wav') },
+			{ species: 'B', capture: wav('b.wav') }
+		]);
+
+		expect(canSubmitObservations(drafts)).toBe(true);
+	});
+
+	it('refuses the whole batch when one observation is incomplete', () => {
+		const drafts = toObservations(shared, [
+			{ species: 'A', capture: wav('a.wav') },
+			{ species: 'B', capture: null }
+		]);
+
+		expect(canSubmitObservations(drafts)).toBe(false);
+	});
+});
+
 import { canSubmitObservation, toDateInputValue, type ObservationDraft } from './draft';
 
 function draftWith(overrides: Partial<ObservationDraft> = {}): ObservationDraft {

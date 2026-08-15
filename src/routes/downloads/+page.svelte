@@ -7,6 +7,7 @@
 	} from '$lib/species/data/repository';
 	import { downloadSpecies } from '$lib/species/data/api';
 	import ImageDownloadPanel from '$lib/species/ui/ImageDownloadPanel.svelte';
+	import BirdnetDownloadPanel from '$lib/birdnet/ui/BirdnetDownloadPanel.svelte';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 
@@ -42,6 +43,8 @@
 
 		<ImageDownloadPanel />
 	{/if}
+
+	<BirdnetDownloadPanel />
 
 	<div class="mt-6 text-xs text-muted-foreground">
 		Wildex | Version {version}

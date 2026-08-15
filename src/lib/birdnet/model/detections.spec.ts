@@ -54,6 +54,21 @@ describe('DetectionLog', () => {
 		expect(detections.confirmed().map((d) => d.species)).toEqual([0]);
 	});
 
+	it('reports which species a window has just confirmed', () => {
+		const detections = log();
+
+		expect(detections.observe(scores(0.9), 0)).toEqual([]);
+		expect(detections.observe(scores(0.9), 2)).toEqual([0]);
+	});
+
+	it('confirms a species once, not on every later hit', () => {
+		const detections = log();
+		detections.observe(scores(0.9), 0);
+		detections.observe(scores(0.9), 2);
+
+		expect(detections.observe(scores(0.9), 4)).toEqual([]);
+	});
+
 	it('remembers when the species was first heard, not when it was confirmed', () => {
 		const detections = log();
 

@@ -1,8 +1,9 @@
 import { SPECIES_IMAGE_CACHE } from './species/data/image';
+import { BIRDNET_CACHE } from './birdnet/data/models';
 
-// Downloaded photos are the user's data, not a build artefact: a deployment
-// invalidates the app shell but must never evict them.
-const DURABLE_CACHES: string[] = [SPECIES_IMAGE_CACHE];
+// Downloaded photos and models are the user's data, not a build artefact: a
+// deployment invalidates the app shell but must never evict them.
+const DURABLE_CACHES: string[] = [SPECIES_IMAGE_CACHE, BIRDNET_CACHE];
 
 export function isObsoleteCache(key: string, currentAppCache: string): boolean {
 	return key !== currentAppCache && !DURABLE_CACHES.includes(key);
@@ -12,6 +13,13 @@ export function isObsoleteCache(key: string, currentAppCache: string): boolean {
 // whole install.
 function isServable(file: string): boolean {
 	return !file.endsWith('/.nojekyll');
+}
+
+// ~100 MB of weights and wasm. `addAll` is atomic, so precaching these would make every
+// install and every deployment re-download the lot, and one failed request would reject
+// the whole app shell. They are downloaded deliberately instead, from the Downloads page.
+function isOnDemandDownload(file: string): boolean {
+	return file.includes('/models/') || file.includes('/ort/');
 }
 
 // Hashed build output and static files never change under a given URL, so a cached copy
@@ -24,6 +32,7 @@ export function toCachePolicy(
 	prerendered: string[]
 ): { precache: string[]; cacheFirst: string[] } {
 	const cacheFirst = [...build, ...files.filter(isServable)];
+	const shell = cacheFirst.filter((file) => !isOnDemandDownload(file));
 
-	return { precache: [...cacheFirst, ...prerendered], cacheFirst };
+	return { precache: [...shell, ...prerendered], cacheFirst };
 }

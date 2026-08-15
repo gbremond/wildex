@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { isObsoleteCache, toCachePolicy } from './cache-policy';
 import { SPECIES_IMAGE_CACHE } from './species/data/image';
+import { BIRDNET_CACHE } from './birdnet/data/models';
 
 const CURRENT_APP_CACHE = 'cache-abc123';
 
@@ -17,13 +18,23 @@ describe('isObsoleteCache', () => {
 		expect(isObsoleteCache(SPECIES_IMAGE_CACHE, CURRENT_APP_CACHE)).toBe(false);
 	});
 
+	it('keeps the downloaded models across a deployment', () => {
+		expect(isObsoleteCache(BIRDNET_CACHE, CURRENT_APP_CACHE)).toBe(false);
+	});
+
 	it('deletes a cache left over from an earlier implementation', () => {
 		expect(isObsoleteCache('bird-images-v0', CURRENT_APP_CACHE)).toBe(true);
 	});
 });
 
 const BUILD = ['/wildex/_app/immutable/entry/app.Ben4I.js'];
-const FILES = ['/wildex/birds.json', '/wildex/.nojekyll'];
+const FILES = [
+	'/wildex/birds.json',
+	'/wildex/.nojekyll',
+	'/wildex/models/birdnet/model.onnx',
+	'/wildex/models/birdnet/labels.txt',
+	'/wildex/ort/ort-wasm-simd-threaded.jsep.wasm'
+];
 const PRERENDERED = ['/wildex/', '/wildex/downloads'];
 
 describe('toCachePolicy', () => {
@@ -54,5 +65,16 @@ describe('toCachePolicy', () => {
 	it('never caches .nojekyll, which GitHub Pages refuses to serve', () => {
 		expect(precache).not.toContain('/wildex/.nojekyll');
 		expect(cacheFirst).not.toContain('/wildex/.nojekyll');
+	});
+
+	// 100 MB through a single atomic addAll would make every install and every
+	// deployment re-download the lot, and one failed request would reject it all.
+	it('never precaches the identification models', () => {
+		expect(precache).not.toContain('/wildex/models/birdnet/model.onnx');
+		expect(precache).not.toContain('/wildex/models/birdnet/labels.txt');
+	});
+
+	it('never precaches the inference runtime', () => {
+		expect(precache).not.toContain('/wildex/ort/ort-wasm-simd-threaded.jsep.wasm');
 	});
 });

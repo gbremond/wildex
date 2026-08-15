@@ -4,6 +4,7 @@ import { WindowAccumulator } from './live-windows';
 import { DetectionLog } from './detections';
 import { gateByPrior, parseLabel, topSpecies, type Species } from './predictions';
 import { PRIOR_THRESHOLD, type Birdnet, type Where } from './session';
+import { encodeWav } from './wav';
 
 /** Windows overlap by half, so a call on a boundary still lands inside one. */
 const HOP_SECONDS = 1.5;
@@ -22,6 +23,8 @@ const DETECTION_RULES = {
 export type HeardSpecies = Species & {
 	/** Seconds into the session when this species was first heard. */
 	firstHeardSeconds: number;
+	/** The 3s window that confirmed it, as evidence for the observation. */
+	evidence: File;
 };
 
 export type LiveTick = {
@@ -42,6 +45,9 @@ export class LiveListener {
 	private busy = false;
 	private prior?: Float32Array;
 	private readonly detections = new DetectionLog(DETECTION_RULES);
+	// Only the window that confirmed a species is kept — retaining every window
+	// speculatively would cost 576 kB each for audio almost all of which is thrown away.
+	private readonly evidence = new Map<number, File>();
 	private windows = 0;
 	private dropped = 0;
 
@@ -108,7 +114,10 @@ export class LiveListener {
 
 			const scores = gateByPrior(raw, this.prior!, PRIOR_THRESHOLD);
 			const windowIndex = this.windows++;
-			this.detections.observe(scores, windowIndex);
+
+			for (const species of this.detections.observe(scores, windowIndex)) {
+				this.evidence.set(species, this.toEvidence(species, pcm));
+			}
 
 			this.onTick({
 				now: topSpecies(scores, this.birdnet.speciesLabels, 3),
@@ -126,8 +135,16 @@ export class LiveListener {
 		return this.detections.confirmed().map((detection) => ({
 			...parseLabel(this.birdnet.speciesLabels[detection.species]),
 			score: detection.peak,
-			firstHeardSeconds: detection.firstHeardWindow * HOP_SECONDS
+			firstHeardSeconds: detection.firstHeardWindow * HOP_SECONDS,
+			evidence: this.evidence.get(detection.species)!
 		}));
+	}
+
+	private toEvidence(species: number, pcm: Float32Array): File {
+		const { scientific } = parseLabel(this.birdnet.speciesLabels[species]);
+		const name = `${scientific.replace(/\s+/g, '-').toLowerCase()}.wav`;
+
+		return new File([encodeWav(pcm, SAMPLE_RATE)], name, { type: 'audio/wav' });
 	}
 }
 

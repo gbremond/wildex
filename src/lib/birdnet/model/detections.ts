@@ -34,16 +34,29 @@ export class DetectionLog {
 
 	constructor(private readonly rules: DetectionRules) {}
 
-	observe(scores: Float32Array, windowIndex: number) {
+	/** Returns the species this window pushed over the line, so the caller can
+	 * keep the audio that proved them. */
+	observe(scores: Float32Array, windowIndex: number): number[] {
+		const confirmed: number[] = [];
+
 		for (let species = 0; species < scores.length; species++) {
 			if (scores[species] < this.rules.threshold) continue;
+
+			const wasConfirmed = this.isConfirmed(species);
 			this.recordHit(species, scores[species], windowIndex);
+			if (!wasConfirmed && this.isConfirmed(species)) confirmed.push(species);
 		}
+
+		return confirmed;
+	}
+
+	private isConfirmed(species: number): boolean {
+		return (this.tracks.get(species)?.hits ?? 0) >= this.rules.requiredHits;
 	}
 
 	confirmed(): Detection[] {
 		return [...this.tracks.entries()]
-			.filter(([, track]) => track.hits >= this.rules.requiredHits)
+			.filter(([species]) => this.isConfirmed(species))
 			.map(([species, track]) => ({
 				species,
 				firstHeardWindow: track.firstHeardWindow,

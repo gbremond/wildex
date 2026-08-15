@@ -12,6 +12,7 @@
 
 import { base, build, files, prerendered, version } from '$service-worker';
 import { SPECIES_IMAGE_CACHE, SPECIES_IMAGE_HOST } from '$lib/species/data/image';
+import { BIRDNET_CACHE, isBirdnetAsset } from '$lib/birdnet/data/models';
 import { isObsoleteCache, toCachePolicy } from '$lib/cache-policy';
 
 // This gives `self` the correct types
@@ -49,6 +50,11 @@ self.addEventListener('fetch', (event) => {
 
 	if (url.hostname === SPECIES_IMAGE_HOST) {
 		event.respondWith(serveSpeciesImage(event));
+		return;
+	}
+
+	if (isBirdnetAsset(url.pathname)) {
+		event.respondWith(serveBirdnetAsset(event));
 		return;
 	}
 
@@ -114,6 +120,27 @@ async function serveSpeciesImage(event: FetchEvent): Promise<Response> {
 	const response = await fetch(event.request);
 
 	if (isCacheableImage(response)) {
+		event.waitUntil(store(cache, event.request, response.clone()));
+	}
+
+	return response;
+}
+
+// ~100 MB of weights and wasm, downloaded deliberately from the Downloads page.
+// They get their own durable cache so a deployment cannot evict them, and they
+// are never precached: a single atomic addAll of that size would re-download on
+// every install and reject the whole app shell if one request failed.
+async function serveBirdnetAsset(event: FetchEvent): Promise<Response> {
+	const cache = await caches.open(BIRDNET_CACHE);
+	const cached = await cache.match(event.request);
+
+	if (cached) {
+		return cached;
+	}
+
+	const response = await fetch(event.request);
+
+	if (isCacheableAsset(response)) {
 		event.waitUntil(store(cache, event.request, response.clone()));
 	}
 

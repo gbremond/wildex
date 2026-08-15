@@ -17,7 +17,9 @@
 		type IdentificationOption,
 		type IdentificationOptionId
 	} from '../model/identification';
-	import { canSubmitObservation, toDateInputValue } from '../model/draft';
+	import { canSubmitObservations, toObservations, toDateInputValue } from '../model/draft';
+	import SoundIdentification from '$lib/birdnet/ui/SoundIdentification.svelte';
+	import type { HeardSpecies } from '$lib/birdnet/model/live';
 
 	let {
 		open = $bindable(false),
@@ -38,15 +40,29 @@
 	let capture = $state<File | null>(null);
 	let previewUrl = $state<string | null>(null);
 	let stepHeight = $state(0);
+	let listening = $state(false);
+	let heard = $state<HeardSpecies[]>([]);
 
 	let captureInput: HTMLInputElement;
 	let awaitedOption: IdentificationOption | null = null;
 
 	let accept = $derived(chosen === null ? null : captureAccept(chosen.method));
-	let canSubmit = $derived(
-		chosen !== null &&
-			canSubmitObservation({ method: chosen.method, species, observedOn, notes, capture })
-	);
+
+	// A listening session can turn up several birds, each its own sighting; every
+	// other method produces exactly one.
+	let drafts = $derived.by(() => {
+		if (chosen === null) return [];
+		const shared = { method: chosen.method, observedOn, notes };
+
+		return heard.length > 1
+			? toObservations(
+					shared,
+					heard.map((species) => ({ species: species.common, capture: species.evidence }))
+				)
+			: [{ ...shared, species, capture }];
+	});
+
+	let canSubmit = $derived(canSubmitObservations(drafts));
 
 	// Revokes the previous URL whenever the capture changes, and the last one when
 	// the sheet is torn down.
@@ -65,6 +81,8 @@
 		capture = null;
 		previewUrl = null;
 		awaitedOption = null;
+		listening = false;
+		heard = [];
 	}
 
 	function openCapturePicker(option: IdentificationOption, needs: string) {
@@ -82,6 +100,14 @@
 	}
 
 	function chooseOption(option: IdentificationOption) {
+		// Sound is identified live rather than from a file: the model listens, and
+		// hands back the window that confirmed the species as the capture.
+		if (option.method === 'sound') {
+			chosen = option;
+			listening = true;
+			return;
+		}
+
 		const needs = captureAccept(option.method);
 
 		if (needs === null) {
@@ -90,6 +116,18 @@
 		}
 
 		openCapturePicker(option, needs);
+	}
+
+	function onSpeciesHeard(chosen: HeardSpecies[]) {
+		if (chosen.length === 0) return;
+
+		heard = chosen;
+		// The single-species case still fills the editable field, so a misheard
+		// bird can be corrected before saving.
+		species = chosen.length === 1 ? chosen[0].common : '';
+		capture = chosen[0].evidence;
+		previewUrl = URL.createObjectURL(chosen[0].evidence);
+		listening = false;
 	}
 
 	// The form is only worth showing once there is something to identify, so the
@@ -109,6 +147,8 @@
 		capture = null;
 		previewUrl = null;
 		awaitedOption = null;
+		listening = false;
+		heard = [];
 	}
 </script>
 
@@ -145,6 +185,28 @@
 	</Item.Group>
 {/snippet}
 
+{#snippet listenStep(option: IdentificationOption)}
+	<Drawer.Header
+		class="flex-row items-center gap-1 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left"
+	>
+		<Button
+			variant="ghost"
+			size="icon-sm"
+			class="rounded-full"
+			onclick={backToOptions}
+			aria-label="Back to identification methods"
+		>
+			<ChevronLeftIcon aria-hidden="true" focusable="false" />
+		</Button>
+		<div class="flex flex-col">
+			<Drawer.Title>{option.label}</Drawer.Title>
+			<Drawer.Description>Tap every species you heard</Drawer.Description>
+		</div>
+	</Drawer.Header>
+
+	<SoundIdentification onIdentified={onSpeciesHeard} />
+{/snippet}
+
 {#snippet observationForm(option: IdentificationOption)}
 	<Drawer.Header
 		class="flex-row items-center gap-1 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left"
@@ -169,7 +231,9 @@
 		class="flex flex-col gap-4 px-4 pb-6"
 		onsubmit={(event) => event.preventDefault()}
 	>
-		{#if accept && previewUrl}
+		<!-- Hidden for a batch: there is one recording per species, so showing the
+		     first one alone reads as if it were the evidence for all of them. -->
+		{#if accept && previewUrl && heard.length <= 1}
 			<div class="flex flex-col gap-1.5">
 				{#if option.method === 'photo'}
 					<!-- Fixed height so the sheet does not resize again once the image loads. -->
@@ -190,7 +254,8 @@
 						variant="ghost"
 						size="sm"
 						class="rounded-xl"
-						onclick={() => openCapturePicker(option, accept)}
+						onclick={() =>
+							option.method === 'sound' ? (listening = true) : openCapturePicker(option, accept)}
 					>
 						Change
 					</Button>
@@ -198,15 +263,35 @@
 			</div>
 		{/if}
 
-		<div class="flex flex-col gap-1.5">
-			<label for="observation-species" class="text-sm font-medium">Species</label>
-			<Input
-				id="observation-species"
-				bind:value={species}
-				placeholder="Common kingfisher"
-				autocomplete="off"
-			/>
-		</div>
+		{#if heard.length > 1}
+			<div class="flex flex-col gap-1.5">
+				<span class="text-sm font-medium">{heard.length} species heard</span>
+				<ul class="flex flex-col gap-1 rounded-2xl border p-2">
+					{#each heard as species (species.scientific)}
+						<li class="flex items-baseline justify-between gap-2 text-sm">
+							<span>
+								{species.common}
+								<span class="text-muted-foreground italic">{species.scientific}</span>
+							</span>
+							<span class="shrink-0 tabular-nums">{(species.score * 100).toFixed(0)}%</span>
+						</li>
+					{/each}
+				</ul>
+				<p class="text-xs text-muted-foreground">
+					Saved as {heard.length} separate observations, each with its own recording.
+				</p>
+			</div>
+		{:else}
+			<div class="flex flex-col gap-1.5">
+				<label for="observation-species" class="text-sm font-medium">Species</label>
+				<Input
+					id="observation-species"
+					bind:value={species}
+					placeholder="Common kingfisher"
+					autocomplete="off"
+				/>
+			</div>
+		{/if}
 
 		<div class="flex flex-col gap-1.5">
 			<label for="observation-date" class="text-sm font-medium">Date</label>
@@ -218,7 +303,9 @@
 			<Textarea id="observation-notes" bind:value={notes} placeholder="Behaviour, weather, count" />
 		</div>
 
-		<Button type="submit" size="lg" disabled={!canSubmit}>Save observation</Button>
+		<Button type="submit" size="lg" disabled={!canSubmit}>
+			Save {drafts.length > 1 ? `${drafts.length} observations` : 'observation'}
+		</Button>
 	</form>
 {/snippet}
 
@@ -249,6 +336,8 @@
 			<div bind:clientHeight={stepHeight}>
 				{#if chosen === null}
 					{@render optionList()}
+				{:else if listening}
+					{@render listenStep(chosen)}
 				{:else}
 					{@render observationForm(chosen)}
 				{/if}
