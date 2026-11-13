@@ -10,6 +10,7 @@
 	import { loadBirdnet, type Where } from '../model/session';
 	import { birdnetWeek } from '../model/week';
 	import { isBirdnetDownloaded } from '../data/model-cache';
+	import { whereNow } from '../data/where';
 	import ListeningIndicator from './ListeningIndicator.svelte';
 	import SpeciesAvatar from '$lib/species/ui/SpeciesAvatar.svelte';
 
@@ -31,26 +32,10 @@
 	// Without a fix the range prior cannot narrow anything, so say so rather than
 	// silently scoring against all 6522 species.
 	async function currentWhere(): Promise<{ where: Where; located: boolean }> {
-		const week = birdnetWeek(new Date());
+		const where = await whereNow();
+		const nowhere = { latitude: 0, longitude: 0, week: birdnetWeek(new Date()) };
 
-		try {
-			const position = await new Promise<GeolocationPosition>((resolve, reject) =>
-				navigator.geolocation.getCurrentPosition(resolve, reject, {
-					timeout: 10000,
-					maximumAge: 300000
-				})
-			);
-			return {
-				where: {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude,
-					week
-				},
-				located: true
-			};
-		} catch {
-			return { where: { latitude: 0, longitude: 0, week }, located: false };
-		}
+		return { where: where ?? nowhere, located: where !== null };
 	}
 
 	async function start() {
