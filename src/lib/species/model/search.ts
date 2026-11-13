@@ -12,20 +12,20 @@ export function fold(text: string): string {
 	return text.normalize('NFD').replace(COMBINING_MARKS, '').toLowerCase();
 }
 
-function searchableText(species: Species): string {
-	return fold(`${species.scientificName} ${species.frenchName} ${species.englishName}`);
+function speciesText(species: Species): string {
+	return `${species.scientificName} ${species.frenchName} ${species.englishName}`;
 }
 
-function matchesEveryWord(text: string, words: string[]): boolean {
-	return words.every((word) => text.includes(word));
+/** Every word typed must appear in the text; a query too short to mean anything matches all. */
+export function matchesSearch(text: string, query: string): boolean {
+	const normalizedQuery = fold(query).trim();
+
+	if (normalizedQuery.length < MIN_QUERY_LENGTH) return true;
+
+	const searchable = fold(text);
+	return normalizedQuery.split(WHITESPACE).every((word) => searchable.includes(word));
 }
 
 export function searchSpecies(species: Species[], query: string): Species[] {
-	const normalizedQuery = fold(query).trim();
-
-	if (normalizedQuery.length < MIN_QUERY_LENGTH) return species;
-
-	const words = normalizedQuery.split(WHITESPACE);
-
-	return species.filter((candidate) => matchesEveryWord(searchableText(candidate), words));
+	return species.filter((candidate) => matchesSearch(speciesText(candidate), query));
 }

@@ -1,71 +1,84 @@
 <script lang="ts">
-	import type { Component, Snippet } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
-	import * as Item from '$lib/components/ui/item';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import CameraIcon from '@lucide/svelte/icons/camera';
-	import ImageIcon from '@lucide/svelte/icons/image';
-	import MicIcon from '@lucide/svelte/icons/mic';
-	import PencilIcon from '@lucide/svelte/icons/pencil';
+	import BottomSheetContent from '$lib/components/BottomSheetContent.svelte';
+	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
-	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import { currentPosition, type Position } from '$lib/geolocation';
+	import { localDateTime } from '$lib/local-date';
+	import type { Species } from '$lib/species/model/model';
+	import SoundIdentification from '$lib/birdnet/ui/SoundIdentification.svelte';
+	import type { HeardSpecies } from '$lib/birdnet/model/live';
 	import {
 		IDENTIFICATION_OPTIONS,
 		captureAccept,
-		type IdentificationOption,
-		type IdentificationOptionId
+		type IdentificationOption
 	} from '../model/identification';
-	import { canSubmitObservations, toObservations, toDateInputValue } from '../model/draft';
-	import SoundIdentification from '$lib/birdnet/ui/SoundIdentification.svelte';
-	import type { HeardSpecies } from '$lib/birdnet/model/live';
+	import {
+		canSubmitObservations,
+		toObservation,
+		toObservations,
+		wasSeenJustNow
+	} from '../model/draft';
+	import { tripAt } from '../model/trip';
+	import { observedSpeciesFrom, type ObservedSpecies } from '../model/observation';
+	import { journal } from '../data/journal.svelte';
+	import { toObservedSpecies } from '../data/heard-species';
+	import IdentificationOptions from './IdentificationOptions.svelte';
+	import SpeciesPicker from './SpeciesPicker.svelte';
+	import HeardSpeciesList from './HeardSpeciesList.svelte';
+	import TripSelect from './TripSelect.svelte';
 
 	let {
 		open = $bindable(false),
+		presetSpecies,
 		trigger
-	}: { open?: boolean; trigger: Snippet<[Record<string, unknown>]> } = $props();
+	}: {
+		open?: boolean;
+		/** Set when opened from a species card: skips straight to the form. */
+		presetSpecies?: Species;
+		trigger: Snippet<[Record<string, unknown>]>;
+	} = $props();
 
-	const OPTION_ICONS: Record<IdentificationOptionId, Component> = {
-		camera: CameraIcon,
-		gallery: ImageIcon,
-		sound: MicIcon,
-		manual: PencilIcon
-	};
+	const MANUAL_OPTION = IDENTIFICATION_OPTIONS.find((option) => option.method === 'manual')!;
 
-	let chosen = $state<IdentificationOption | null>(null);
-	let species = $state('');
-	let observedOn = $state(toDateInputValue(new Date()));
+	type HeardObservation = { species: ObservedSpecies; score: number; capture: File };
+
+	let chosenOption = $state<IdentificationOption | null>(null);
+	let species = $state<ObservedSpecies>({ name: '' });
+	let observedAt = $state(localDateTime(new Date()));
 	let notes = $state('');
 	let capture = $state<File | null>(null);
 	let previewUrl = $state<string | null>(null);
 	let stepHeight = $state(0);
 	let listening = $state(false);
-	let heard = $state<HeardSpecies[]>([]);
+	let heard = $state<HeardObservation[]>([]);
+	let saving = $state(false);
 
 	let captureInput: HTMLInputElement;
 	let awaitedOption: IdentificationOption | null = null;
+	// Asked for on open: a GPS fix takes seconds.
+	let positionFix: Promise<Position | null> = Promise.resolve(null);
 
-	let accept = $derived(chosen === null ? null : captureAccept(chosen.method));
-
-	// A listening session can turn up several birds, each its own sighting; every
-	// other method produces exactly one.
+	// A listening session can turn up several birds, each its own observation.
 	let drafts = $derived.by(() => {
-		if (chosen === null) return [];
-		const shared = { method: chosen.method, observedOn, notes };
+		if (chosenOption === null) return [];
+		const shared = { method: chosenOption.method, observedAt, notes };
 
-		return heard.length > 1
-			? toObservations(
-					shared,
-					heard.map((species) => ({ species: species.common, capture: species.evidence }))
-				)
-			: [{ ...shared, species, capture }];
+		return heard.length > 1 ? toObservations(shared, heard) : [{ ...shared, species, capture }];
 	});
 
-	let canSubmit = $derived(canSubmitObservations(drafts));
+	let canSubmit = $derived(!saving && canSubmitObservations(drafts));
 
-	// Revokes the previous URL whenever the capture changes, and the last one when
-	// the sheet is torn down.
+	// Defaults to the trip of the chosen day; the form can override it.
+	let tripId = $derived(
+		observedAt ? (tripAt(journal.trips, new Date(observedAt).toISOString())?.id ?? '') : ''
+	);
+
+	// Revokes the previous URL whenever the capture changes, and the last one on teardown.
 	$effect(() => {
 		const url = previewUrl;
 		return () => {
@@ -74,23 +87,25 @@
 	});
 
 	function resetDraft() {
-		chosen = null;
-		species = '';
-		observedOn = toDateInputValue(new Date());
+		backToOptions();
+		chosenOption = presetSpecies ? MANUAL_OPTION : null;
+		species = presetSpecies ? observedSpeciesFrom(presetSpecies) : { name: '' };
+		observedAt = localDateTime(new Date());
 		notes = '';
-		capture = null;
-		previewUrl = null;
-		awaitedOption = null;
-		listening = false;
-		heard = [];
+		saving = false;
+		positionFix = currentPosition();
 	}
 
-	function openCapturePicker(option: IdentificationOption, needs: string) {
+	function attach(file: File | null) {
+		capture = file;
+		previewUrl = file ? URL.createObjectURL(file) : null;
+	}
+
+	function openCapturePicker(option: IdentificationOption, accept: string) {
 		awaitedOption = option;
 
-		// These writes have to land before click(): the picker only opens inside
-		// this user gesture, so waiting for Svelte to flush state would be too late.
-		captureInput.accept = needs;
+		// Set before click(): the picker only opens inside this user gesture.
+		captureInput.accept = accept;
 		if (option.wantsCamera) captureInput.setAttribute('capture', 'environment');
 		else captureInput.removeAttribute('capture');
 		// Clearing the value lets the same file be picked twice in a row.
@@ -100,203 +115,163 @@
 	}
 
 	function chooseOption(option: IdentificationOption) {
-		// Sound is identified live rather than from a file: the model listens, and
-		// hands back the window that confirmed the species as the capture.
+		// Sound is identified live; the window that confirmed a species becomes its capture.
 		if (option.method === 'sound') {
-			chosen = option;
+			chosenOption = option;
 			listening = true;
 			return;
 		}
 
-		const needs = captureAccept(option.method);
+		const accept = captureAccept(option.method);
 
-		if (needs === null) {
-			chosen = option;
+		if (accept === null) {
+			chosenOption = option;
 			return;
 		}
 
-		openCapturePicker(option, needs);
+		openCapturePicker(option, accept);
 	}
 
-	function onSpeciesHeard(chosen: HeardSpecies[]) {
-		if (chosen.length === 0) return;
+	async function onSpeciesHeard(heardSpecies: HeardSpecies[]) {
+		if (heardSpecies.length === 0) return;
 
-		heard = chosen;
-		// The single-species case still fills the editable field, so a misheard
-		// bird can be corrected before saving.
-		species = chosen.length === 1 ? chosen[0].common : '';
-		capture = chosen[0].evidence;
-		previewUrl = URL.createObjectURL(chosen[0].evidence);
+		heard = await Promise.all(
+			heardSpecies.map(async (bird) => ({
+				species: await toObservedSpecies(bird),
+				score: bird.score,
+				capture: bird.evidence
+			}))
+		);
+		// A single species still fills the editable field, so a misheard bird can be fixed.
+		species = heard.length === 1 ? heard[0].species : { name: '' };
+		attach(heard[0].capture);
 		listening = false;
 	}
 
-	// The form is only worth showing once there is something to identify, so the
-	// step advances here rather than on the option click. Cancelling the picker
-	// fires no change event, which leaves the sheet on the option list.
+	// Cancelling the picker fires no change event, so the sheet stays where it was.
 	function onCaptureChosen(event: Event) {
 		const file = (event.currentTarget as HTMLInputElement).files?.[0];
 		if (!file) return;
 
-		capture = file;
-		previewUrl = URL.createObjectURL(file);
-		chosen = awaitedOption;
+		attach(file);
+		chosenOption = awaitedOption;
 	}
 
 	function backToOptions() {
-		chosen = null;
-		capture = null;
-		previewUrl = null;
+		chosenOption = null;
+		attach(null);
 		awaitedOption = null;
 		listening = false;
 		heard = [];
 	}
+
+	async function save() {
+		saving = true;
+
+		try {
+			const position = wasSeenJustNow(observedAt, new Date()) ? await positionFix : null;
+			const context = { position, tripId: tripId || null };
+
+			await journal.add(drafts.map((draft) => toObservation(draft, context)));
+			open = false;
+		} finally {
+			saving = false;
+		}
+	}
 </script>
 
-{#snippet optionList()}
-	<Drawer.Header>
-		<Drawer.Title>New observation</Drawer.Title>
-		<Drawer.Description>How do you want to identify the species?</Drawer.Description>
-	</Drawer.Header>
-
-	<Item.Group class="gap-2 px-4 pb-6">
-		{#each IDENTIFICATION_OPTIONS as option (option.id)}
-			{@const Icon = OPTION_ICONS[option.id]}
-			<Item.Root variant="outline">
-				{#snippet child({ props })}
-					<button {...props} type="button" onclick={() => chooseOption(option)}>
-						<Item.Media variant="icon">
-							<Icon aria-hidden="true" focusable="false" class="size-5" />
-						</Item.Media>
-						<Item.Content>
-							<Item.Title>{option.label}</Item.Title>
-							<Item.Description>{option.hint}</Item.Description>
-						</Item.Content>
-						<Item.Actions>
-							<ChevronRightIcon
-								aria-hidden="true"
-								focusable="false"
-								class="size-4 text-muted-foreground"
-							/>
-						</Item.Actions>
-					</button>
-				{/snippet}
-			</Item.Root>
-		{/each}
-	</Item.Group>
-{/snippet}
-
-{#snippet listenStep(option: IdentificationOption)}
+{#snippet stepHeader(title: string, description: string)}
 	<Drawer.Header
 		class="flex-row items-center gap-1 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left"
 	>
-		<Button
-			variant="ghost"
-			size="icon-sm"
-			class="rounded-full"
-			onclick={backToOptions}
-			aria-label="Back to identification methods"
-		>
-			<ChevronLeftIcon aria-hidden="true" focusable="false" />
-		</Button>
+		{#if !presetSpecies}
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="rounded-full"
+				onclick={backToOptions}
+				aria-label="Back to identification methods"
+			>
+				<ChevronLeftIcon aria-hidden="true" focusable="false" />
+			</Button>
+		{/if}
 		<div class="flex flex-col">
-			<Drawer.Title>{option.label}</Drawer.Title>
-			<Drawer.Description>Tap every species you heard</Drawer.Description>
+			<Drawer.Title>{title}</Drawer.Title>
+			<Drawer.Description>{description}</Drawer.Description>
 		</div>
 	</Drawer.Header>
+{/snippet}
 
-	<SoundIdentification onIdentified={onSpeciesHeard} />
+{#snippet capturePreview(option: IdentificationOption)}
+	<div class="flex flex-col gap-1.5">
+		{#if capture?.type.startsWith('audio/')}
+			<audio src={previewUrl} controls class="w-full"></audio>
+		{:else}
+			<!-- Fixed height so the sheet does not resize again once the image loads. -->
+			<div class="h-48 overflow-hidden rounded-2xl bg-muted/50">
+				<img src={previewUrl} alt="Attached to this observation" class="size-full object-contain" />
+			</div>
+		{/if}
+
+		<div class="flex items-center gap-2 pl-3 text-sm">
+			<span class="min-w-0 flex-1 truncate text-muted-foreground">{capture?.name}</span>
+			<!-- A manual observation has no capture method of its own: its photo is optional. -->
+			<Button
+				variant="ghost"
+				size="sm"
+				class="rounded-xl"
+				onclick={() =>
+					option.method === 'sound'
+						? (listening = true)
+						: openCapturePicker(option, captureAccept(option.method) ?? 'image/*')}
+			>
+				Change
+			</Button>
+		</div>
+	</div>
 {/snippet}
 
 {#snippet observationForm(option: IdentificationOption)}
-	<Drawer.Header
-		class="flex-row items-center gap-1 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left"
-	>
-		<Button
-			variant="ghost"
-			size="icon-sm"
-			class="rounded-full"
-			onclick={backToOptions}
-			aria-label="Back to identification methods"
-		>
-			<ChevronLeftIcon aria-hidden="true" focusable="false" />
-		</Button>
-		<div class="flex flex-col">
-			<Drawer.Title>{option.label}</Drawer.Title>
-			<Drawer.Description>{option.hint}</Drawer.Description>
-		</div>
-	</Drawer.Header>
+	{#if presetSpecies}
+		{@render stepHeader(presetSpecies.frenchName, 'Seen it? Save it in one tap.')}
+	{:else}
+		{@render stepHeader(option.label, option.hint)}
+	{/if}
 
 	<form
 		data-vaul-no-drag
 		class="flex flex-col gap-4 px-4 pb-6"
-		onsubmit={(event) => event.preventDefault()}
+		onsubmit={(event) => {
+			event.preventDefault();
+			save();
+		}}
 	>
-		<!-- Hidden for a batch: there is one recording per species, so showing the
-		     first one alone reads as if it were the evidence for all of them. -->
-		{#if accept && previewUrl && heard.length <= 1}
-			<div class="flex flex-col gap-1.5">
-				{#if option.method === 'photo'}
-					<!-- Fixed height so the sheet does not resize again once the image loads. -->
-					<div class="h-48 overflow-hidden rounded-2xl bg-muted/50">
-						<img
-							src={previewUrl}
-							alt="Attached to this observation"
-							class="size-full object-contain"
-						/>
-					</div>
-				{:else}
-					<audio src={previewUrl} controls class="w-full"></audio>
-				{/if}
-
-				<div class="flex items-center gap-2 pl-3 text-sm">
-					<span class="min-w-0 flex-1 truncate text-muted-foreground">{capture?.name}</span>
-					<Button
-						variant="ghost"
-						size="sm"
-						class="rounded-xl"
-						onclick={() =>
-							option.method === 'sound' ? (listening = true) : openCapturePicker(option, accept)}
-					>
-						Change
-					</Button>
-				</div>
-			</div>
+		<!-- Hidden for a batch: one recording shown alone would read as the evidence for all. -->
+		{#if previewUrl && heard.length <= 1}
+			{@render capturePreview(option)}
+		{:else if option.method === 'manual'}
+			<Button
+				variant="outline"
+				class="rounded-xl border-dashed bg-transparent text-muted-foreground"
+				onclick={() => openCapturePicker(option, 'image/*')}
+			>
+				<ImagePlusIcon />
+				Add a photo
+			</Button>
 		{/if}
 
 		{#if heard.length > 1}
-			<div class="flex flex-col gap-1.5">
-				<span class="text-sm font-medium">{heard.length} species heard</span>
-				<ul class="flex flex-col gap-1 rounded-2xl border p-2">
-					{#each heard as species (species.scientific)}
-						<li class="flex items-baseline justify-between gap-2 text-sm">
-							<span>
-								{species.common}
-								<span class="text-muted-foreground italic">{species.scientific}</span>
-							</span>
-							<span class="shrink-0 tabular-nums">{(species.score * 100).toFixed(0)}%</span>
-						</li>
-					{/each}
-				</ul>
-				<p class="text-xs text-muted-foreground">
-					Saved as {heard.length} separate observations, each with its own recording.
-				</p>
-			</div>
-		{:else}
-			<div class="flex flex-col gap-1.5">
-				<label for="observation-species" class="text-sm font-medium">Species</label>
-				<Input
-					id="observation-species"
-					bind:value={species}
-					placeholder="Common kingfisher"
-					autocomplete="off"
-				/>
-			</div>
+			<HeardSpeciesList {heard} />
+		{:else if !presetSpecies}
+			<SpeciesPicker bind:species />
 		{/if}
 
 		<div class="flex flex-col gap-1.5">
-			<label for="observation-date" class="text-sm font-medium">Date</label>
-			<Input id="observation-date" type="date" bind:value={observedOn} />
+			<label for="observation-date" class="text-sm font-medium">When</label>
+			<Input id="observation-date" type="datetime-local" bind:value={observedAt} />
 		</div>
+
+		<TripSelect bind:value={tripId} />
 
 		<div class="flex flex-col gap-1.5">
 			<label for="observation-notes" class="text-sm font-medium">Notes</label>
@@ -304,7 +279,11 @@
 		</div>
 
 		<Button type="submit" size="lg" disabled={!canSubmit}>
-			Save {drafts.length > 1 ? `${drafts.length} observations` : 'observation'}
+			{#if saving}
+				Saving…
+			{:else}
+				Save {drafts.length > 1 ? `${drafts.length} observations` : 'observation'}
+			{/if}
 		</Button>
 	</form>
 {/snippet}
@@ -316,11 +295,8 @@
 		{/snippet}
 	</Drawer.Trigger>
 
-	<Drawer.Content
-		class="mx-auto max-w-120 rounded-t-3xl border border-b-0 bg-card p-0 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)] before:hidden"
-	>
-		<!-- Hidden, and driven by the option and Change buttons, which set `accept`
-		     and `capture` on it to open the camera or the gallery. -->
+	<BottomSheetContent>
+		<!-- Driven by the option, Add a photo and Change buttons to open the camera or gallery. -->
 		<input
 			bind:this={captureInput}
 			onchange={onCaptureChosen}
@@ -334,14 +310,15 @@
 			style:height="{stepHeight}px"
 		>
 			<div bind:clientHeight={stepHeight}>
-				{#if chosen === null}
-					{@render optionList()}
+				{#if chosenOption === null}
+					<IdentificationOptions onChoose={chooseOption} />
 				{:else if listening}
-					{@render listenStep(chosen)}
+					{@render stepHeader(chosenOption.label, 'Tap every species you heard')}
+					<SoundIdentification onIdentified={onSpeciesHeard} />
 				{:else}
-					{@render observationForm(chosen)}
+					{@render observationForm(chosenOption)}
 				{/if}
 			</div>
 		</div>
-	</Drawer.Content>
+	</BottomSheetContent>
 </Drawer.Root>

@@ -1,17 +1,25 @@
-import { canSubmitObservations, toObservations } from './draft';
 import { describe, expect, it } from 'vitest';
+import {
+	canSubmitObservation,
+	canSubmitObservations,
+	toObservation,
+	toObservations,
+	wasSeenJustNow,
+	type ObservationDraft
+} from './draft';
 
 const wav = (name: string) => new File([new ArrayBuffer(8)], name, { type: 'audio/wav' });
-const shared = { method: 'sound' as const, observedOn: '2026-08-15', notes: 'dawn chorus' };
+const shared = { method: 'sound' as const, observedAt: '2026-08-15T06:30', notes: 'dawn chorus' };
+const named = (name: string) => ({ name });
 
 describe('toObservations', () => {
 	it('makes one observation per species heard', () => {
 		const drafts = toObservations(shared, [
-			{ species: 'Eurasian Blackbird', capture: wav('a.wav') },
-			{ species: 'Great Tit', capture: wav('b.wav') }
+			{ species: named('Eurasian Blackbird'), capture: wav('a.wav') },
+			{ species: named('Great Tit'), capture: wav('b.wav') }
 		]);
 
-		expect(drafts.map((draft) => draft.species)).toEqual(['Eurasian Blackbird', 'Great Tit']);
+		expect(drafts.map((draft) => draft.species.name)).toEqual(['Eurasian Blackbird', 'Great Tit']);
 	});
 
 	it('gives each observation the recording that identified it', () => {
@@ -19,8 +27,8 @@ describe('toObservations', () => {
 		const tit = wav('tit.wav');
 
 		const drafts = toObservations(shared, [
-			{ species: 'Eurasian Blackbird', capture: blackbird },
-			{ species: 'Great Tit', capture: tit }
+			{ species: named('Eurasian Blackbird'), capture: blackbird },
+			{ species: named('Great Tit'), capture: tit }
 		]);
 
 		expect(drafts[0].capture).toBe(blackbird);
@@ -29,13 +37,13 @@ describe('toObservations', () => {
 
 	it('repeats the date and notes across every observation', () => {
 		const drafts = toObservations(shared, [
-			{ species: 'A', capture: wav('a.wav') },
-			{ species: 'B', capture: wav('b.wav') }
+			{ species: named('A'), capture: wav('a.wav') },
+			{ species: named('B'), capture: wav('b.wav') }
 		]);
 
-		expect(drafts.every((d) => d.observedOn === '2026-08-15' && d.notes === 'dawn chorus')).toBe(
-			true
-		);
+		expect(
+			drafts.every((d) => d.observedAt === '2026-08-15T06:30' && d.notes === 'dawn chorus')
+		).toBe(true);
 	});
 
 	it('yields nothing when no species was selected', () => {
@@ -50,8 +58,8 @@ describe('canSubmitObservations', () => {
 
 	it('accepts a batch where every observation is complete', () => {
 		const drafts = toObservations(shared, [
-			{ species: 'A', capture: wav('a.wav') },
-			{ species: 'B', capture: wav('b.wav') }
+			{ species: named('A'), capture: wav('a.wav') },
+			{ species: named('B'), capture: wav('b.wav') }
 		]);
 
 		expect(canSubmitObservations(drafts)).toBe(true);
@@ -59,21 +67,19 @@ describe('canSubmitObservations', () => {
 
 	it('refuses the whole batch when one observation is incomplete', () => {
 		const drafts = toObservations(shared, [
-			{ species: 'A', capture: wav('a.wav') },
-			{ species: 'B', capture: null }
+			{ species: named('A'), capture: wav('a.wav') },
+			{ species: named('B'), capture: null }
 		]);
 
 		expect(canSubmitObservations(drafts)).toBe(false);
 	});
 });
 
-import { canSubmitObservation, toDateInputValue, type ObservationDraft } from './draft';
-
 function draftWith(overrides: Partial<ObservationDraft> = {}): ObservationDraft {
 	return {
 		method: 'manual',
-		species: 'Common kingfisher',
-		observedOn: '2026-08-12',
+		species: { name: 'Common kingfisher' },
+		observedAt: '2026-08-12T10:00',
 		notes: '',
 		capture: null,
 		...overrides
@@ -82,9 +88,22 @@ function draftWith(overrides: Partial<ObservationDraft> = {}): ObservationDraft 
 
 const anyCapture = new File([], 'kingfisher.jpg');
 
-describe('toDateInputValue', () => {
-	it('formats a date as the local calendar day', () => {
-		expect(toDateInputValue(new Date(2026, 7, 12, 23, 30))).toBe('2026-08-12');
+describe('toObservation', () => {
+	it('stamps the draft with where and during which trip it was seen', () => {
+		const position = { latitude: 44.64, longitude: -1.03 };
+
+		const observation = toObservation(draftWith(), { position, tripId: 'teich' });
+
+		expect(observation).toMatchObject({ position, tripId: 'teich' });
+	});
+
+	it('stores the moment it was seen as an instant', () => {
+		const observation = toObservation(draftWith({ observedAt: '2026-08-12T10:00' }), {
+			position: null,
+			tripId: null
+		});
+
+		expect(observation.observedAt).toBe(new Date(2026, 7, 12, 10, 0).toISOString());
 	});
 });
 
@@ -94,11 +113,11 @@ describe('canSubmitObservation', () => {
 	});
 
 	it('rejects a missing species', () => {
-		expect(canSubmitObservation(draftWith({ species: '   ' }))).toBe(false);
+		expect(canSubmitObservation(draftWith({ species: { name: '   ' } }))).toBe(false);
 	});
 
 	it('rejects a missing date', () => {
-		expect(canSubmitObservation(draftWith({ observedOn: '' }))).toBe(false);
+		expect(canSubmitObservation(draftWith({ observedAt: '' }))).toBe(false);
 	});
 
 	it('rejects a photo identification with nothing captured', () => {
@@ -115,5 +134,17 @@ describe('canSubmitObservation', () => {
 
 	it('accepts a sound identification once a recording is captured', () => {
 		expect(canSubmitObservation(draftWith({ method: 'sound', capture: anyCapture }))).toBe(true);
+	});
+});
+
+describe('wasSeenJustNow', () => {
+	const now = new Date(2026, 10, 13, 10, 0);
+
+	it('holds for an observation from a few minutes ago, so the current position applies', () => {
+		expect(wasSeenJustNow('2026-11-13T09:45', now)).toBe(true);
+	});
+
+	it('does not hold for an observation filled in days later, made somewhere else', () => {
+		expect(wasSeenJustNow('2026-11-11T15:00', now)).toBe(false);
 	});
 });

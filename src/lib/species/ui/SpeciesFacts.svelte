@@ -6,7 +6,7 @@
 	let { species }: { species: Species } = $props();
 </script>
 
-<dl class="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+<dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
 	<dt class="text-muted-foreground">English name</dt>
 	<dd>{species.englishName}</dd>
 

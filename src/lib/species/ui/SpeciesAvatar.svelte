@@ -2,17 +2,24 @@
 	import Feather from '@lucide/svelte/icons/feather';
 	import { cn } from '$lib/utils';
 	import { speciesAvatarGradient } from './avatar-gradient';
-	import { speciesImageUrl } from '../data/image';
+	import { speciesImageUrl, type SpeciesImageSize } from '../data/image';
 	import { isSpeciesTransitioning, speciesPhotoTransitionName } from './transition.svelte';
 
 	let {
 		seed,
 		scientificName,
 		fade = true,
+		size = 'thumb',
 		class: className
-	}: { seed: string; scientificName: string; fade?: boolean; class?: string } = $props();
+	}: {
+		seed: string;
+		scientificName: string;
+		fade?: boolean;
+		size?: SpeciesImageSize;
+		class?: string;
+	} = $props();
 
-	let imageUrl = $derived(speciesImageUrl(scientificName, 'thumb'));
+	let imageUrl = $derived(speciesImageUrl(scientificName, size));
 	let imageFailed = $state(false);
 	let transitionStyle = $derived(
 		isSpeciesTransitioning(seed) ? `view-transition-name: ${speciesPhotoTransitionName(seed)}` : ''
