@@ -148,6 +148,18 @@
 	--radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* The list card's photo grows into the species hero: crop it rather than stretch it. */
+::view-transition-old(.species-photo),
+::view-transition-new(.species-photo) {
+	height: 100%;
+	object-fit: cover;
+}
+
+::view-transition-group(.species-photo) {
+	animation-duration: 350ms;
+	animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;

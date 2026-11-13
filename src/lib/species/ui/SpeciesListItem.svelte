@@ -18,7 +18,7 @@
 	let { species, likelihood }: { species: Species; likelihood?: number } = $props();
 </script>
 
-<Item variant="outline" class="flex-nowrap gap-0 overflow-hidden p-0">
+<Item variant="outline" class="flex-nowrap gap-0 overflow-hidden bg-card p-0">
 	{#snippet child({ props })}
 		<a
 			{...props}
@@ -28,7 +28,7 @@
 			<SpeciesAvatar
 				seed={species.id}
 				scientificName={species.scientificName}
-				class="w-24 shrink-0 self-stretch"
+				class="w-20 shrink-0 self-stretch"
 			/>
 			<div class="flex min-w-0 flex-1 items-center gap-3.5 px-4 py-3.5">
 				<ItemContent class="min-w-0">

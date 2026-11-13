@@ -11,8 +11,8 @@
 	}
 </script>
 
-<div class="relative my-4 w-full">
-	<InputGroup.Root class="w-full">
+<div class="relative w-full">
+	<InputGroup.Root class="h-11 w-full border-border bg-card">
 		<InputGroup.Addon>
 			<SearchIcon />
 		</InputGroup.Addon>

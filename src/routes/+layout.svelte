@@ -4,6 +4,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 	import BottomNavBar from '$lib/components/BottomNavBar.svelte';
 
@@ -18,7 +19,7 @@
 	onMount(updateNetworkStatus);
 
 	onNavigate((navigation) => {
-		if (!document.startViewTransition) return;
+		if (!document.startViewTransition || prefersReducedMotion.current) return;
 
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Species } from '../model/model';
 	import { speciesImageUrl } from '../data/image';
-	import { speciesPhotoTransitionName } from './transition.svelte';
+	import { speciesPhotoTransitionStyle } from './transition.svelte';
 
 	let { species }: { species: Species } = $props();
 
@@ -13,7 +13,7 @@
 	<h1 class="mt-4 text-3xl">{species.frenchName}</h1>
 	<p class="text-muted-foreground italic">{species.scientificName}</p>
 {:else}
-	<div class="relative" style="view-transition-name: {speciesPhotoTransitionName(species.id)}">
+	<div class="relative" style={speciesPhotoTransitionStyle(species.id)}>
 		<img
 			src={imageUrl}
 			alt={species.scientificName}

@@ -52,11 +52,11 @@
 {/snippet}
 
 <Collapsible.Root bind:open={isOpen}>
-	<div class="flex items-center gap-1">
+	<div class="flex items-center gap-2">
 		{@render leading?.()}
 		<Collapsible.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="ghost" size="sm" class="text-muted-foreground">
+				<Button {...props} variant="outline" size="sm">
 					<SlidersHorizontalIcon />
 					Filters
 					{#if selectedCount > 0}

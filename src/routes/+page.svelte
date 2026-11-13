@@ -21,6 +21,9 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button';
 	import LocateIcon from '@lucide/svelte/icons/locate';
+	import BirdIcon from '@lucide/svelte/icons/bird';
+	import DownloadIcon from '@lucide/svelte/icons/download';
+	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
 	import { rankByLikelihood } from '$lib/birdnet/model/likely';
 	import { findLikelySpeciesHere, type LikelySpeciesHere } from '$lib/birdnet/data/likely-here';
 
@@ -104,12 +107,17 @@
 </script>
 
 {#snippet aroundMeStatus()}
-	<p class="px-2 py-1 text-sm text-muted-foreground">
+	<p role="status" class="text-sm text-muted-foreground">
 		{#if likelySpeciesHere === undefined}
-			Finding the birds likely around you…
+			<span class="flex items-center gap-2">
+				<LoaderCircleIcon aria-hidden="true" class="size-4 motion-safe:animate-spin" />
+				Finding the birds likely around you…
+			</span>
 		{:else if likelySpeciesHere.kind === 'not-downloaded'}
 			Around me needs sound detection — get it from the
-			<a href={resolve('/downloads')} class="underline">Downloads page</a>.
+			<a href={resolve('/downloads')} class="font-medium text-primary underline underline-offset-4"
+				>Downloads page</a
+			>.
 		{:else if likelySpeciesHere.kind === 'no-position'}
 			Your position is not available, so the list is not narrowed.
 		{:else if likelySpeciesHere.kind === 'unavailable'}
@@ -120,8 +128,8 @@
 	</p>
 {/snippet}
 
-<div class="flex h-dvh flex-col">
-	<h1 class="text-3xl">Welcome to Wildex</h1>
+<div class="mx-auto flex h-dvh max-w-120 flex-col gap-4 px-4 pt-6">
+	<h1 class="text-3xl">Birds</h1>
 
 	{#if storedCount}
 		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />
@@ -129,9 +137,8 @@
 		<SpeciesFilterPanel bind:filters {orders} onchange={rememberSearchInUrl}>
 			{#snippet leading()}
 				<Button
-					variant={aroundMe ? 'default' : 'ghost'}
+					variant={aroundMe ? 'default' : 'outline'}
 					size="sm"
-					class={aroundMe ? '' : 'text-muted-foreground'}
 					aria-pressed={aroundMe}
 					onclick={toggleAroundMe}
 				>
@@ -152,5 +159,15 @@
 			hasFilters={aroundMe || countSelectedFilters(filters) > 0}
 			{likelihoods}
 		/>
+	{:else if storedCount === 0}
+		<div class="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
+			<BirdIcon aria-hidden="true" class="size-8" />
+			<p>No birds on this device yet.</p>
+			<p class="text-sm">Download the species list once, then search it offline.</p>
+			<Button href={resolve('/downloads')} class="mt-2">
+				<DownloadIcon data-icon="inline-start" />
+				Go to Downloads
+			</Button>
+		</div>
 	{/if}
 </div>

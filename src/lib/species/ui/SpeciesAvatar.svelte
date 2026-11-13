@@ -3,7 +3,7 @@
 	import { cn } from '$lib/utils';
 	import { speciesAvatarGradient } from './avatar-gradient';
 	import { speciesImageUrl, type SpeciesImageSize } from '../data/image';
-	import { isSpeciesTransitioning, speciesPhotoTransitionName } from './transition.svelte';
+	import { isSpeciesTransitioning, speciesPhotoTransitionStyle } from './transition.svelte';
 
 	let {
 		seed,
@@ -22,7 +22,7 @@
 	let imageUrl = $derived(speciesImageUrl(scientificName, size));
 	let imageFailed = $state(false);
 	let transitionStyle = $derived(
-		isSpeciesTransitioning(seed) ? `view-transition-name: ${speciesPhotoTransitionName(seed)}` : ''
+		isSpeciesTransitioning(seed) ? speciesPhotoTransitionStyle(seed) : ''
 	);
 </script>
 
@@ -36,9 +36,7 @@
 		/>
 		{#if fade}
 			<!-- Bleeds the photo into the card it sits in; wrong on a standalone thumbnail. -->
-			<div
-				class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-background/0 to-background"
-			></div>
+			<div class="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-card/0 to-card"></div>
 		{/if}
 	{:else}
 		<div
