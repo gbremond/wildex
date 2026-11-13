@@ -2,10 +2,13 @@ import type { Observation } from '../model/observation';
 import { activeTrip, type Trip } from '../model/trip';
 import { readAll, remove, writeAll } from './database';
 
-/** Every observation and trip on this device, kept in memory once loaded. */
+/**
+ * Every observation and trip on this device, kept in memory once loaded.
+ * Raw state: records are replaced, never mutated, and proxies cannot be stored in IndexedDB.
+ */
 class Journal {
-	observations = $state<Observation[]>([]);
-	trips = $state<Trip[]>([]);
+	observations = $state.raw<Observation[]>([]);
+	trips = $state.raw<Trip[]>([]);
 	loaded = $state(false);
 	activeTrip = $derived(activeTrip(this.trips));
 

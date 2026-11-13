@@ -1,33 +1,19 @@
 <script lang="ts">
 	import { getLocale } from '$lib/paraglide/runtime';
-	import { m } from '$lib/paraglide/messages';
-	import 'leaflet/dist/leaflet.css';
 	import 'leaflet.markercluster/dist/MarkerCluster.css';
 	import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-	import type {
-		DivIcon,
-		LatLngTuple,
-		Map as LeafletMap,
-		Marker,
-		MarkerClusterGroup
-	} from 'leaflet';
+	import type { DivIcon, Map as LeafletMap, Marker, MarkerClusterGroup } from 'leaflet';
 	import { flushSync, onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { currentPosition, type Position } from '$lib/geolocation';
-	import { MAP_TILE_URL } from '../data/map-tiles';
 	import { speciesImageUrl } from '$lib/species/data/image';
 	import { observedName, photoOf, type Observation } from '../model/observation';
 	import ObservationPhoto from './ObservationPhoto.svelte';
+	import { FRANCE, addTiles, dotIcon, loadLeaflet, toLatLng, type Leaflet } from './leaflet';
 
-	type Leaflet = typeof import('leaflet');
 	type LocatedObservation = Observation & { position: Position };
 
 	let { observations }: { observations: Observation[] } = $props();
-
-	const FRANCE: LatLngTuple = [46.6, 2.4];
-	const ATTRIBUTION = m.map_attribution({
-		link: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	});
 
 	const dateTimeFormat = new Intl.DateTimeFormat(getLocale(), {
 		dateStyle: 'medium',
@@ -60,22 +46,11 @@
 		return observation.position !== null;
 	}
 
-	function toLatLng({ latitude, longitude }: Position): LatLngTuple {
-		return [latitude, longitude];
-	}
-
-	// The plugin extends the global `L` that Leaflet sets, so it must load second.
-	async function loadLeaflet(): Promise<Leaflet> {
-		const { default: leaflet } = await import('leaflet');
-		await import('leaflet.markercluster');
-		return leaflet;
-	}
-
 	async function showMap(): Promise<LeafletMap> {
 		L = await loadLeaflet();
 		const leafletMap = L.map(container);
 
-		L.tileLayer(MAP_TILE_URL, { maxZoom: 19, attribution: ATTRIBUTION }).addTo(leafletMap);
+		addTiles(L, leafletMap);
 		cluster = L.markerClusterGroup().addTo(leafletMap);
 
 		if (located.length === 0) await showWhereIAm(leafletMap);
@@ -98,13 +73,7 @@
 		const photo = photoOf(observation);
 
 		// Captured photos are left out: each would need an object URL alive as long as the map.
-		// Leaflet's default icon is an image Vite does not bundle, hence a CSS dot.
-		if (photo.kind !== 'species') {
-			return L.divIcon({
-				className: 'rounded-full border-2 border-white bg-primary shadow',
-				iconSize: [16, 16]
-			});
-		}
+		if (photo.kind !== 'species') return dotIcon(L);
 
 		// Leaflet's stylesheet resets marker images to `width: auto`, hence the `!`.
 		return L.divIcon({

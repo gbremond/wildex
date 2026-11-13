@@ -23,7 +23,8 @@
 		canSubmitObservations,
 		toObservation,
 		toObservations,
-		wasSeenJustNow
+		wasSeenJustNow,
+		whereSeen
 	} from '../model/draft';
 	import { tripAt } from '../model/trip';
 	import { observedSpeciesFrom, type ObservedSpecies } from '../model/observation';
@@ -173,8 +174,13 @@
 		saving = true;
 
 		try {
-			const position = wasSeenJustNow(observedAt, new Date()) ? await positionFix : null;
-			const context = { position, tripId: tripId || null };
+			const now = new Date();
+			const here = wasSeenJustNow(observedAt, now) ? await positionFix : null;
+			const trip = journal.trips.find(({ id }) => id === tripId);
+			const context = {
+				position: whereSeen({ observedAt, now, here, trip }),
+				tripId: trip?.id ?? null
+			};
 
 			await journal.add(drafts.map((draft) => toObservation(draft, context)));
 			open = false;

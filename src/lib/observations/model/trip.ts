@@ -1,23 +1,29 @@
+import type { Position } from '$lib/geolocation';
 import { localDay } from '$lib/local-date';
 import { matchesSearch } from '$lib/species/model/search';
 
-export type Trip = { id: string; name: string; startedAt: string; endedAt: string | null };
+export type Trip = {
+	id: string;
+	name: string;
+	startedAt: string;
+	endedAt: string | null;
+	position?: Position;
+};
 
 /**
  * A trip on today starts now and stays open until ended. A trip on another
  * day is being filled in after the fact, so it simply covers that day.
  */
-export function newTrip(name: string, day: string, now: Date): Trip {
-	const id = crypto.randomUUID();
+export function newTrip(name: string, day: string, now: Date, position?: Position): Trip {
+	const trip = { id: crypto.randomUUID(), name, ...(position && { position }) };
 
 	if (day === localDay(now)) {
-		return { id, name, startedAt: now.toISOString(), endedAt: null };
+		return { ...trip, startedAt: now.toISOString(), endedAt: null };
 	}
 
 	const [year, month, date] = day.split('-').map(Number);
 	return {
-		id,
-		name,
+		...trip,
 		startedAt: new Date(year, month - 1, date).toISOString(),
 		endedAt: new Date(year, month - 1, date, 23, 59, 59, 999).toISOString()
 	};

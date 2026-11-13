@@ -1,6 +1,7 @@
 import type { Position } from '$lib/geolocation';
 import { captureAccept, type IdentificationMethod } from './identification';
 import type { Observation, ObservedSpecies } from './observation';
+import type { Trip } from './trip';
 
 export type ObservationDraft = {
 	method: IdentificationMethod;
@@ -45,6 +46,22 @@ const JUST_NOW_MS = 60 * 60_000;
 /** The phone's position only says where the bird was if it was seen just now. */
 export function wasSeenJustNow(observedAt: string, now: Date): boolean {
 	return now.getTime() - new Date(observedAt).getTime() <= JUST_NOW_MS;
+}
+
+/** The phone's fix for an observation made just now, otherwise where its trip took place. */
+export function whereSeen({
+	observedAt,
+	now,
+	here,
+	trip
+}: {
+	observedAt: string;
+	now: Date;
+	here: Position | null;
+	trip: Trip | undefined;
+}): Position | null {
+	const tripPosition = trip?.position ?? null;
+	return wasSeenJustNow(observedAt, now) ? (here ?? tripPosition) : tripPosition;
 }
 
 export function toObservation(

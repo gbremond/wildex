@@ -5,10 +5,13 @@
 	import MapPinnedIcon from '@lucide/svelte/icons/map-pinned';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import MapPinIcon from '@lucide/svelte/icons/map-pin';
+	import type { Position } from '$lib/geolocation';
 	import { journal } from '../data/journal.svelte';
 	import { localDay } from '$lib/local-date';
 	import { newTrip, tripChips } from '../model/trip';
 	import AllTripsSheet from './AllTripsSheet.svelte';
+	import PlacePicker from './PlacePicker.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 
@@ -23,6 +26,8 @@
 	let browsingAllTrips = $state(false);
 	let name = $state('');
 	let day = $state('');
+	let placing = $state(false);
+	let position = $state.raw<Position>();
 
 	let chips = $derived(tripChips(journal.trips, selectedTripId, RECENT_TRIP_COUNT));
 
@@ -31,12 +36,14 @@
 	function openForm() {
 		name = '';
 		day = localDay(new Date());
+		placing = false;
+		position = undefined;
 		naming = true;
 	}
 
 	async function save(event: SubmitEvent) {
 		event.preventDefault();
-		await journal.addTrip(newTrip(name.trim(), day, new Date()));
+		await journal.addTrip(newTrip(name.trim(), day, new Date(), position));
 		naming = false;
 	}
 
@@ -60,6 +67,32 @@
 			<p class="text-xs text-muted-foreground">
 				{m.trip_form_day_hint()}
 			</p>
+		</div>
+		<div class="flex flex-col gap-1.5">
+			<span class="text-sm font-medium">{m.trip_form_place()}</span>
+			{#if placing}
+				<PlacePicker bind:position />
+				<Button
+					variant="ghost"
+					size="sm"
+					class="self-start"
+					onclick={() => {
+						placing = false;
+						position = undefined;
+					}}
+				>
+					{m.trip_form_remove_place()}
+				</Button>
+			{:else}
+				<Button
+					variant="outline"
+					class="rounded-xl border-dashed bg-transparent text-muted-foreground"
+					onclick={() => (placing = true)}
+				>
+					<MapPinIcon data-icon="inline-start" />
+					{m.trip_form_add_place()}
+				</Button>
+			{/if}
 		</div>
 		<div class="flex justify-end gap-2">
 			<Button variant="ghost" onclick={() => (naming = false)}>{m.trip_form_cancel()}</Button>

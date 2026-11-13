@@ -30,6 +30,12 @@ describe('newTrip', () => {
 		expect(today).toMatchObject({ startedAt: now.toISOString(), endedAt: null });
 	});
 
+	it('keeps where a trip took place, when given', () => {
+		const teich = { latitude: 44.64, longitude: -1.03 };
+
+		expect(newTrip('Teich', '2026-11-11', now, teich).position).toEqual(teich);
+	});
+
 	it('makes a trip on a past day cover that whole day', () => {
 		const past = newTrip('Teich', '2026-11-11', now);
 

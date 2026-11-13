@@ -5,6 +5,7 @@ import {
 	toObservation,
 	toObservations,
 	wasSeenJustNow,
+	whereSeen,
 	type ObservationDraft
 } from './draft';
 
@@ -146,5 +147,37 @@ describe('wasSeenJustNow', () => {
 
 	it('does not hold for an observation filled in days later, made somewhere else', () => {
 		expect(wasSeenJustNow('2026-11-11T15:00', now)).toBe(false);
+	});
+});
+
+describe('whereSeen', () => {
+	const now = new Date(2026, 10, 13, 10, 0);
+	const here = { latitude: 48.85, longitude: 2.35 };
+	const teich = {
+		id: 'teich',
+		name: 'Teich',
+		startedAt: '',
+		endedAt: '',
+		position: { latitude: 44.64, longitude: -1.03 }
+	};
+
+	it('is where the phone is for an observation made just now', () => {
+		expect(whereSeen({ observedAt: '2026-11-13T09:50', now, here, trip: teich })).toEqual(here);
+	});
+
+	it('is where the trip took place when the phone has no fix', () => {
+		expect(whereSeen({ observedAt: '2026-11-13T09:50', now, here: null, trip: teich })).toEqual(
+			teich.position
+		);
+	});
+
+	it('is where the trip took place for an observation filled in afterwards', () => {
+		expect(whereSeen({ observedAt: '2026-11-11T15:00', now, here, trip: teich })).toEqual(
+			teich.position
+		);
+	});
+
+	it('is unknown for an observation filled in afterwards outside a located trip', () => {
+		expect(whereSeen({ observedAt: '2026-11-11T15:00', now, here, trip: undefined })).toBeNull();
 	});
 });
