@@ -8,7 +8,7 @@ function read(search: string) {
 
 describe('readSearchParams', () => {
 	it('reads an empty search as an empty query and no filter', () => {
-		expect(read('')).toEqual({ query: '', filters: NO_FILTERS });
+		expect(read('')).toEqual({ query: '', filters: NO_FILTERS, aroundMe: false });
 	});
 
 	it('reads the query', () => {
@@ -68,15 +68,19 @@ describe('toSearchPath', () => {
 		expect(toSearchPath('', filters)).toBe('/?habitat=MARINE');
 	});
 
+	it('marks the list as narrowed to the species around me', () => {
+		expect(toSearchPath('', NO_FILTERS, true)).toBe('/?around=me');
+	});
+
 	it('escapes the query', () => {
 		expect(toSearchPath("d'europe & co", NO_FILTERS)).toBe('/?q=d%27europe+%26+co');
 	});
 });
 
 describe('a written search', () => {
-	const CASES: { query: string; filters: SpeciesFilters }[] = [
-		{ query: '', filters: NO_FILTERS },
-		{ query: 'merle noir', filters: NO_FILTERS },
+	const CASES: { query: string; filters: SpeciesFilters; aroundMe: boolean }[] = [
+		{ query: '', filters: NO_FILTERS, aroundMe: false },
+		{ query: 'merle noir', filters: NO_FILTERS, aroundMe: true },
 		{
 			query: 'goéland',
 			filters: {
@@ -84,13 +88,14 @@ describe('a written search', () => {
 				order: ['Charadriiformes'],
 				habitat: ['MARINE'],
 				iucn: ['VULNERABLE', 'UNKNOWN']
-			}
+			},
+			aroundMe: false
 		}
 	];
 
-	it.each(CASES)('reads back as it was written for "$query"', ({ query, filters }) => {
-		const written = new URL(toSearchPath(query, filters), 'https://wildex.test');
+	it.each(CASES)('reads back as it was written for "$query"', ({ query, filters, aroundMe }) => {
+		const written = new URL(toSearchPath(query, filters, aroundMe), 'https://wildex.test');
 
-		expect(read(written.search)).toEqual({ query, filters });
+		expect(read(written.search)).toEqual({ query, filters, aroundMe });
 	});
 });

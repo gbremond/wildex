@@ -15,7 +15,7 @@
 	import { resolve } from '$app/paths';
 	import { markSpeciesTransition } from './transition.svelte';
 
-	let { species }: { species: Species } = $props();
+	let { species, likelihood }: { species: Species; likelihood?: number } = $props();
 </script>
 
 <Item variant="outline" class="flex-nowrap gap-0 overflow-hidden p-0">
@@ -36,6 +36,11 @@
 					<ItemDescription class="line-clamp-1"><em>{species.scientificName}</em></ItemDescription>
 				</ItemContent>
 				<ItemActions class="flex-col items-end gap-1">
+					{#if likelihood !== undefined}
+						<span class="text-sm font-medium text-primary tabular-nums">
+							{Math.round(likelihood * 100)}%
+						</span>
+					{/if}
 					{#if species.iucnCategory !== 'LEAST_CONCERN' && species.iucnCategory !== 'UNKNOWN'}
 						<IucnBadge category={species.iucnCategory} />
 					{/if}

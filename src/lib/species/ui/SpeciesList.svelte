@@ -4,13 +4,21 @@
 	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
 	import { fade } from 'svelte/transition';
 	import { cn } from '$lib/utils';
+	import type { Likelihoods } from '$lib/birdnet/model/likely';
 
 	let {
 		species,
 		isSearching,
 		query,
-		hasFilters
-	}: { species: Species[]; isSearching: boolean; query: string; hasFilters: boolean } = $props();
+		hasFilters,
+		likelihoods
+	}: {
+		species: Species[];
+		isSearching: boolean;
+		query: string;
+		hasFilters: boolean;
+		likelihoods?: Likelihoods;
+	} = $props();
 
 	const emptyMessage = $derived.by(() => {
 		if (query && hasFilters) return `No bird matches “${query}” with these filters`;
@@ -28,7 +36,7 @@
 				class={cn('px-2', index === species.length - 1 ? 'pb-(--bottom-nav-clearance)' : 'pb-2')}
 				in:fade={{ duration: 120 }}
 			>
-				<SpeciesListItem species={item} />
+				<SpeciesListItem species={item} likelihood={likelihoods?.get(item.scientificName)} />
 			</div>
 		{/snippet}
 	</SvelteVirtualList>

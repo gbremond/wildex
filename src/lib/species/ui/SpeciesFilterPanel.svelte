@@ -17,12 +17,20 @@
 	import type { IucnCategory, Status } from '../model/model';
 	import IucnBadge from './IucnBadge.svelte';
 	import SpeciesFacetFilter from './SpeciesFacetFilter.svelte';
+	import type { Snippet } from 'svelte';
 
 	let {
 		filters = $bindable(),
 		orders,
-		onchange
-	}: { filters: SpeciesFilters; orders: string[]; onchange: () => void } = $props();
+		onchange,
+		leading
+	}: {
+		filters: SpeciesFilters;
+		orders: string[];
+		onchange: () => void;
+		/** Shown before the Filters button, on the same row. */
+		leading?: Snippet;
+	} = $props();
 
 	let isOpen = $state(false);
 
@@ -45,6 +53,7 @@
 
 <Collapsible.Root bind:open={isOpen}>
 	<div class="flex items-center gap-1">
+		{@render leading?.()}
 		<Collapsible.Trigger>
 			{#snippet child({ props })}
 				<Button {...props} variant="ghost" size="sm" class="text-muted-foreground">
