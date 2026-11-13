@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 	import 'leaflet/dist/leaflet.css';
 	import 'leaflet.markercluster/dist/MarkerCluster.css';
 	import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -14,7 +16,7 @@
 	import { currentPosition, type Position } from '$lib/geolocation';
 	import { MAP_TILE_URL } from '../data/map-tiles';
 	import { speciesImageUrl } from '$lib/species/data/image';
-	import { photoOf, type Observation } from '../model/observation';
+	import { observedName, photoOf, type Observation } from '../model/observation';
 	import ObservationPhoto from './ObservationPhoto.svelte';
 
 	type Leaflet = typeof import('leaflet');
@@ -23,10 +25,11 @@
 	let { observations }: { observations: Observation[] } = $props();
 
 	const FRANCE: LatLngTuple = [46.6, 2.4];
-	const ATTRIBUTION =
-		'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	const ATTRIBUTION = m.map_attribution({
+		link: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	});
 
-	const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+	const dateTimeFormat = new Intl.DateTimeFormat(getLocale(), {
 		dateStyle: 'medium',
 		timeStyle: 'short'
 	});
@@ -114,7 +117,7 @@
 	function markerFor(observation: LocatedObservation): Marker {
 		const marker = L.marker(toLatLng(observation.position), {
 			icon: iconFor(observation),
-			title: observation.species.name
+			title: observedName(observation.species, getLocale())
 		});
 
 		return marker.bindPopup(() => detailsOf(observation));
@@ -139,10 +142,12 @@
 						href={resolve('/species/[id]', { id: selected.species.speciesId })}
 						class="block truncate text-sm font-medium text-foreground! hover:underline"
 					>
-						{selected.species.name}
+						{observedName(selected.species, getLocale())}
 					</a>
 				{:else}
-					<span class="block truncate text-sm font-medium">{selected.species.name}</span>
+					<span class="block truncate text-sm font-medium"
+						>{observedName(selected.species, getLocale())}</span
+					>
 				{/if}
 				<span class="block text-xs text-muted-foreground">
 					{dateTimeFormat.format(new Date(selected.observedAt))}

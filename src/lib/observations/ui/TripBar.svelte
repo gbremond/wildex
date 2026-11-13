@@ -9,6 +9,8 @@
 	import { localDay } from '$lib/local-date';
 	import { newTrip, tripChips } from '../model/trip';
 	import AllTripsSheet from './AllTripsSheet.svelte';
+	import { m } from '$lib/paraglide/messages';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	const RECENT_TRIP_COUNT = 3;
 
@@ -24,7 +26,7 @@
 
 	let chips = $derived(tripChips(journal.trips, selectedTripId, RECENT_TRIP_COUNT));
 
-	const dayFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' });
+	const dayFormat = new Intl.DateTimeFormat(getLocale(), { day: 'numeric', month: 'short' });
 
 	function openForm() {
 		name = '';
@@ -49,19 +51,19 @@
 {#if naming}
 	<form class="flex flex-col gap-4 rounded-2xl border bg-card p-4" onsubmit={save}>
 		<div class="flex flex-col gap-1.5">
-			<label for="trip-name" class="text-sm font-medium">Trip</label>
+			<label for="trip-name" class="text-sm font-medium">{m.trip_form_name()}</label>
 			<Input id="trip-name" bind:value={name} placeholder="Réserve ornithologique du Teich" />
 		</div>
 		<div class="flex flex-col gap-1.5">
-			<label for="trip-day" class="text-sm font-medium">Day</label>
+			<label for="trip-day" class="text-sm font-medium">{m.trip_form_day()}</label>
 			<Input id="trip-day" type="date" bind:value={day} />
 			<p class="text-xs text-muted-foreground">
-				Today starts the trip now. Another day lets you fill one in afterwards.
+				{m.trip_form_day_hint()}
 			</p>
 		</div>
 		<div class="flex justify-end gap-2">
-			<Button variant="ghost" onclick={() => (naming = false)}>Cancel</Button>
-			<Button type="submit" disabled={!name.trim() || !day}>Save trip</Button>
+			<Button variant="ghost" onclick={() => (naming = false)}>{m.trip_form_cancel()}</Button>
+			<Button type="submit" disabled={!name.trim() || !day}>{m.trip_form_save()}</Button>
 		</div>
 	</form>
 {:else}
@@ -69,17 +71,23 @@
 		<div class="flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-3">
 			<MapPinnedIcon aria-hidden="true" class="size-5 shrink-0 text-primary" />
 			<p class="min-w-0 flex-1">
-				<span class="block text-xs text-muted-foreground">On a trip</span>
+				<span class="block text-xs text-muted-foreground">{m.trip_active_label()}</span>
 				<span class="line-clamp-2 font-medium">{journal.activeTrip.name}</span>
 			</p>
-			<Button variant="outline" size="sm" onclick={() => journal.endTrip()}>End</Button>
+			<Button variant="outline" size="sm" onclick={() => journal.endTrip()}>
+				{m.trip_active_end()}
+			</Button>
 		</div>
 	{/if}
 
-	<div role="group" aria-label="Trips" class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+	<div
+		role="group"
+		aria-label={m.trip_chips_label()}
+		class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
+	>
 		<button type="button" onclick={openForm} class={chipClass(false)}>
 			<PlusIcon aria-hidden="true" class="size-4" />
-			New trip
+			{m.trip_chips_new()}
 		</button>
 		{#each chips as trip (trip.id)}
 			<button
@@ -94,7 +102,7 @@
 		{/each}
 		{#if journal.trips.length > RECENT_TRIP_COUNT}
 			<button type="button" onclick={() => (browsingAllTrips = true)} class={chipClass(false)}>
-				All trips ({journal.trips.length})
+				{m.trip_chips_all({ count: journal.trips.length })}
 				<ChevronRightIcon aria-hidden="true" class="size-4" />
 			</button>
 		{/if}

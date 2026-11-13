@@ -6,6 +6,8 @@
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import { journal } from '../data/journal.svelte';
 	import { groupByYear, searchTrips } from '../model/trip';
+	import { m } from '$lib/paraglide/messages';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	let {
 		open = $bindable(false),
@@ -20,7 +22,7 @@
 		Map.groupBy(journal.observations, (observation) => observation.tripId)
 	);
 
-	const dayFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' });
+	const dayFormat = new Intl.DateTimeFormat(getLocale(), { day: 'numeric', month: 'short' });
 
 	function choose(tripId: string) {
 		onSelect(tripId);
@@ -31,7 +33,7 @@
 <Drawer.Root bind:open onOpenChange={(isOpen) => isOpen && (query = '')}>
 	<BottomSheetContent>
 		<Drawer.Header>
-			<Drawer.Title>All trips</Drawer.Title>
+			<Drawer.Title>{m.trip_all_title()}</Drawer.Title>
 		</Drawer.Header>
 
 		<div class="px-4 pb-2">
@@ -41,8 +43,8 @@
 				</InputGroup.Addon>
 				<InputGroup.Input
 					bind:value={query}
-					placeholder="Search a trip"
-					aria-label="Search a trip"
+					placeholder={m.trip_all_search()}
+					aria-label={m.trip_all_search()}
 				/>
 			</InputGroup.Root>
 		</div>
@@ -65,15 +67,17 @@
 							>
 								<span class="font-medium">{trip.name}</span>
 								<span class="text-sm text-muted-foreground">
-									{dayFormat.format(new Date(trip.startedAt))} · {count}
-									{count === 1 ? 'observation' : 'observations'}
+									{dayFormat.format(new Date(trip.startedAt))} ·
+									{m.trip_all_observation_count({ count })}
 								</span>
 							</button>
 						</li>
 					{/each}
 				</ul>
 			{:else}
-				<p class="py-6 text-center text-sm text-muted-foreground">No trip matches “{query}”.</p>
+				<p class="py-6 text-center text-sm text-muted-foreground">
+					{m.trip_all_no_match({ query })}
+				</p>
 			{/each}
 		</div>
 	</BottomSheetContent>

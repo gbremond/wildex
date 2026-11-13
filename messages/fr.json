@@ -1,0 +1,263 @@
+{
+	"downloads_images_failed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} image n'a pas pu être téléchargée — vérifier la connexion et réessayer.",
+				"countPlural=other": "{count} images n'ont pas pu être téléchargées — vérifier la connexion et réessayer."
+			}
+		}
+	],
+	"downloads_images_progress": "Téléchargement des images… {done}/{total}",
+	"downloads_images_start": "Télécharger les images",
+	"downloads_images_stored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} image disponible hors ligne",
+				"countPlural=other": "{count} images disponibles hors ligne"
+			}
+		}
+	],
+	"downloads_sound_again": "Retélécharger la détection sonore",
+	"downloads_sound_failed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} fichier n'a pas pu être téléchargé — vérifier la connexion et réessayer.",
+				"countPlural=other": "{count} fichiers n'ont pas pu être téléchargés — vérifier la connexion et réessayer."
+			}
+		}
+	],
+	"downloads_sound_missing": "Détection sonore non téléchargée — {cached}/{total} fichiers",
+	"downloads_sound_progress": "Téléchargement de la détection sonore… {done}/{total}",
+	"downloads_sound_ready": "Détection sonore disponible hors ligne",
+	"downloads_sound_start": "Télécharger la détection sonore ({size} Mo)",
+	"downloads_species_progress": "Téléchargement…",
+	"downloads_species_start": "Télécharger les espèces",
+	"downloads_species_stored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} espèce disponible hors ligne",
+				"countPlural=other": "{count} espèces disponibles hors ligne"
+			}
+		}
+	],
+	"downloads_title": "Téléchargements",
+	"games_answer_see": "Voir",
+	"games_answer_was": "C'était",
+	"games_correct": "Bonne réponse !",
+	"games_image_alt": "Oiseau à identifier",
+	"games_next": "Suivant",
+	"games_no_species": "Aucune espèce sur cet appareil pour l'instant. Télécharger d'abord la liste.",
+	"games_score": "Score : {score} / {attempts} essais",
+	"games_title": "Jeux",
+	"games_wrong": "Pas celui-ci",
+	"habitat_brackish": "Eau saumâtre",
+	"habitat_continental": "Continental",
+	"habitat_freshwater": "Eau douce",
+	"habitat_marine": "Marin",
+	"habitat_marine_and_freshwater": "Marin et eau douce",
+	"habitat_marine_and_terrestrial": "Marin et terrestre",
+	"habitat_terrestrial": "Terrestre",
+	"habitat_terrestrial_and_freshwater": "Terrestre et eau douce",
+	"heard_species_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} espèce entendue",
+				"countPlural=other": "{count} espèces entendues"
+			}
+		}
+	],
+	"heard_species_saved_separately": "Enregistrées comme {count} observations distinctes, chacune avec son enregistrement.",
+	"home_around_me": "Autour de moi",
+	"home_around_me_downloads_link": "page Téléchargements",
+	"home_around_me_finding": "Recherche des oiseaux probables à proximité…",
+	"home_around_me_found": "Oiseaux attendus ici cette semaine, les plus probables en premier.",
+	"home_around_me_no_position": "Position indisponible : la liste n'est pas filtrée.",
+	"home_around_me_not_downloaded": "Autour de moi a besoin de la détection sonore, à récupérer depuis la",
+	"home_around_me_unavailable": "Autour de moi est indisponible pour l'instant : la liste n'est pas filtrée.",
+	"home_empty_go_to_downloads": "Aller aux téléchargements",
+	"home_empty_hint": "Téléchargez la liste des espèces une fois, puis cherchez hors ligne.",
+	"home_empty_title": "Aucun oiseau sur cet appareil pour l'instant.",
+	"home_title": "Oiseaux",
+	"identification_camera_hint": "Sur le vif, avec BioCLIP v2",
+	"identification_camera_label": "Prendre une photo",
+	"identification_gallery_hint": "Depuis la galerie, avec BioCLIP v2",
+	"identification_gallery_label": "Choisir une photo",
+	"identification_manual_hint": "Nommer l'espèce soi-même",
+	"identification_manual_label": "Saisie libre",
+	"identification_question": "Comment identifier l'espèce ?",
+	"identification_sound_hint": "Identifier les oiseaux à leur chant, avec BirdNET",
+	"identification_sound_label": "Écouter",
+	"identification_title": "Nouvelle observation",
+	"iucn_critically_endangered": "En danger critique",
+	"iucn_data_deficient": "Données insuffisantes",
+	"iucn_endangered": "En danger",
+	"iucn_extinct": "Éteinte",
+	"iucn_extinct_in_the_wild": "Éteinte à l'état sauvage",
+	"iucn_least_concern": "Préoccupation mineure",
+	"iucn_near_threatened": "Quasi menacée",
+	"iucn_unknown": "Inconnu",
+	"iucn_vulnerable": "Vulnérable",
+	"language_switch_label": "Switch to English",
+	"loading": "Chargement…",
+	"map_attribution": "&copy; les contributeurs d'{link}",
+	"mic_blocked_by_android_cause": "Android bloque le micro pour Chrome lui-même.",
+	"mic_blocked_by_android_fix": "Paramètres Android → Applications → Chrome → Autorisations → Micro → Autoriser.",
+	"mic_blocked_by_site_cause": "Ce site n'a pas le droit d'utiliser le micro.",
+	"mic_blocked_by_site_fix": "Toucher le cadenas dans la barre d'adresse → Autorisations → Micro → Autoriser, puis recharger.",
+	"mic_in_use_cause": "Le micro est utilisé par une autre application.",
+	"mic_in_use_fix": "Fermer tout enregistrement ou appel en cours, puis réessayer.",
+	"mic_insecure_context_cause": "La page n'est pas dans un contexte sécurisé.",
+	"mic_insecure_context_fix": "Servir la page en HTTPS — `cloudflared tunnel --url http://localhost:5173`.",
+	"mic_no_microphone_cause": "L'appareil ne signale aucun micro.",
+	"mic_no_microphone_fix": "Vérifier qu'aucun autre profil ni aucune règle ne masque le micro.",
+	"mic_prompt_dismissed_cause": "La demande d'autorisation a été fermée sans réponse.",
+	"mic_prompt_dismissed_fix": "Réessayer et choisir Autoriser quand Chrome le demande.",
+	"mic_unmet_constraints_cause": "L'appareil ne peut pas respecter les contraintes audio demandées.",
+	"mic_unmet_constraints_fix": "À signaler — MICROPHONE_CONSTRAINTS dans capture.ts doit être assoupli pour cet appareil.",
+	"mic_unrecognised_cause": "Échec non reconnu.",
+	"mic_unrecognised_fix": "Signaler l'erreur ci-dessus.",
+	"nav_add_observation": "Ajouter une observation",
+	"nav_downloads": "Hors ligne",
+	"nav_games": "Jeux",
+	"nav_home": "Accueil",
+	"nav_main_label": "Navigation principale",
+	"nav_observations": "Observations",
+	"observation_details_delete": "Supprimer",
+	"observation_details_delete_confirm": "Supprimer cette observation ? Action irréversible.",
+	"observation_details_delete_observation": "Supprimer l'observation",
+	"observation_details_keep": "Garder",
+	"observation_details_see_species": "Voir l'espèce",
+	"observation_form_add_photo": "Ajouter une photo",
+	"observation_form_back": "Retour aux méthodes d'identification",
+	"observation_form_capture_alt": "Jointe à cette observation",
+	"observation_form_change_capture": "Changer",
+	"observation_form_notes": "Notes",
+	"observation_form_notes_placeholder": "Comportement, météo, effectif",
+	"observation_form_preset_hint": "Vu ? Un seul geste pour l'enregistrer.",
+	"observation_form_save": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Enregistrer l'observation",
+				"countPlural=other": "Enregistrer {count} observations"
+			}
+		}
+	],
+	"observation_form_saving": "Enregistrement…",
+	"observation_form_when": "Quand",
+	"observation_row_delete": "Supprimer {name}",
+	"observations_species_filter_clear": "Afficher toutes les espèces",
+	"observations_species_filter_fallback": "Cette espèce",
+	"observations_title": "Observations",
+	"observations_view_label": "Vue",
+	"observations_view_map": "Carte",
+	"observations_view_timeline": "Chronologie",
+	"offline_notice": "Hors ligne : affichage des espèces enregistrées sur cet appareil.",
+	"sound_add_observations": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Ajouter {count} observation",
+				"countPlural=other": "Ajouter {count} observations"
+			}
+		}
+	],
+	"sound_diagnosis_cause": "Cause :",
+	"sound_diagnosis_fix": "Solution :",
+	"sound_listening": "À l'écoute",
+	"sound_listening_unlocated": "À l'écoute — sans position, résultats non filtrés",
+	"sound_not_downloaded": "La détection sonore n'est pas encore téléchargée : la récupérer depuis la page Téléchargements.",
+	"sound_nothing_confirmed": "Rien de confirmé pour l'instant — une espèce doit ressortir dans deux fenêtres distinctes.",
+	"sound_start": "Lancer l'écoute",
+	"sound_step_hint": "Toucher chaque espèce entendue",
+	"sound_stop": "Arrêter",
+	"species_facet_clear": "Effacer {label}",
+	"species_facet_empty": "Aucun résultat.",
+	"species_facet_search": "Rechercher dans {label}…",
+	"species_facet_selected": "{count} sélectionnés",
+	"species_facts_family": "Famille",
+	"species_facts_iucn_status": "Statut UICN",
+	"species_facts_other_language_name": "Nom anglais",
+	"species_filters_clear_all": "Tout effacer",
+	"species_filters_iucn": "UICN",
+	"species_filters_toggle": "Filtres",
+	"species_habitat": "Habitat",
+	"species_list_no_match_filters": "Aucun oiseau ne correspond à ces filtres",
+	"species_list_no_match_query": "Aucun oiseau ne correspond à « {query} »",
+	"species_list_no_match_query_and_filters": "Aucun oiseau ne correspond à « {query} » avec ces filtres",
+	"species_order": "Ordre",
+	"species_page_avibase": "Voir sur Avibase ↗",
+	"species_page_back": "Retour à la recherche",
+	"species_page_not_found": "Cette espèce n'est pas sur cet appareil. Télécharger d'abord la liste.",
+	"species_page_see_all": "Tout voir",
+	"species_page_seen_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Vu une fois",
+				"countPlural=other": "Vu {count} fois"
+			}
+		}
+	],
+	"species_page_seen_it": "Je l'ai vu",
+	"species_page_xeno_canto": "Écouter sur Xeno-canto ↗",
+	"species_picker_label": "Espèce",
+	"species_picker_placeholder": "Martin-pêcheur d'Europe",
+	"species_picker_unlisted": "Absente de la liste : enregistrée comme espèce hors liste.",
+	"species_search_clear": "Effacer la recherche",
+	"species_search_placeholder": "Rechercher un oiseau",
+	"species_status": "Statut",
+	"status_endemic": "Endémique",
+	"status_introduced": "Introduite",
+	"status_invasive": "Envahissante",
+	"status_native": "Indigène",
+	"status_occasional": "Occasionnelle",
+	"status_subendemic": "Subendémique",
+	"timeline_empty": "Rien pour l'instant.",
+	"timeline_empty_hint": "Toucher + ci-dessous, ou « Je l'ai vu » sur une fiche espèce.",
+	"timeline_loading": "Chargement des observations…",
+	"timeline_today": "Aujourd'hui",
+	"timeline_unlisted": "Hors liste",
+	"timeline_yesterday": "Hier",
+	"trip_active_end": "Terminer",
+	"trip_active_label": "Sortie en cours",
+	"trip_all_no_match": "Aucune sortie ne correspond à « {query} ».",
+	"trip_all_observation_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} observation",
+				"countPlural=other": "{count} observations"
+			}
+		}
+	],
+	"trip_all_search": "Rechercher une sortie",
+	"trip_all_title": "Toutes les sorties",
+	"trip_chips_all": "Toutes les sorties ({count})",
+	"trip_chips_label": "Sorties",
+	"trip_chips_new": "Nouvelle sortie",
+	"trip_form_cancel": "Annuler",
+	"trip_form_day": "Jour",
+	"trip_form_day_hint": "Aujourd'hui démarre la sortie maintenant. Un autre jour permet de la remplir après coup.",
+	"trip_form_name": "Sortie",
+	"trip_form_save": "Enregistrer la sortie",
+	"trip_select_label": "Sortie",
+	"trip_select_none": "Aucune sortie",
+	"update_prompt_action": "Mettre à jour",
+	"update_prompt_description": "Une nouvelle version de Wildex est prête.",
+	"update_prompt_title": "Mise à jour disponible"
+}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { speciesName } from '../model/names';
 	import type { Species } from '../model/model';
 	import { speciesImageUrl } from '../data/image';
 	import { speciesPhotoTransitionStyle } from './transition.svelte';
@@ -10,7 +12,7 @@
 </script>
 
 {#if imageFailed}
-	<h1 class="mt-4 text-3xl">{species.frenchName}</h1>
+	<h1 class="mt-4 text-3xl">{speciesName(species, getLocale())}</h1>
 	<p class="text-muted-foreground italic">{species.scientificName}</p>
 {:else}
 	<div class="relative" style={speciesPhotoTransitionStyle(species.id)}>
@@ -23,7 +25,7 @@
 		<div
 			class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-4 pt-16 pb-4"
 		>
-			<h1 class="text-3xl text-white">{species.frenchName}</h1>
+			<h1 class="text-3xl text-white">{speciesName(species, getLocale())}</h1>
 			<p class="text-white/85 italic">{species.scientificName}</p>
 		</div>
 	</div>

@@ -29,3 +29,6 @@ vite.config.ts.timestamp-*
 /static/models/birdnet/*
 !/static/models/birdnet/NOTICE
 /static/ort
+
+# Compiled from messages/ by Paraglide
+/src/lib/paraglide

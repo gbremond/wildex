@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { speciesName } from '$lib/species/model/names';
 	import type { Snippet } from 'svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Button } from '$lib/components/ui/button';
@@ -31,6 +33,8 @@
 	import SpeciesPicker from './SpeciesPicker.svelte';
 	import HeardSpeciesList from './HeardSpeciesList.svelte';
 	import TripSelect from './TripSelect.svelte';
+	import { IDENTIFICATION_COPY } from './identification-copy';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		open = $bindable(false),
@@ -190,7 +194,7 @@
 				size="icon-sm"
 				class="rounded-full"
 				onclick={backToOptions}
-				aria-label="Back to identification methods"
+				aria-label={m.observation_form_back()}
 			>
 				<ChevronLeftIcon aria-hidden="true" focusable="false" />
 			</Button>
@@ -209,7 +213,11 @@
 		{:else}
 			<!-- Fixed height so the sheet does not resize again once the image loads. -->
 			<div class="h-48 overflow-hidden rounded-2xl bg-muted/50">
-				<img src={previewUrl} alt="Attached to this observation" class="size-full object-contain" />
+				<img
+					src={previewUrl}
+					alt={m.observation_form_capture_alt()}
+					class="size-full object-contain"
+				/>
 			</div>
 		{/if}
 
@@ -225,7 +233,7 @@
 						? (listening = true)
 						: openCapturePicker(option, captureAccept(option.method) ?? 'image/*')}
 			>
-				Change
+				{m.observation_form_change_capture()}
 			</Button>
 		</div>
 	</div>
@@ -233,9 +241,12 @@
 
 {#snippet observationForm(option: IdentificationOption)}
 	{#if presetSpecies}
-		{@render stepHeader(presetSpecies.frenchName, 'Seen it? Save it in one tap.')}
+		{@render stepHeader(speciesName(presetSpecies, getLocale()), m.observation_form_preset_hint())}
 	{:else}
-		{@render stepHeader(option.label, option.hint)}
+		{@render stepHeader(
+			IDENTIFICATION_COPY[option.id].label(),
+			IDENTIFICATION_COPY[option.id].hint()
+		)}
 	{/if}
 
 	<form
@@ -256,7 +267,7 @@
 				onclick={() => openCapturePicker(option, 'image/*')}
 			>
 				<ImagePlusIcon />
-				Add a photo
+				{m.observation_form_add_photo()}
 			</Button>
 		{/if}
 
@@ -267,22 +278,28 @@
 		{/if}
 
 		<div class="flex flex-col gap-1.5">
-			<label for="observation-date" class="text-sm font-medium">When</label>
+			<label for="observation-date" class="text-sm font-medium">{m.observation_form_when()}</label>
 			<Input id="observation-date" type="datetime-local" bind:value={observedAt} />
 		</div>
 
 		<TripSelect bind:value={tripId} />
 
 		<div class="flex flex-col gap-1.5">
-			<label for="observation-notes" class="text-sm font-medium">Notes</label>
-			<Textarea id="observation-notes" bind:value={notes} placeholder="Behaviour, weather, count" />
+			<label for="observation-notes" class="text-sm font-medium">
+				{m.observation_form_notes()}
+			</label>
+			<Textarea
+				id="observation-notes"
+				bind:value={notes}
+				placeholder={m.observation_form_notes_placeholder()}
+			/>
 		</div>
 
 		<Button type="submit" size="lg" disabled={!canSubmit}>
 			{#if saving}
-				Saving…
+				{m.observation_form_saving()}
 			{:else}
-				Save {drafts.length > 1 ? `${drafts.length} observations` : 'observation'}
+				{m.observation_form_save({ count: drafts.length })}
 			{/if}
 		</Button>
 	</form>
@@ -313,7 +330,7 @@
 				{#if chosenOption === null}
 					<IdentificationOptions onChoose={chooseOption} />
 				{:else if listening}
-					{@render stepHeader(chosenOption.label, 'Tap every species you heard')}
+					{@render stepHeader(IDENTIFICATION_COPY[chosenOption.id].label(), m.sound_step_hint())}
 					<SoundIdentification onIdentified={onSpeciesHeard} />
 				{:else}
 					{@render observationForm(chosenOption)}

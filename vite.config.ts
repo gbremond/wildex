@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { execSync } from 'node:child_process';
 
 function currentCommit() {
@@ -15,6 +16,12 @@ function currentCommit() {
 
 export default defineConfig({
 	plugins: [
+		// French unless the visitor picked English: there is no server to read their language.
+		paraglideVitePlugin({
+			project: './project.inlang',
+			outdir: './src/lib/paraglide',
+			strategy: ['localStorage', 'baseLocale']
+		}),
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {

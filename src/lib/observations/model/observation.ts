@@ -1,10 +1,16 @@
 import type { Position } from '$lib/geolocation';
 import { localDay } from '$lib/local-date';
+import type { Locale } from '$lib/paraglide/runtime';
 import type { Species } from '$lib/species/model/model';
 import type { IdentificationMethod } from './identification';
 
-/** Unlisted species only have a name: they were typed in by hand. */
-export type ObservedSpecies = { name: string; speciesId?: string; scientificName?: string };
+/** `name` is the French name, or whatever was typed for an unlisted species. */
+export type ObservedSpecies = {
+	name: string;
+	englishName?: string;
+	speciesId?: string;
+	scientificName?: string;
+};
 
 export type Observation = {
 	id: string;
@@ -25,9 +31,14 @@ export type PhotoSource =
 export function observedSpeciesFrom(species: Species): ObservedSpecies {
 	return {
 		name: species.frenchName,
+		englishName: species.englishName,
 		speciesId: species.id,
 		scientificName: species.scientificName
 	};
+}
+
+export function observedName(species: ObservedSpecies, locale: Locale): string {
+	return locale === 'en' && species.englishName ? species.englishName : species.name;
 }
 
 function matches(observation: Observation, { speciesId, tripId }: ObservationFilter): boolean {

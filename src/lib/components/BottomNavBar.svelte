@@ -9,6 +9,7 @@
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import ObservationSheet from '$lib/observations/ui/ObservationSheet.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let isSheetOpen = $state(false);
 
@@ -33,7 +34,7 @@
 	></span>
 {/snippet}
 
-<nav aria-label="Main" class="fixed inset-x-0 bottom-0 z-50">
+<nav aria-label={m.nav_main_label()} class="fixed inset-x-0 bottom-0 z-50">
 	<div
 		class="relative mx-auto max-w-120 rounded-t-3xl border border-b-0 bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-4px_rgb(0_0_0/0.15)]"
 	>
@@ -54,7 +55,7 @@
 						{@render activeIndicator()}
 					{/if}
 					<SearchIcon aria-hidden="true" focusable="false" class="size-5" />
-					<span class="w-full truncate text-center">Home</span>
+					<span class="w-full truncate text-center">{m.nav_home()}</span>
 				</a>
 			</li>
 
@@ -68,7 +69,7 @@
 						{@render activeIndicator()}
 					{/if}
 					<BinocularsIcon aria-hidden="true" focusable="false" class="size-5" />
-					<span class="w-full truncate text-center">Observations</span>
+					<span class="w-full truncate text-center">{m.nav_observations()}</span>
 				</a>
 			</li>
 
@@ -82,7 +83,7 @@
 						{@render activeIndicator()}
 					{/if}
 					<Gamepad2Icon aria-hidden="true" focusable="false" class="size-5" />
-					<span class="w-full truncate text-center">Games</span>
+					<span class="w-full truncate text-center">{m.nav_games()}</span>
 				</a>
 			</li>
 
@@ -96,7 +97,7 @@
 						{@render activeIndicator()}
 					{/if}
 					<DownloadIcon aria-hidden="true" focusable="false" class="size-5" />
-					<span class="w-full truncate text-center">Downloads</span>
+					<span class="w-full truncate text-center">{m.nav_downloads()}</span>
 				</a>
 			</li>
 		</ul>
@@ -113,7 +114,7 @@
 					)}
 				>
 					<PlusIcon aria-hidden="true" focusable="false" class="size-6" />
-					<span class="sr-only">Add observation</span>
+					<span class="sr-only">{m.nav_add_observation()}</span>
 				</button>
 			{/snippet}
 		</ObservationSheet>

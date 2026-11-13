@@ -13,6 +13,9 @@
 	import { whereNow } from '../data/where';
 	import ListeningIndicator from './ListeningIndicator.svelte';
 	import SpeciesAvatar from '$lib/species/ui/SpeciesAvatar.svelte';
+	import { m } from '$lib/paraglide/messages';
+	import { MICROPHONE_ADVICE } from './microphone-advice';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	let { onIdentified }: { onIdentified: (species: HeardSpecies[]) => void } = $props();
 
@@ -26,6 +29,8 @@
 	let error = $state<string | undefined>();
 	let diagnosis = $state<MicrophoneDiagnosis | undefined>();
 	let live = $state<LiveTick | undefined>();
+
+	const percentFormat = new Intl.NumberFormat(getLocale(), { style: 'percent' });
 
 	onDestroy(() => void listener?.stop());
 
@@ -55,17 +60,17 @@
 
 		try {
 			if (!(await isBirdnetDownloaded())) {
-				throw new Error('Sound detection is not downloaded yet — get it from the Downloads page.');
+				throw new Error(m.sound_not_downloaded());
 			}
 
-			status = 'Loading…';
+			status = m.loading();
 			const birdnet = await loadBirdnet();
 			const { where, located } = await currentWhere();
 
 			listener = new LiveListener(birdnet, where, (tick) => (live = tick));
 			await listener.start(stream);
 			listening = true;
-			status = located ? 'Listening' : 'Listening — no location, results are not filtered';
+			status = located ? m.sound_listening() : m.sound_listening_unlocated();
 		} catch (cause) {
 			for (const track of stream.getTracks()) track.stop();
 			error = cause instanceof Error ? cause.message : String(cause);
@@ -95,12 +100,12 @@
 	{#if !listening}
 		<Button size="lg" onclick={start}>
 			<MicIcon />
-			Start listening
+			{m.sound_start()}
 		</Button>
 	{:else}
 		<Button size="lg" variant="outline" onclick={stop}>
 			<ListeningIndicator />
-			Stop
+			{m.sound_stop()}
 		</Button>
 	{/if}
 
@@ -114,8 +119,14 @@
 
 	{#if diagnosis}
 		<div class="rounded-md border p-3 text-sm">
-			<p><span class="font-medium">Cause:</span> {diagnosis.cause}</p>
-			<p class="mt-1"><span class="font-medium">Fix:</span> {diagnosis.fix}</p>
+			<p>
+				<span class="font-medium">{m.sound_diagnosis_cause()}</span>
+				{MICROPHONE_ADVICE[diagnosis].cause()}
+			</p>
+			<p class="mt-1">
+				<span class="font-medium">{m.sound_diagnosis_fix()}</span>
+				{MICROPHONE_ADVICE[diagnosis].fix()}
+			</p>
 		</div>
 	{/if}
 
@@ -146,7 +157,7 @@
 								</span>
 							</span>
 							<span class="shrink-0 text-sm tabular-nums">
-								{(species.score * 100).toFixed(0)}%
+								{percentFormat.format(species.score)}
 							</span>
 							<span
 								class="flex size-6 shrink-0 items-center justify-center rounded-full border {isSelected
@@ -163,13 +174,13 @@
 			</ul>
 		{:else if listening}
 			<p class="text-sm text-muted-foreground">
-				Nothing confirmed yet — a species needs two separate windows.
+				{m.sound_nothing_confirmed()}
 			</p>
 		{/if}
 
 		{#if selected.size}
 			<Button size="lg" onclick={confirmSelection}>
-				Add {selected.size} observation{selected.size > 1 ? 's' : ''}
+				{m.sound_add_observations({ count: selected.size })}
 			</Button>
 		{/if}
 
@@ -178,7 +189,7 @@
 				{#each live.now as species (species.scientific)}
 					<li class="flex items-baseline justify-between gap-2 text-sm text-muted-foreground">
 						<span>{species.common}</span>
-						<span class="shrink-0 tabular-nums">{(species.score * 100).toFixed(0)}%</span>
+						<span class="shrink-0 tabular-nums">{percentFormat.format(species.score)}</span>
 					</li>
 				{/each}
 			</ul>

@@ -1,0 +1,263 @@
+{
+	"downloads_images_failed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} image could not be downloaded — check your connection and retry.",
+				"countPlural=other": "{count} images could not be downloaded — check your connection and retry."
+			}
+		}
+	],
+	"downloads_images_progress": "Downloading images… {done}/{total}",
+	"downloads_images_start": "Download images",
+	"downloads_images_stored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} image stored offline",
+				"countPlural=other": "{count} images stored offline"
+			}
+		}
+	],
+	"downloads_sound_again": "Re-download sound detection",
+	"downloads_sound_failed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} file could not be downloaded — check your connection and retry.",
+				"countPlural=other": "{count} files could not be downloaded — check your connection and retry."
+			}
+		}
+	],
+	"downloads_sound_missing": "Sound detection not downloaded — {cached}/{total} files",
+	"downloads_sound_progress": "Downloading sound detection… {done}/{total}",
+	"downloads_sound_ready": "Sound detection available offline",
+	"downloads_sound_start": "Download sound detection ({size} MB)",
+	"downloads_species_progress": "Downloading…",
+	"downloads_species_start": "Download species",
+	"downloads_species_stored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} species stored offline",
+				"countPlural=other": "{count} species stored offline"
+			}
+		}
+	],
+	"downloads_title": "Downloads",
+	"games_answer_see": "See",
+	"games_answer_was": "It was",
+	"games_correct": "Correct!",
+	"games_image_alt": "Bird to identify",
+	"games_next": "Next",
+	"games_no_species": "No species on this device yet. Download the list first.",
+	"games_score": "Score: {score} / {attempts} attempts",
+	"games_title": "Games",
+	"games_wrong": "Not this one",
+	"habitat_brackish": "Brackish",
+	"habitat_continental": "Continental",
+	"habitat_freshwater": "Freshwater",
+	"habitat_marine": "Marine",
+	"habitat_marine_and_freshwater": "Marine and freshwater",
+	"habitat_marine_and_terrestrial": "Marine and terrestrial",
+	"habitat_terrestrial": "Terrestrial",
+	"habitat_terrestrial_and_freshwater": "Terrestrial and freshwater",
+	"heard_species_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} species heard",
+				"countPlural=other": "{count} species heard"
+			}
+		}
+	],
+	"heard_species_saved_separately": "Saved as {count} separate observations, each with its own recording.",
+	"home_around_me": "Around me",
+	"home_around_me_downloads_link": "Downloads page",
+	"home_around_me_finding": "Finding the birds likely around you…",
+	"home_around_me_found": "Birds expected here this week, most likely first.",
+	"home_around_me_no_position": "Your position is not available, so the list is not narrowed.",
+	"home_around_me_not_downloaded": "Around me needs sound detection — get it from the",
+	"home_around_me_unavailable": "Around me is unavailable right now, so the list is not narrowed.",
+	"home_empty_go_to_downloads": "Go to Downloads",
+	"home_empty_hint": "Download the species list once, then search it offline.",
+	"home_empty_title": "No birds on this device yet.",
+	"home_title": "Birds",
+	"identification_camera_hint": "Shoot now, with BioCLIP v2",
+	"identification_camera_label": "Take a picture",
+	"identification_gallery_hint": "From the gallery, with BioCLIP v2",
+	"identification_gallery_label": "Pick a picture",
+	"identification_manual_hint": "Name the species yourself",
+	"identification_manual_label": "From scratch",
+	"identification_question": "How do you want to identify the species?",
+	"identification_sound_hint": "Identify birds by their calls, with BirdNET",
+	"identification_sound_label": "Listen",
+	"identification_title": "New observation",
+	"iucn_critically_endangered": "Critically endangered",
+	"iucn_data_deficient": "Data deficient",
+	"iucn_endangered": "Endangered",
+	"iucn_extinct": "Extinct",
+	"iucn_extinct_in_the_wild": "Extinct in the wild",
+	"iucn_least_concern": "Least concern",
+	"iucn_near_threatened": "Near threatened",
+	"iucn_unknown": "Unknown",
+	"iucn_vulnerable": "Vulnerable",
+	"language_switch_label": "Passer en français",
+	"loading": "Loading…",
+	"map_attribution": "&copy; {link} contributors",
+	"mic_blocked_by_android_cause": "Android is blocking the microphone for Chrome itself.",
+	"mic_blocked_by_android_fix": "Android Settings → Apps → Chrome → Permissions → Microphone → Allow.",
+	"mic_blocked_by_site_cause": "This site is blocked from using the microphone.",
+	"mic_blocked_by_site_fix": "Tap the padlock in the address bar → Permissions → Microphone → Allow, then reload.",
+	"mic_in_use_cause": "The microphone is in use by another app.",
+	"mic_in_use_fix": "Close anything recording or on a call, then retry.",
+	"mic_insecure_context_cause": "The page is not a secure context.",
+	"mic_insecure_context_fix": "Serve the page over HTTPS — `cloudflared tunnel --url http://localhost:5173`.",
+	"mic_no_microphone_cause": "No microphone was reported by the device.",
+	"mic_no_microphone_fix": "Check that no other profile or policy is hiding the microphone.",
+	"mic_prompt_dismissed_cause": "The permission prompt was dismissed rather than answered.",
+	"mic_prompt_dismissed_fix": "Retry and choose Allow when Chrome asks.",
+	"mic_unmet_constraints_cause": "The device cannot meet the audio constraints we asked for.",
+	"mic_unmet_constraints_fix": "Report this — MICROPHONE_CONSTRAINTS in capture.ts needs relaxing for this device.",
+	"mic_unrecognised_cause": "Unrecognised failure.",
+	"mic_unrecognised_fix": "Report the error above.",
+	"nav_add_observation": "Add observation",
+	"nav_downloads": "Downloads",
+	"nav_games": "Games",
+	"nav_home": "Home",
+	"nav_main_label": "Main",
+	"nav_observations": "Observations",
+	"observation_details_delete": "Delete",
+	"observation_details_delete_confirm": "Delete this observation? This can't be undone.",
+	"observation_details_delete_observation": "Delete observation",
+	"observation_details_keep": "Keep",
+	"observation_details_see_species": "See species",
+	"observation_form_add_photo": "Add a photo",
+	"observation_form_back": "Back to identification methods",
+	"observation_form_capture_alt": "Attached to this observation",
+	"observation_form_change_capture": "Change",
+	"observation_form_notes": "Notes",
+	"observation_form_notes_placeholder": "Behaviour, weather, count",
+	"observation_form_preset_hint": "Seen it? Save it in one tap.",
+	"observation_form_save": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Save observation",
+				"countPlural=other": "Save {count} observations"
+			}
+		}
+	],
+	"observation_form_saving": "Saving…",
+	"observation_form_when": "When",
+	"observation_row_delete": "Delete {name}",
+	"observations_species_filter_clear": "Show every species",
+	"observations_species_filter_fallback": "This species",
+	"observations_title": "Observations",
+	"observations_view_label": "View",
+	"observations_view_map": "Map",
+	"observations_view_timeline": "Timeline",
+	"offline_notice": "You are offline, showing species saved on this device.",
+	"sound_add_observations": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Add {count} observation",
+				"countPlural=other": "Add {count} observations"
+			}
+		}
+	],
+	"sound_diagnosis_cause": "Cause:",
+	"sound_diagnosis_fix": "Fix:",
+	"sound_listening": "Listening",
+	"sound_listening_unlocated": "Listening — no location, results are not filtered",
+	"sound_not_downloaded": "Sound detection is not downloaded yet — get it from the Downloads page.",
+	"sound_nothing_confirmed": "Nothing confirmed yet — a species needs two separate windows.",
+	"sound_start": "Start listening",
+	"sound_step_hint": "Tap every species you heard",
+	"sound_stop": "Stop",
+	"species_facet_clear": "Clear {label}",
+	"species_facet_empty": "Nothing matches.",
+	"species_facet_search": "Search {label}…",
+	"species_facet_selected": "{count} selected",
+	"species_facts_family": "Family",
+	"species_facts_iucn_status": "IUCN status",
+	"species_facts_other_language_name": "French name",
+	"species_filters_clear_all": "Clear all",
+	"species_filters_iucn": "IUCN",
+	"species_filters_toggle": "Filters",
+	"species_habitat": "Habitat",
+	"species_list_no_match_filters": "No bird matches these filters",
+	"species_list_no_match_query": "No bird matches “{query}”",
+	"species_list_no_match_query_and_filters": "No bird matches “{query}” with these filters",
+	"species_order": "Order",
+	"species_page_avibase": "See on Avibase ↗",
+	"species_page_back": "Back to search",
+	"species_page_not_found": "This species is not on this device. Download the list first.",
+	"species_page_see_all": "See them all",
+	"species_page_seen_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Seen once",
+				"countPlural=other": "Seen {count} times"
+			}
+		}
+	],
+	"species_page_seen_it": "I saw it",
+	"species_page_xeno_canto": "Listen on Xeno-canto ↗",
+	"species_picker_label": "Species",
+	"species_picker_placeholder": "Common Kingfisher",
+	"species_picker_unlisted": "Not in your list: saved as an unlisted species.",
+	"species_search_clear": "Clear search",
+	"species_search_placeholder": "Search a bird",
+	"species_status": "Status",
+	"status_endemic": "Endemic",
+	"status_introduced": "Introduced",
+	"status_invasive": "Invasive",
+	"status_native": "Native",
+	"status_occasional": "Occasional",
+	"status_subendemic": "Subendemic",
+	"timeline_empty": "Nothing here yet.",
+	"timeline_empty_hint": "Tap + below, or \"I saw it\" on a species card.",
+	"timeline_loading": "Loading observations…",
+	"timeline_today": "Today",
+	"timeline_unlisted": "Unlisted",
+	"timeline_yesterday": "Yesterday",
+	"trip_active_end": "End",
+	"trip_active_label": "On a trip",
+	"trip_all_no_match": "No trip matches “{query}”.",
+	"trip_all_observation_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} observation",
+				"countPlural=other": "{count} observations"
+			}
+		}
+	],
+	"trip_all_search": "Search a trip",
+	"trip_all_title": "All trips",
+	"trip_chips_all": "All trips ({count})",
+	"trip_chips_label": "Trips",
+	"trip_chips_new": "New trip",
+	"trip_form_cancel": "Cancel",
+	"trip_form_day": "Day",
+	"trip_form_day_hint": "Today starts the trip now. Another day lets you fill one in afterwards.",
+	"trip_form_name": "Trip",
+	"trip_form_save": "Save trip",
+	"trip_select_label": "Trip",
+	"trip_select_none": "No trip",
+	"update_prompt_action": "Update",
+	"update_prompt_description": "A new version of Wildex is ready.",
+	"update_prompt_title": "Update available"
+}

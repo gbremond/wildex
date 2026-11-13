@@ -12,6 +12,8 @@
 		type IdentificationOption,
 		type IdentificationOptionId
 	} from '../model/identification';
+	import { IDENTIFICATION_COPY } from './identification-copy';
+	import { m } from '$lib/paraglide/messages';
 
 	let { onChoose }: { onChoose: (option: IdentificationOption) => void } = $props();
 
@@ -24,8 +26,8 @@
 </script>
 
 <Drawer.Header>
-	<Drawer.Title>New observation</Drawer.Title>
-	<Drawer.Description>How do you want to identify the species?</Drawer.Description>
+	<Drawer.Title>{m.identification_title()}</Drawer.Title>
+	<Drawer.Description>{m.identification_question()}</Drawer.Description>
 </Drawer.Header>
 
 <Item.Group class="gap-2 px-4 pb-6">
@@ -38,8 +40,8 @@
 						<Icon aria-hidden="true" focusable="false" class="size-5" />
 					</Item.Media>
 					<Item.Content>
-						<Item.Title>{option.label}</Item.Title>
-						<Item.Description>{option.hint}</Item.Description>
+						<Item.Title>{IDENTIFICATION_COPY[option.id].label()}</Item.Title>
+						<Item.Description>{IDENTIFICATION_COPY[option.id].hint()}</Item.Description>
 					</Item.Content>
 					<Item.Actions>
 						<ChevronRightIcon

@@ -7,9 +7,9 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import { NO_FILTERS, countSelectedFilters, type SpeciesFilters } from '../model/filters';
 	import {
-		HABITAT_OPTIONS,
-		IUCN_OPTIONS,
-		STATUS_OPTIONS,
+		habitatOptions,
+		iucnOptions,
+		statusOptions,
 		toOrderOptions,
 		type FacetOption
 	} from './facet-options';
@@ -18,6 +18,7 @@
 	import IucnBadge from './IucnBadge.svelte';
 	import SpeciesFacetFilter from './SpeciesFacetFilter.svelte';
 	import type { Snippet } from 'svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		filters = $bindable(),
@@ -58,7 +59,7 @@
 			{#snippet child({ props })}
 				<Button {...props} variant="outline" size="sm">
 					<SlidersHorizontalIcon />
-					Filters
+					{m.species_filters_toggle()}
 					{#if selectedCount > 0}
 						<Badge variant="secondary">{selectedCount}</Badge>
 					{/if}
@@ -70,7 +71,7 @@
 		{#if selectedCount > 0}
 			<Button variant="ghost" size="sm" class="text-muted-foreground" onclick={clearAll}>
 				<XIcon />
-				Clear all
+				{m.species_filters_clear_all()}
 			</Button>
 		{/if}
 	</div>
@@ -80,27 +81,27 @@
 	>
 		<div class="flex flex-wrap gap-2 pt-2 pb-1">
 			<SpeciesFacetFilter
-				label="Status"
-				options={STATUS_OPTIONS}
+				label={m.species_status()}
+				options={statusOptions()}
 				bind:selected={filters.status}
 				{onchange}
 				optionBadge={statusOptionBadge}
 			/>
 			<SpeciesFacetFilter
-				label="Order"
+				label={m.species_order()}
 				options={orderOptions}
 				bind:selected={filters.order}
 				{onchange}
 			/>
 			<SpeciesFacetFilter
-				label="Habitat"
-				options={HABITAT_OPTIONS}
+				label={m.species_habitat()}
+				options={habitatOptions()}
 				bind:selected={filters.habitat}
 				{onchange}
 			/>
 			<SpeciesFacetFilter
-				label="IUCN"
-				options={IUCN_OPTIONS}
+				label={m.species_filters_iucn()}
+				options={iucnOptions()}
 				bind:selected={filters.iucn}
 				{onchange}
 				optionBadge={iucnOptionBadge}

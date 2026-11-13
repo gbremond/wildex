@@ -46,10 +46,15 @@ export type Species = {
 	iucnCategory: IucnCategory;
 	avibaseId?: string;
 	description?: string;
+	frenchDescription?: string;
 };
 
 function isOneOf<Value extends string>(values: readonly Value[], value: unknown): value is Value {
 	return values.includes(value as Value);
+}
+
+function isOptionalString(value: unknown): boolean {
+	return value === undefined || typeof value === 'string';
 }
 
 export function isSpecies(value: unknown): value is Species {
@@ -68,6 +73,7 @@ export function isSpecies(value: unknown): value is Species {
 		isOneOf(STATUSES, species.status) &&
 		isOneOf(IUCN_CATEGORIES, species.iucnCategory) &&
 		(species.avibaseId === undefined || typeof species.avibaseId === 'string') &&
-		(species.description === undefined || typeof species.description === 'string')
+		isOptionalString(species.description) &&
+		isOptionalString(species.frenchDescription)
 	);
 }

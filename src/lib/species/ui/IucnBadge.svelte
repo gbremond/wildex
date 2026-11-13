@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { IucnCategory } from '../model/model';
 	import { iucnBadgeVariant, iucnIcon } from './badge-variants';
-	import { readableLabel } from './labels';
+	import { iucnLabel } from './labels';
 	import { Badge } from '$lib/components/ui/badge';
 
 	let { category }: { category: IucnCategory } = $props();
@@ -11,5 +11,5 @@
 
 <Badge variant={iucnBadgeVariant(category)}>
 	<Icon data-icon="inline-start" />
-	{readableLabel(category)}
+	{iucnLabel(category)}
 </Badge>

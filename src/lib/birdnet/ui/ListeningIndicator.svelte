@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
+
 	// Purely decorative: it says "we are listening", not what was heard. The
 	// animation is CSS so it keeps running on the compositor while inference
 	// blocks the main thread every window.
 	const BARS = [0.9, 0.5, 1, 0.65, 0.85, 0.4, 0.75];
 </script>
 
-<div class="flex items-end gap-1" role="status" aria-label="Listening">
+<div class="flex items-end gap-1" role="status" aria-label={m.sound_listening()}>
 	{#each BARS as height, index (index)}
 		<span
 			class="wave-bar w-1 rounded-full bg-current"

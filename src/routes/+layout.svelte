@@ -7,6 +7,9 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 	import BottomNavBar from '$lib/components/BottomNavBar.svelte';
+	import LanguageSwitch from '$lib/components/LanguageSwitch.svelte';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
 
@@ -16,7 +19,11 @@
 		isOffline = !navigator.onLine;
 	}
 
-	onMount(updateNetworkStatus);
+	onMount(() => {
+		updateNetworkStatus();
+		// Pages are prerendered in French; the reader's choice is only known in the browser.
+		document.documentElement.lang = getLocale();
+	});
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition || prefersReducedMotion.current) return;
@@ -36,6 +43,12 @@
 </svelte:head>
 <svelte:window ononline={updateNetworkStatus} onoffline={updateNetworkStatus} />
 
+<div class="relative mx-auto max-w-120">
+	<div class="absolute top-2 right-2 z-10">
+		<LanguageSwitch />
+	</div>
+</div>
+
 <main>
 	{@render children()}
 </main>
@@ -45,7 +58,7 @@
 
 	{#if isOffline}
 		<p role="status" class="mt-4 rounded bg-primary px-3 py-2 text-sm text-primary-foreground">
-			You are offline, showing species saved on this device.
+			{m.offline_notice()}
 		</p>
 	{/if}
 </footer>

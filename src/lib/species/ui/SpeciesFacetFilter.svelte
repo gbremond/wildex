@@ -7,6 +7,7 @@
 	import PlusCircleIcon from '@lucide/svelte/icons/circle-plus';
 	import type { Snippet } from 'svelte';
 	import type { FacetOption } from './facet-options';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		label,
@@ -56,7 +57,9 @@
 				{#if selected.length > 0}
 					<Separator orientation="vertical" class="mx-0.5 h-4" />
 					{#if selectedOptions.length > MAX_LISTED_OPTIONS}
-						<Badge variant="secondary">{selectedOptions.length} selected</Badge>
+						<Badge variant="secondary">
+							{m.species_facet_selected({ count: selectedOptions.length })}
+						</Badge>
 					{:else}
 						{#each selectedOptions as option (option.value)}
 							{#if optionBadge}
@@ -73,9 +76,9 @@
 
 	<Popover.Content class="w-60 p-0" align="start">
 		<Command.Root>
-			<Command.Input placeholder="Search {label}…" />
+			<Command.Input placeholder={m.species_facet_search({ label })} />
 			<Command.List class="max-h-64">
-				<Command.Empty>Nothing matches.</Command.Empty>
+				<Command.Empty>{m.species_facet_empty()}</Command.Empty>
 				<Command.Group>
 					{#each options as option (option.value)}
 						<Command.Item
@@ -96,7 +99,7 @@
 					<Command.Separator class="my-1" />
 					<Command.Group>
 						<Command.Item onSelect={clear} class="justify-center text-muted-foreground">
-							Clear {label}
+							{m.species_facet_clear({ label })}
 						</Command.Item>
 					</Command.Group>
 				{/if}

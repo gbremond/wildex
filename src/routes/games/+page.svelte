@@ -17,6 +17,9 @@
     import {cn} from '$lib/utils';
     import CheckIcon from '@lucide/svelte/icons/check';
     import XIcon from '@lucide/svelte/icons/x';
+    import {m} from '$lib/paraglide/messages';
+    import {getLocale} from '$lib/paraglide/runtime';
+    import {speciesName} from '$lib/species/model/names';
 
     let species = $state<Species[]>([]);
     let choices = $state<Species[]>([]);
@@ -69,14 +72,14 @@
 </script>
 
 <div class="mx-auto max-w-120 p-4 pb-(--bottom-nav-clearance)">
-    <h1 class="text-3xl">Games</h1>
+    <h1 class="text-3xl">{m.games_title()}</h1>
 
-    <p class="text-muted-foreground">Score : {score} / {attempts} attempts</p>
+    <p class="text-muted-foreground">{m.games_score({ score, attempts })}</p>
 
     {#if answer}
         <img
                 src={imageUrl}
-                alt="Bird to identify"
+                alt={m.games_image_alt()}
                 class="my-4 aspect-[3/2] w-full rounded object-cover"
         />
 
@@ -96,7 +99,7 @@
                     {:else if picked?.id === choice.id}
                         <XIcon data-icon="inline-start"/>
                     {/if}
-                    {choice.frenchName}
+                    {speciesName(choice, getLocale())}
                 </Button>
             {/each}
         </div>
@@ -112,28 +115,28 @@
                         {/if}
                     </ItemMedia>
                     <ItemContent>
-                        <ItemTitle>{hasWon ? 'Correct!' : 'Not this one'}</ItemTitle>
+                        <ItemTitle>{hasWon ? m.games_correct() : m.games_wrong()}</ItemTitle>
                         <ItemDescription>
                             {#if !hasWon}
-                                It was
+                                {m.games_answer_was()}
                             {:else}
-                                See
+                                {m.games_answer_see()}
                             {/if}
                             <a
                                     href={resolve('/species/[id]', { id: answer.id })}
                                     class="font-medium text-foreground underline underline-offset-4"
                             >
-                                {answer.frenchName}
+                                {speciesName(answer, getLocale())}
                             </a>
                         </ItemDescription>
                     </ItemContent>
                     <ItemActions>
-                        <Button onclick={startRound} size="sm">Next</Button>
+                        <Button onclick={startRound} size="sm">{m.games_next()}</Button>
                     </ItemActions>
                 </Item>
             </div>
         {/if}
     {:else}
-        <p class="mt-4">No species on this device yet. Download the list first.</p>
+        <p class="mt-4">{m.games_no_species()}</p>
     {/if}
 </div>

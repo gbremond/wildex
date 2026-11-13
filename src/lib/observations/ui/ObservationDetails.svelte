@@ -12,14 +12,16 @@
 	import BottomSheetContent from '$lib/components/BottomSheetContent.svelte';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import { journal } from '../data/journal.svelte';
-	import type { Observation } from '../model/observation';
+	import { observedName, type Observation } from '../model/observation';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 	import ObservationPhoto from './ObservationPhoto.svelte';
 
 	let { opened = $bindable(null) }: { opened: OpenedObservation | null } = $props();
 
 	let confirming = $derived(opened?.mode === 'delete');
 
-	const observedAtFormat = new Intl.DateTimeFormat(undefined, {
+	const observedAtFormat = new Intl.DateTimeFormat(getLocale(), {
 		dateStyle: 'full',
 		timeStyle: 'short'
 	});
@@ -46,7 +48,7 @@
 			{@const { observation } = opened}
 			{@const tripName = journal.tripName(observation.tripId)}
 			<Drawer.Header class="group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left">
-				<Drawer.Title>{observation.species.name}</Drawer.Title>
+				<Drawer.Title>{observedName(observation.species, getLocale())}</Drawer.Title>
 				<Drawer.Description>
 					{observedAtFormat.format(new Date(observation.observedAt))}
 					{#if tripName}· {tripName}{/if}
@@ -55,11 +57,13 @@
 
 			<div class="flex flex-col gap-4 px-4 pb-6">
 				{#if confirming}
-					<p class="text-sm">Delete this observation? This can't be undone.</p>
+					<p class="text-sm">{m.observation_details_delete_confirm()}</p>
 					<div class="grid grid-cols-2 gap-2">
-						<Button variant="outline" size="lg" onclick={keep}>Keep</Button>
+						<Button variant="outline" size="lg" onclick={keep}>
+							{m.observation_details_keep()}
+						</Button>
 						<Button variant="destructive" size="lg" onclick={() => remove(observation)}>
-							Delete
+							{m.observation_details_delete()}
 						</Button>
 					</div>
 				{:else}
@@ -77,7 +81,7 @@
 								size="lg"
 								onclick={close}
 							>
-								See species
+								{m.observation_details_see_species()}
 							</Button>
 						{/if}
 						<Button
@@ -87,7 +91,7 @@
 							onclick={() => (confirming = true)}
 						>
 							<Trash2Icon data-icon="inline-start" />
-							Delete observation
+							{m.observation_details_delete_observation()}
 						</Button>
 					</div>
 				{/if}

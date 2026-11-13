@@ -5,6 +5,7 @@
 	import { cn } from '$lib/utils';
 	import SearchXIcon from '@lucide/svelte/icons/search-x';
 	import type { Likelihoods } from '$lib/birdnet/model/likely';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		species,
@@ -21,10 +22,10 @@
 	} = $props();
 
 	const emptyMessage = $derived.by(() => {
-		if (query && hasFilters) return `No bird matches “${query}” with these filters`;
-		if (query) return `No bird matches “${query}”`;
+		if (query && hasFilters) return m.species_list_no_match_query_and_filters({ query });
+		if (query) return m.species_list_no_match_query({ query });
 
-		return 'No bird matches these filters';
+		return m.species_list_no_match_filters();
 	});
 
 	const SETTLING_ROWS = 10;

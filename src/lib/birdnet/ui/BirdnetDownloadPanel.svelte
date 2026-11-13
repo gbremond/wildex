@@ -6,8 +6,9 @@
 		downloadBirdnetModels,
 		totalBirdnetAssets
 	} from '../data/model-cache';
+	import { m } from '$lib/paraglide/messages';
 
-	const APPROXIMATE_SIZE = '105 MB';
+	const APPROXIMATE_SIZE_MB = 105;
 
 	let cachedCount = $state<number | null>(null);
 	let totalCount = $state(0);
@@ -46,20 +47,20 @@
 
 <Button onclick={downloadModels} disabled={isDownloading}>
 	{isDownloading
-		? `Downloading sound detection… ${progress?.done ?? 0}/${progress?.total ?? 0}`
+		? m.downloads_sound_progress({ done: progress?.done ?? 0, total: progress?.total ?? 0 })
 		: isComplete
-			? 'Re-download sound detection'
-			: `Download sound detection (${APPROXIMATE_SIZE})`}
+			? m.downloads_sound_again()
+			: m.downloads_sound_start({ size: APPROXIMATE_SIZE_MB })}
 </Button>
 
 <p>
 	{#if isComplete}
-		Sound detection available offline
+		{m.downloads_sound_ready()}
 	{:else}
-		Sound detection not downloaded — {cachedCount ?? 0}/{totalCount} files
+		{m.downloads_sound_missing({ cached: cachedCount ?? 0, total: totalCount })}
 	{/if}
 </p>
 
 {#if failedCount}
-	<p>{failedCount} files could not be downloaded — check your connection and retry.</p>
+	<p>{m.downloads_sound_failed({ count: failedCount })}</p>
 {/if}

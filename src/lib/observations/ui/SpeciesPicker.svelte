@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
+	import { speciesName } from '$lib/species/model/names';
 	import { onMount } from 'svelte';
 	import { Input } from '$lib/components/ui/input';
 	import type { Species } from '$lib/species/model/model';
@@ -32,17 +35,17 @@
 </script>
 
 <div class="flex flex-col gap-1.5">
-	<label for="observation-species" class="text-sm font-medium">Species</label>
+	<label for="observation-species" class="text-sm font-medium">{m.species_picker_label()}</label>
 	<Input
 		id="observation-species"
 		value={species.name}
 		oninput={rename}
-		placeholder="Martin-pêcheur d'Europe"
+		placeholder={m.species_picker_placeholder()}
 		autocomplete="off"
 	/>
 
 	{#if suggestions.length === 0 && species.name.trim() && !species.speciesId}
-		<p class="text-xs text-muted-foreground">Not in your list: saved as an unlisted species.</p>
+		<p class="text-xs text-muted-foreground">{m.species_picker_unlisted()}</p>
 	{:else if suggestions.length}
 		<ul class="flex flex-col gap-1">
 			{#each suggestions as suggestion (suggestion.id)}
@@ -59,7 +62,7 @@
 							class="size-9 shrink-0 rounded-lg"
 						/>
 						<span class="min-w-0">
-							<span class="block truncate text-sm">{suggestion.frenchName}</span>
+							<span class="block truncate text-sm">{speciesName(suggestion, getLocale())}</span>
 							<span class="block truncate text-xs text-muted-foreground italic">
 								{suggestion.scientificName}
 							</span>

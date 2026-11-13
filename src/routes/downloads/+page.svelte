@@ -10,6 +10,7 @@
 	import BirdnetDownloadPanel from '$lib/birdnet/ui/BirdnetDownloadPanel.svelte';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
+	import { m } from '$lib/paraglide/messages';
 
 	let storedCount = $state<number | null>(null);
 	let isDownloading = $state(false);
@@ -32,14 +33,14 @@
 </script>
 
 <div class="mx-auto max-w-120 p-4 pb-(--bottom-nav-clearance)">
-	<h1 class="text-3xl">Downloads</h1>
+	<h1 class="text-3xl">{m.downloads_title()}</h1>
 
 	<Button onclick={downloadAndStoreSpecies} disabled={isDownloading}>
-		{isDownloading ? 'Downloading…' : 'Download species'}
+		{isDownloading ? m.downloads_species_progress() : m.downloads_species_start()}
 	</Button>
 
 	{#if storedCount !== null}
-		<p>{storedCount} species stored offline</p>
+		<p>{m.downloads_species_stored({ count: storedCount })}</p>
 
 		<ImageDownloadPanel />
 	{/if}

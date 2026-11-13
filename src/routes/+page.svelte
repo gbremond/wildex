@@ -26,6 +26,7 @@
 	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
 	import { rankByLikelihood } from '$lib/birdnet/model/likely';
 	import { findLikelySpeciesHere, type LikelySpeciesHere } from '$lib/birdnet/data/likely-here';
+	import { m } from '$lib/paraglide/messages';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
@@ -111,25 +112,25 @@
 		{#if likelySpeciesHere === undefined}
 			<span class="flex items-center gap-2">
 				<LoaderCircleIcon aria-hidden="true" class="size-4 motion-safe:animate-spin" />
-				Finding the birds likely around you…
+				{m.home_around_me_finding()}
 			</span>
 		{:else if likelySpeciesHere.kind === 'not-downloaded'}
-			Around me needs sound detection — get it from the
+			{m.home_around_me_not_downloaded()}
 			<a href={resolve('/downloads')} class="font-medium text-primary underline underline-offset-4"
-				>Downloads page</a
+				>{m.home_around_me_downloads_link()}</a
 			>.
 		{:else if likelySpeciesHere.kind === 'no-position'}
-			Your position is not available, so the list is not narrowed.
+			{m.home_around_me_no_position()}
 		{:else if likelySpeciesHere.kind === 'unavailable'}
-			Around me is unavailable right now, so the list is not narrowed.
+			{m.home_around_me_unavailable()}
 		{:else}
-			Birds expected here this week, most likely first.
+			{m.home_around_me_found()}
 		{/if}
 	</p>
 {/snippet}
 
 <div class="mx-auto flex h-dvh max-w-120 flex-col gap-4 px-4 pt-6">
-	<h1 class="text-3xl">Birds</h1>
+	<h1 class="text-3xl">{m.home_title()}</h1>
 
 	{#if storedCount}
 		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />
@@ -143,7 +144,7 @@
 					onclick={toggleAroundMe}
 				>
 					<LocateIcon />
-					Around me
+					{m.home_around_me()}
 				</Button>
 			{/snippet}
 		</SpeciesFilterPanel>
@@ -162,11 +163,11 @@
 	{:else if storedCount === 0}
 		<div class="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
 			<BirdIcon aria-hidden="true" class="size-8" />
-			<p>No birds on this device yet.</p>
-			<p class="text-sm">Download the species list once, then search it offline.</p>
+			<p>{m.home_empty_title()}</p>
+			<p class="text-sm">{m.home_empty_hint()}</p>
 			<Button href={resolve('/downloads')} class="mt-2">
 				<DownloadIcon data-icon="inline-start" />
-				Go to Downloads
+				{m.home_empty_go_to_downloads()}
 			</Button>
 		</div>
 	{/if}

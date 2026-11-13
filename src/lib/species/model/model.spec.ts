@@ -29,6 +29,14 @@ describe('isSpecies', () => {
 		expect(isSpecies(validSpecies({ iucnCategory: 'UNKNOWN' }))).toBe(true);
 	});
 
+	it('accepts a species with a French description', () => {
+		expect(isSpecies(validSpecies({ frenchDescription: 'Un petit passereau.' }))).toBe(true);
+	});
+
+	it('rejects a non-string French description', () => {
+		expect(isSpecies(validSpecies({ frenchDescription: 42 }))).toBe(false);
+	});
+
 	it('rejects a non-string description', () => {
 		expect(isSpecies(validSpecies({ description: 42 }))).toBe(false);
 	});

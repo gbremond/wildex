@@ -2,6 +2,7 @@
 	import * as InputGroup from '$lib/components/ui/input-group';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import XIcon from '@lucide/svelte/icons/x';
+	import { m } from '$lib/paraglide/messages';
 
 	let { query = $bindable(), onchange }: { query: string; onchange: () => void } = $props();
 
@@ -17,7 +18,7 @@
 			<SearchIcon />
 		</InputGroup.Addon>
 		<InputGroup.Input
-			placeholder="Search a bird"
+			placeholder={m.species_search_placeholder()}
 			class={query ? 'pr-9' : ''}
 			bind:value={query}
 			oninput={onchange}
@@ -34,7 +35,7 @@
 		<InputGroup.Button
 			onclick={clearQuery}
 			size="icon-sm"
-			aria-label="Clear search"
+			aria-label={m.species_search_clear()}
 			class="absolute top-1/2 right-2 -translate-y-1/2"
 		>
 			<XIcon />

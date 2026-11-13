@@ -7,7 +7,13 @@
 	import ListIcon from '@lucide/svelte/icons/list';
 	import MapIcon from '@lucide/svelte/icons/map';
 	import { journal } from '$lib/observations/data/journal.svelte';
-	import { filterObservations, type ObservationFilter } from '$lib/observations/model/observation';
+	import {
+		filterObservations,
+		observedName,
+		type ObservationFilter
+	} from '$lib/observations/model/observation';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 	import { readObservationFilter, toObservationsPath } from '$lib/observations/model/filter-url';
 	import TripBar from '$lib/observations/ui/TripBar.svelte';
 	import ObservationTimeline from '$lib/observations/ui/ObservationTimeline.svelte';
@@ -15,17 +21,17 @@
 
 	type View = 'Timeline' | 'Map';
 
-	const VIEWS: { name: View; icon: Component }[] = [
-		{ name: 'Timeline', icon: ListIcon },
-		{ name: 'Map', icon: MapIcon }
+	const VIEWS: { name: View; label: () => string; icon: Component }[] = [
+		{ name: 'Timeline', label: m.observations_view_timeline, icon: ListIcon },
+		{ name: 'Map', label: m.observations_view_map, icon: MapIcon }
 	];
 
 	let view = $state<View>('Timeline');
 	let filter = $state<ObservationFilter>({});
 
 	let visibleObservations = $derived(filterObservations(journal.observations, filter));
-	let filteredSpeciesName = $derived(
-		journal.observations.find(({ species }) => species.speciesId === filter.speciesId)?.species.name
+	let filteredSpecies = $derived(
+		journal.observations.find(({ species }) => species.speciesId === filter.speciesId)?.species
 	);
 
 	onMount(() => journal.load());
@@ -45,7 +51,7 @@
 </script>
 
 <div class="mx-auto flex max-w-120 flex-col gap-4 px-4 pt-6 pb-(--bottom-nav-clearance)">
-	<h1 class="text-3xl">Observations</h1>
+	<h1 class="text-3xl">{m.observations_title()}</h1>
 
 	<TripBar selectedTripId={filter.tripId} onSelect={toggleTrip} />
 
@@ -54,14 +60,20 @@
 			href={resolve(toObservationsPath({ tripId: filter.tripId }))}
 			class="flex h-8 w-fit items-center gap-1.5 rounded-full bg-primary pr-2 pl-3 text-sm text-primary-foreground"
 		>
-			{filteredSpeciesName ?? 'This species'}
+			{filteredSpecies
+				? observedName(filteredSpecies, getLocale())
+				: m.observations_species_filter_fallback()}
 			<XIcon aria-hidden="true" class="size-4" />
-			<span class="sr-only">Show every species</span>
+			<span class="sr-only">{m.observations_species_filter_clear()}</span>
 		</a>
 	{/if}
 
-	<div role="group" aria-label="View" class="grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
-		{#each VIEWS as { name, icon: Icon } (name)}
+	<div
+		role="group"
+		aria-label={m.observations_view_label()}
+		class="grid grid-cols-2 gap-1 rounded-full bg-muted p-1"
+	>
+		{#each VIEWS as { name, label, icon: Icon } (name)}
 			<button
 				type="button"
 				aria-pressed={view === name}
@@ -72,7 +84,7 @@
 				)}
 			>
 				<Icon aria-hidden="true" class="size-4" />
-				{name}
+				{label()}
 			</button>
 		{/each}
 	</div>

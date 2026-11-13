@@ -3,6 +3,7 @@
 	import { cacheSpeciesImages, countCachedImages } from '../data/image-cache';
 	import { getSpeciesList } from '../data/repository';
 	import { Button } from '$lib/components/ui/button';
+	import { m } from '$lib/paraglide/messages';
 
 	let cachedCount = $state<number | null>(null);
 	let isDownloading = $state(false);
@@ -35,12 +36,12 @@
 
 <Button onclick={downloadImages} disabled={isDownloading}>
 	{isDownloading
-		? `Downloading images… ${progress?.done ?? 0}/${progress?.total ?? 0}`
-		: 'Download images'}
+		? m.downloads_images_progress({ done: progress?.done ?? 0, total: progress?.total ?? 0 })
+		: m.downloads_images_start()}
 </Button>
 
-<p>{cachedCount ?? 0} images stored offline</p>
+<p>{m.downloads_images_stored({ count: cachedCount ?? 0 })}</p>
 
 {#if failedCount}
-	<p>{failedCount} images could not be downloaded — check your connection and retry.</p>
+	<p>{m.downloads_images_failed({ count: failedCount })}</p>
 {/if}

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	filterObservations,
 	groupByDay,
+	observedName,
 	observedSpeciesFrom,
 	photoOf,
 	type Observation
@@ -105,6 +106,22 @@ describe('observedSpeciesFrom', () => {
 			englishName: 'Common Kingfisher'
 		} as Species;
 
-		expect(observedSpeciesFrom(species)).toEqual(kingfisher);
+		expect(observedSpeciesFrom(species)).toEqual({
+			...kingfisher,
+			englishName: 'Common Kingfisher'
+		});
+	});
+});
+
+describe('observedName', () => {
+	const listed = { ...kingfisher, englishName: 'Common Kingfisher' };
+
+	it('follows the language of the app for a listed species', () => {
+		expect(observedName(listed, 'en')).toBe('Common Kingfisher');
+		expect(observedName(listed, 'fr')).toBe('Martin-pêcheur');
+	});
+
+	it('keeps a name typed by hand whatever the language', () => {
+		expect(observedName({ name: 'Goéland bizarre' }, 'en')).toBe('Goéland bizarre');
 	});
 });

@@ -10,6 +10,7 @@
 		ItemActions
 	} from '$lib/components/ui/item';
 	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
+	import { m } from '$lib/paraglide/messages';
 
 	let waitingWorker = $state<ServiceWorker | null>(null);
 
@@ -61,11 +62,11 @@
 				<RefreshCwIcon class="text-primary" />
 			</ItemMedia>
 			<ItemContent>
-				<ItemTitle>Update available</ItemTitle>
-				<ItemDescription>A new version of Wildex is ready.</ItemDescription>
+				<ItemTitle>{m.update_prompt_title()}</ItemTitle>
+				<ItemDescription>{m.update_prompt_description()}</ItemDescription>
 			</ItemContent>
 			<ItemActions>
-				<Button onclick={triggerUpdate} size="sm">Update</Button>
+				<Button onclick={triggerUpdate} size="sm">{m.update_prompt_action()}</Button>
 			</ItemActions>
 		</Item>
 	</div>

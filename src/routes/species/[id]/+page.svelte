@@ -8,6 +8,9 @@
 	import { markSpeciesTransition } from '$lib/species/ui/transition.svelte';
 	import SpeciesHero from '$lib/species/ui/SpeciesHero.svelte';
 	import SpeciesFacts from '$lib/species/ui/SpeciesFacts.svelte';
+	import { speciesDescription } from '$lib/species/model/names';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 	import ExternalLink from '$lib/components/ExternalLink.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
@@ -31,10 +34,11 @@
 	let canGoBack = $state(false);
 
 	let referenceUrl = $derived(species ? avibaseUrl(species) : null);
+	let description = $derived(species && speciesDescription(species, getLocale()));
 	let observations = $derived(filterObservations(journal.observations, { speciesId: params.id }));
 	let opened = $state<OpenedObservation | null>(null);
 
-	const observedAtFormat = new Intl.DateTimeFormat(undefined, {
+	const observedAtFormat = new Intl.DateTimeFormat(getLocale(), {
 		dateStyle: 'medium',
 		timeStyle: 'short'
 	});
@@ -70,14 +74,14 @@
 			class="-ml-3 text-primary-foreground hover:text-primary-foreground"
 		>
 			<ArrowLeftIcon data-icon="inline-start" />
-			Back to search
+			{m.species_page_back()}
 		</Button>
 	</div>
 </div>
 
 <div class="mx-auto max-w-120 pb-(--bottom-nav-clearance)">
 	{#if isLoading}
-		<p class="p-4">Loading…</p>
+		<p class="p-4">{m.loading()}</p>
 	{:else if species}
 		<SpeciesHero {species} />
 
@@ -88,7 +92,7 @@
 				{#snippet trigger(props)}
 					<Button {...props} size="lg" class="w-full">
 						<BinocularsIcon data-icon="inline-start" />
-						I saw it
+						{m.species_page_seen_it()}
 					</Button>
 				{/snippet}
 			</ObservationSheet>
@@ -97,13 +101,13 @@
 				<section class="flex flex-col gap-3">
 					<div class="flex items-baseline justify-between">
 						<h2 class="text-lg font-medium">
-							Seen {observations.length === 1 ? 'once' : `${observations.length} times`}
+							{m.species_page_seen_count({ count: observations.length })}
 						</h2>
 						<a
 							href={resolve(toObservationsPath({ speciesId: species.id }))}
 							class="text-sm font-medium text-primary underline-offset-4 hover:underline"
 						>
-							See them all
+							{m.species_page_see_all()}
 						</a>
 					</div>
 					<ul class="flex flex-col gap-3">
@@ -124,19 +128,19 @@
 				</section>
 			{/if}
 
-			{#if species.description}
-				<p class="text-sm leading-relaxed">{species.description}</p>
+			{#if description}
+				<p class="text-sm leading-relaxed">{description}</p>
 			{/if}
 
 			<div class="flex flex-col gap-2">
 				{#if referenceUrl}
-					<ExternalLink href={referenceUrl}>See on Avibase ↗</ExternalLink>
+					<ExternalLink href={referenceUrl}>{m.species_page_avibase()}</ExternalLink>
 				{/if}
-				<ExternalLink href={xenoCantoUrl(species)}>Listen on Xeno-canto ↗</ExternalLink>
+				<ExternalLink href={xenoCantoUrl(species)}>{m.species_page_xeno_canto()}</ExternalLink>
 			</div>
 		</div>
 	{:else}
-		<p class="p-4">This species is not on this device. Download the list first.</p>
+		<p class="p-4">{m.species_page_not_found()}</p>
 	{/if}
 </div>
 

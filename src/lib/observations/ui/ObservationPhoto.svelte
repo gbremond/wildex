@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { getLocale } from '$lib/paraglide/runtime';
 	import Feather from '@lucide/svelte/icons/feather';
 	import { cn } from '$lib/utils';
 	import SpeciesAvatar from '$lib/species/ui/SpeciesAvatar.svelte';
 	import { speciesAvatarGradient } from '$lib/species/ui/avatar-gradient';
 	import type { SpeciesImageSize } from '$lib/species/data/image';
-	import { photoOf, type Observation } from '../model/observation';
+	import { observedName, photoOf, type Observation } from '../model/observation';
 
 	let {
 		observation,
@@ -26,7 +27,7 @@
 {#if captureUrl}
 	<img
 		src={captureUrl}
-		alt={observation.species.name}
+		alt={observedName(observation.species, getLocale())}
 		class={cn('overflow-hidden rounded-xl object-cover', className)}
 	/>
 {:else if photo.kind === 'species'}
