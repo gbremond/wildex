@@ -9,7 +9,7 @@ import { readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
-import { fetchDescription } from './lib/wikipedia.mjs';
+import { fetchDescription, fetchFrenchDescription } from './lib/wikipedia.mjs';
 import { fetchIucnCategory } from './lib/iucn.mjs';
 
 const OUTPUT_FILE = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'static', 'birds.json');
@@ -167,10 +167,12 @@ async function enrichBirds(birds, iucnToken) {
 	let completed = 0;
 	let iucnHits = 0;
 	let descriptionHits = 0;
+	let frenchDescriptionHits = 0;
 
 	await mapWithConcurrency(birds, 3, async (bird) => {
-		const [description, iucnCategory] = await Promise.all([
+		const [description, frenchDescription, iucnCategory] = await Promise.all([
 			fetchDescription(bird.scientificName).catch(() => undefined),
+			fetchFrenchDescription(bird).catch(() => undefined),
 			fetchIucnCategory(bird.scientificName, iucnToken).catch(() => undefined)
 		]);
 
@@ -178,12 +180,16 @@ async function enrichBirds(birds, iucnToken) {
 			bird.description = description;
 			descriptionHits++;
 		}
+		if (frenchDescription) {
+			bird.frenchDescription = frenchDescription;
+			frenchDescriptionHits++;
+		}
 		bird.iucnCategory = iucnCategory ?? UNKNOWN_IUCN;
 		if (iucnCategory) iucnHits++;
 
 		completed++;
 		process.stdout.write(
-			`\renriching ${completed}/${birds.length} (iucn ${iucnHits}, description ${descriptionHits})`
+			`\renriching ${completed}/${birds.length} (iucn ${iucnHits}, description ${descriptionHits}, fr ${frenchDescriptionHits})`
 		);
 	});
 
@@ -214,6 +220,9 @@ function report(birds) {
 
 	console.log(`  iucn     ${assessed.length}/${birds.length}`);
 	console.log(`  description ${birds.filter((bird) => bird.description).length}/${birds.length}`);
+	console.log(
+		`  description fr ${birds.filter((bird) => bird.frenchDescription).length}/${birds.length}`
+	);
 	console.log(`  fallback ${birds.filter((bird) => !named(bird)).length} without a French name`);
 }
 
