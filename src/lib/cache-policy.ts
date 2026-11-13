@@ -1,9 +1,10 @@
 import { SPECIES_IMAGE_CACHE } from './species/data/image';
 import { BIRDNET_CACHE } from './birdnet/data/models';
+import { MAP_TILE_CACHE } from './observations/data/map-tiles';
 
-// Downloaded photos and models are the user's data, not a build artefact: a
-// deployment invalidates the app shell but must never evict them.
-const DURABLE_CACHES: string[] = [SPECIES_IMAGE_CACHE, BIRDNET_CACHE];
+// Downloaded photos, models and map tiles are the user's data, not a build artefact:
+// a deployment invalidates the app shell but must never evict them.
+const DURABLE_CACHES: string[] = [SPECIES_IMAGE_CACHE, BIRDNET_CACHE, MAP_TILE_CACHE];
 
 export function isObsoleteCache(key: string, currentAppCache: string): boolean {
 	return key !== currentAppCache && !DURABLE_CACHES.includes(key);

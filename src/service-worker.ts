@@ -13,6 +13,7 @@
 import { base, build, files, prerendered, version } from '$service-worker';
 import { SPECIES_IMAGE_CACHE, SPECIES_IMAGE_HOST } from '$lib/species/data/image';
 import { BIRDNET_CACHE, isBirdnetAsset } from '$lib/birdnet/data/models';
+import { MAP_TILE_CACHE, MAP_TILE_HOST } from '$lib/observations/data/map-tiles';
 import { isObsoleteCache, toCachePolicy } from '$lib/cache-policy';
 
 // This gives `self` the correct types
@@ -48,13 +49,25 @@ self.addEventListener('fetch', (event) => {
 
 	const url = new URL(event.request.url);
 
+	// Species photos never change and Cornell's endpoint is a small research service.
+	// This is also what fills the cache when photos are downloaded for offline use.
 	if (url.hostname === SPECIES_IMAGE_HOST) {
-		event.respondWith(serveSpeciesImage(event));
+		event.respondWith(serveCacheFirst(event, SPECIES_IMAGE_CACHE, isCacheableImage));
 		return;
 	}
 
+	// OpenStreetMap asks clients to cache tiles; keeping them also gives an offline map
+	// of the places already visited.
+	if (url.hostname === MAP_TILE_HOST) {
+		event.respondWith(serveCacheFirst(event, MAP_TILE_CACHE, isCacheableImage));
+		return;
+	}
+
+	// ~100 MB of weights and wasm, downloaded deliberately from the Downloads page.
+	// Never precached: an atomic addAll that size would re-download on every install
+	// and reject the whole app shell if one request failed.
 	if (isBirdnetAsset(url.pathname)) {
-		event.respondWith(serveBirdnetAsset(event));
+		event.respondWith(serveCacheFirst(event, BIRDNET_CACHE, isCacheableAsset));
 		return;
 	}
 
@@ -99,18 +112,18 @@ function isCacheableAsset(response: Response): boolean {
 	return response.status === 200 && !response.headers.get('cache-control')?.includes('no-store');
 }
 
-// Cornell sends no CORS headers, so image responses are opaque: their status
-// reads as 0 and only a readable response can be judged on `ok`.
+// Cross-origin images are fetched without CORS, so their responses are opaque:
+// the status reads as 0 and only a readable response can be judged on `ok`.
 function isCacheableImage(response: Response): boolean {
 	return response.type === 'opaque' || response.ok;
 }
 
-// Species photos never change and Cornell's endpoint is a small research service:
-// serve one from cache once fetched, instead of re-fetching it on every view.
-// This is also what fills the cache when the user downloads photos for offline
-// use, so it is the single place species images are written.
-async function serveSpeciesImage(event: FetchEvent): Promise<Response> {
-	const cache = await caches.open(SPECIES_IMAGE_CACHE);
+async function serveCacheFirst(
+	event: FetchEvent,
+	cacheName: string,
+	isCacheable: (response: Response) => boolean
+): Promise<Response> {
+	const cache = await caches.open(cacheName);
 	const cached = await cache.match(event.request);
 
 	if (cached) {
@@ -119,28 +132,7 @@ async function serveSpeciesImage(event: FetchEvent): Promise<Response> {
 
 	const response = await fetch(event.request);
 
-	if (isCacheableImage(response)) {
-		event.waitUntil(store(cache, event.request, response.clone()));
-	}
-
-	return response;
-}
-
-// ~100 MB of weights and wasm, downloaded deliberately from the Downloads page.
-// They get their own durable cache so a deployment cannot evict them, and they
-// are never precached: a single atomic addAll of that size would re-download on
-// every install and reject the whole app shell if one request failed.
-async function serveBirdnetAsset(event: FetchEvent): Promise<Response> {
-	const cache = await caches.open(BIRDNET_CACHE);
-	const cached = await cache.match(event.request);
-
-	if (cached) {
-		return cached;
-	}
-
-	const response = await fetch(event.request);
-
-	if (isCacheableAsset(response)) {
+	if (isCacheable(response)) {
 		event.waitUntil(store(cache, event.request, response.clone()));
 	}
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { isObsoleteCache, toCachePolicy } from './cache-policy';
 import { SPECIES_IMAGE_CACHE } from './species/data/image';
 import { BIRDNET_CACHE } from './birdnet/data/models';
+import { MAP_TILE_CACHE } from './observations/data/map-tiles';
 
 const CURRENT_APP_CACHE = 'cache-abc123';
 
@@ -20,6 +21,10 @@ describe('isObsoleteCache', () => {
 
 	it('keeps the downloaded models across a deployment', () => {
 		expect(isObsoleteCache(BIRDNET_CACHE, CURRENT_APP_CACHE)).toBe(false);
+	});
+
+	it('keeps the cached map tiles across a deployment', () => {
+		expect(isObsoleteCache(MAP_TILE_CACHE, CURRENT_APP_CACHE)).toBe(false);
 	});
 
 	it('deletes a cache left over from an earlier implementation', () => {
