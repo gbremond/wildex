@@ -42,7 +42,9 @@
 	}
 </script>
 
-<Drawer.Root open={opened !== null} onOpenChange={(isOpen) => !isOpen && close()}>
+<!-- Bound, not just passed: after a swipe down the drawer kept its own closed state, and
+     the next observation tapped opened nothing. -->
+<Drawer.Root bind:open={() => opened !== null, (isOpen) => !isOpen && close()}>
 	<BottomSheetContent>
 		{#if opened}
 			{@const { observation } = opened}
