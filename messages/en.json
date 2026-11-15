@@ -207,6 +207,7 @@
 	"sound_step_hint": "Tap every species you heard",
 	"sound_stop": "Stop",
 	"species_facet_clear": "Clear {label}",
+	"species_gallery_label": "Photos of the species",
 	"species_facet_empty": "Nothing matches.",
 	"species_facet_search": "Search {label}…",
 	"species_facet_selected": "{count} selected",

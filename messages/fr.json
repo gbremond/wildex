@@ -216,6 +216,7 @@
 	"sound_step_hint": "Toucher chaque espèce entendue",
 	"sound_stop": "Arrêter",
 	"species_facet_clear": "Effacer {label}",
+	"species_gallery_label": "Photos de l'espèce",
 	"species_facet_empty": "Aucun résultat.",
 	"species_facet_search": "Rechercher dans {label}…",
 	"species_facet_selected": "{count} sélectionnés",

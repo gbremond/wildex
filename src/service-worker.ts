@@ -12,6 +12,7 @@
 
 import { base, build, files, prerendered, version } from '$service-worker';
 import { SPECIES_IMAGE_CACHE, SPECIES_IMAGE_HOST } from '$lib/species/data/image';
+import { INATURALIST_HOSTS } from '$lib/species/data/inaturalist';
 import { BIRDNET_CACHE, isBirdnetAsset } from '$lib/birdnet/data/models';
 import { MAP_TILE_CACHE, MAP_TILE_HOST } from '$lib/observations/data/map-tiles';
 import { isObsoleteCache, toCachePolicy } from '$lib/cache-policy';
@@ -55,6 +56,9 @@ self.addEventListener('fetch', (event) => {
 		event.respondWith(serveCacheFirst(event, SPECIES_IMAGE_CACHE, isCacheableImage));
 		return;
 	}
+
+	// Extra photos are an online bonus: left to the browser's own cache, not kept for offline.
+	if (INATURALIST_HOSTS.includes(url.hostname)) return;
 
 	// OpenStreetMap asks clients to cache tiles; keeping them also gives an offline map
 	// of the places already visited.
