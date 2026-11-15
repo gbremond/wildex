@@ -165,6 +165,28 @@
 	"observations_view_map": "Map",
 	"observations_view_timeline": "Timeline",
 	"offline_notice": "You are offline, showing species saved on this device.",
+	"save_moment_done": "Done",
+	"save_moment_first": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "First sighting",
+				"countPlural=other": "First sightings"
+			}
+		}
+	],
+	"save_moment_life_list": "{count} species seen so far.",
+	"save_moment_saved": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Observation saved",
+				"countPlural=other": "{count} observations saved"
+			}
+		}
+	],
 	"sound_add_observations": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],

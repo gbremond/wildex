@@ -8,6 +8,7 @@
 	import { groupByDay, observedName, type Observation } from '../model/observation';
 	import ObservationDetails, { type OpenedObservation } from './ObservationDetails.svelte';
 	import ObservationRow from './ObservationRow.svelte';
+	import { ARRIVE_CLASS, hasJustArrived } from './arrival.svelte';
 
 	let { observations }: { observations: Observation[] } = $props();
 
@@ -43,14 +44,15 @@
 {:else}
 	<ol class="flex flex-col gap-6">
 		{#each days as { day, observations: ofTheDay } (day)}
-			<li>
+			<!-- A day made only of new observations is new itself, title included. -->
+			<li class={{ [ARRIVE_CLASS]: ofTheDay.every(hasJustArrived) }}>
 				<h2 class="text-sm font-medium text-muted-foreground first-letter:uppercase">
 					{dayTitle(day)}
 				</h2>
 				<ul class="mt-2 flex flex-col gap-3 border-l-2 border-muted pl-3">
 					{#each ofTheDay as observation (observation.id)}
 						{@const tripName = journal.tripName(observation.tripId)}
-						<li>
+						<li class={{ [ARRIVE_CLASS]: hasJustArrived(observation) }}>
 							<ObservationRow {observation} onOpen={(mode) => (opened = { observation, mode })}>
 								<span class="flex items-baseline gap-2">
 									<span class="truncate text-base font-medium"

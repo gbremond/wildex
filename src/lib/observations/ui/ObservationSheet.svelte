@@ -27,7 +27,11 @@
 		whereSeen
 	} from '../model/draft';
 	import { tripAt } from '../model/trip';
-	import { observedSpeciesFrom, type ObservedSpecies } from '../model/observation';
+	import { observedSpeciesFrom, type Observation, type ObservedSpecies } from '../model/observation';
+	import { firstSightings, lifeListSize } from '../model/milestones';
+	import { vibrate } from '$lib/haptics';
+	import { announceArrival } from './arrival.svelte';
+	import SaveMoment from './SaveMoment.svelte';
 	import { journal } from '../data/journal.svelte';
 	import { toObservedSpecies } from '../data/heard-species';
 	import IdentificationOptions from './IdentificationOptions.svelte';
@@ -50,7 +54,11 @@
 
 	const MANUAL_OPTION = IDENTIFICATION_OPTIONS.find((option) => option.method === 'manual')!;
 
+	// Long enough to see the stamp land, short enough not to slow the next bird down.
+	const SAVED_MOMENT_MS = 900;
+
 	type HeardObservation = { species: ObservedSpecies; score: number; capture: File };
+	type SavedMoment = { saved: Observation[]; firstSightings: Observation[] };
 
 	let chosenOption = $state<IdentificationOption | null>(null);
 	let species = $state<ObservedSpecies>({ name: '' });
@@ -62,8 +70,10 @@
 	let listening = $state(false);
 	let heard = $state<HeardObservation[]>([]);
 	let saving = $state(false);
+	let savedMoment = $state.raw<SavedMoment | null>(null);
 
 	let captureInput: HTMLInputElement;
+	let closeTimer: ReturnType<typeof setTimeout> | undefined;
 	let awaitedOption: IdentificationOption | null = null;
 	// Asked for on open: a GPS fix takes seconds.
 	let positionFix: Promise<Position | null> = Promise.resolve(null);
@@ -98,6 +108,7 @@
 		observedAt = localDateTime(new Date());
 		notes = '';
 		saving = false;
+		savedMoment = null;
 		positionFix = currentPosition();
 	}
 
@@ -182,11 +193,37 @@
 				tripId: trip?.id ?? null
 			};
 
-			await journal.add(drafts.map((draft) => toObservation(draft, context)));
-			open = false;
+			const saved = drafts.map((draft) => toObservation(draft, context));
+			const firsts = firstSightings(saved, journal.observations);
+
+			await journal.add(saved);
+			showSavedMoment({ saved, firstSightings: firsts });
 		} finally {
 			saving = false;
 		}
+	}
+
+	// Only a first sighting waits for Done: holding every save would slow the next bird down.
+	function showSavedMoment(moment: SavedMoment) {
+		savedMoment = moment;
+
+		if (moment.firstSightings.length) {
+			vibrate('firstSighting');
+		} else {
+			vibrate('saved');
+			closeTimer = setTimeout(close, SAVED_MOMENT_MS);
+		}
+	}
+
+	function close() {
+		open = false;
+		onClosed();
+	}
+
+	function onClosed() {
+		clearTimeout(closeTimer);
+		if (savedMoment) announceArrival(savedMoment.saved);
+		savedMoment = null;
 	}
 </script>
 
@@ -311,7 +348,7 @@
 	</form>
 {/snippet}
 
-<Drawer.Root bind:open onOpenChange={(isOpen) => isOpen && resetDraft()}>
+<Drawer.Root bind:open onOpenChange={(isOpen) => (isOpen ? resetDraft() : onClosed())}>
 	<Drawer.Trigger>
 		{#snippet child({ props })}
 			{@render trigger(props)}
@@ -333,7 +370,14 @@
 			style:height="{stepHeight}px"
 		>
 			<div bind:clientHeight={stepHeight}>
-				{#if chosenOption === null}
+				{#if savedMoment}
+					<SaveMoment
+						saved={savedMoment.saved}
+						firstSightings={savedMoment.firstSightings}
+						lifeListSize={lifeListSize(journal.observations)}
+						onDone={close}
+					/>
+				{:else if chosenOption === null}
 					<IdentificationOptions onChoose={chooseOption} />
 				{:else if listening}
 					{@render stepHeader(IDENTIFICATION_COPY[chosenOption.id].label(), m.sound_step_hint())}

@@ -165,6 +165,37 @@
 	"observations_view_map": "Carte",
 	"observations_view_timeline": "Chronologie",
 	"offline_notice": "Hors ligne : affichage des espèces enregistrées sur cet appareil.",
+	"save_moment_done": "Terminé",
+	"save_moment_first": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Première observation",
+				"countPlural=other": "Premières observations"
+			}
+		}
+	],
+	"save_moment_life_list": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} espèce observée à ce jour.",
+				"countPlural=other": "{count} espèces observées à ce jour."
+			}
+		}
+	],
+	"save_moment_saved": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Observation enregistrée",
+				"countPlural=other": "{count} observations enregistrées"
+			}
+		}
+	],
 	"sound_add_observations": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],

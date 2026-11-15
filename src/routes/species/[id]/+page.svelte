@@ -21,6 +21,7 @@
 		type OpenedObservation
 	} from '$lib/observations/ui/ObservationDetails.svelte';
 	import { journal } from '$lib/observations/data/journal.svelte';
+	import { ARRIVE_CLASS, hasJustArrived } from '$lib/observations/ui/arrival.svelte';
 	import { filterObservations } from '$lib/observations/model/observation';
 	import { toObservationsPath } from '$lib/observations/model/filter-url';
 	import type { PageProps } from './$types';
@@ -113,7 +114,7 @@
 					<ul class="flex flex-col gap-3">
 						{#each observations.slice(0, LATEST_OBSERVATION_COUNT) as observation (observation.id)}
 							{@const context = journal.tripName(observation.tripId) ?? observation.notes}
-							<li>
+							<li class={{ [ARRIVE_CLASS]: hasJustArrived(observation) }}>
 								<ObservationRow {observation} onOpen={(mode) => (opened = { observation, mode })}>
 									<span class="block font-medium">
 										{observedAtFormat.format(new Date(observation.observedAt))}

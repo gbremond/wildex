@@ -9,6 +9,7 @@
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import ObservationSheet from '$lib/observations/ui/ObservationSheet.svelte';
+	import { latestArrival } from '$lib/observations/ui/arrival.svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	let isSheetOpen = $state(false);
@@ -68,7 +69,12 @@
 					{#if isObservationsActive}
 						{@render activeIndicator()}
 					{/if}
-					<BinocularsIcon aria-hidden="true" focusable="false" class="size-5" />
+					<!-- Re-created on every save so the bump replays: it shows where the observation went. -->
+					{#key latestArrival()}
+						<span class:bump={latestArrival().length > 0}>
+							<BinocularsIcon aria-hidden="true" focusable="false" class="size-5" />
+						</span>
+					{/key}
 					<span class="w-full truncate text-center">{m.nav_observations()}</span>
 				</a>
 			</li>
@@ -120,3 +126,24 @@
 		</ObservationSheet>
 	</div>
 </nav>
+
+<style>
+	/* Waits for the observation sheet to slide away, or the bump plays unseen. */
+	.bump {
+		display: inline-block;
+		animation: bump 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 350ms;
+	}
+
+	@keyframes bump {
+		40% {
+			transform: translateY(-3px) scale(1.35);
+			color: var(--primary);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.bump {
+			animation: none;
+		}
+	}
+</style>
