@@ -220,6 +220,7 @@
 	"species_habitat": "Habitat",
 	"species_list_no_match_filters": "No bird matches these filters",
 	"species_list_no_match_query": "No bird matches “{query}”",
+	"species_list_seen": "Already seen",
 	"species_list_no_match_query_and_filters": "No bird matches “{query}” with these filters",
 	"species_order": "Order",
 	"species_page_avibase": "See on Avibase ↗",

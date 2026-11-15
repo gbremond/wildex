@@ -16,8 +16,14 @@
 	} from '$lib/components/ui/item';
 	import { resolve } from '$app/paths';
 	import { markSpeciesTransition } from './transition.svelte';
+	import BinocularsIcon from '@lucide/svelte/icons/binoculars';
+	import { m } from '$lib/paraglide/messages';
 
-	let { species, likelihood }: { species: Species; likelihood?: number } = $props();
+	let {
+		species,
+		likelihood,
+		seen
+	}: { species: Species; likelihood?: number; seen: boolean } = $props();
 
 	const percentFormat = new Intl.NumberFormat(getLocale(), { style: 'percent' });
 </script>
@@ -29,11 +35,23 @@
 			href={resolve('/species/[id]', { id: species.id })}
 			onclick={() => markSpeciesTransition(species.id)}
 		>
-			<SpeciesAvatar
-				seed={species.id}
-				scientificName={species.scientificName}
-				class="w-20 shrink-0 self-stretch"
-			/>
+			<div class="relative w-20 shrink-0 self-stretch">
+				<SpeciesAvatar
+					seed={species.id}
+					scientificName={species.scientificName}
+					class="size-full"
+				/>
+				<!-- On the photo, not by the name: long names keep their full width. -->
+				{#if seen}
+					<span
+						role="img"
+						aria-label={m.species_list_seen()}
+						class="absolute bottom-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-card/90 text-success shadow-sm ring-1 ring-success/40"
+					>
+						<BinocularsIcon aria-hidden="true" class="size-3" strokeWidth={2.5} />
+					</span>
+				{/if}
+			</div>
 			<div class="flex min-w-0 flex-1 items-center gap-3.5 px-4 py-3.5">
 				<ItemContent class="min-w-0">
 					<ItemTitle class="block w-full truncate">{speciesName(species, getLocale())}</ItemTitle>

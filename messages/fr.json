@@ -229,6 +229,7 @@
 	"species_habitat": "Habitat",
 	"species_list_no_match_filters": "Aucun oiseau ne correspond à ces filtres",
 	"species_list_no_match_query": "Aucun oiseau ne correspond à « {query} »",
+	"species_list_seen": "Déjà observée",
 	"species_list_no_match_query_and_filters": "Aucun oiseau ne correspond à « {query} » avec ces filtres",
 	"species_order": "Ordre",
 	"species_page_avibase": "Voir sur Avibase ↗",

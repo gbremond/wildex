@@ -12,13 +12,15 @@
 		isSearching,
 		query,
 		hasFilters,
-		likelihoods
+		likelihoods,
+		seenSpeciesIds
 	}: {
 		species: Species[];
 		isSearching: boolean;
 		query: string;
 		hasFilters: boolean;
 		likelihoods?: Likelihoods;
+		seenSpeciesIds: Set<string>;
 	} = $props();
 
 	const emptyMessage = $derived.by(() => {
@@ -52,7 +54,11 @@
 							class="animate-in duration-300 fill-mode-backwards fade-in slide-in-from-bottom-2 motion-reduce:animate-none"
 							style:animation-delay={settleDelay(index)}
 						>
-							<SpeciesListItem species={item} likelihood={likelihoods?.get(item.scientificName)} />
+							<SpeciesListItem
+								species={item}
+								likelihood={likelihoods?.get(item.scientificName)}
+								seen={seenSpeciesIds.has(item.id)}
+							/>
 						</div>
 					{/key}
 				</div>

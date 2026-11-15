@@ -20,3 +20,8 @@ export function firstSightings(saved: Observation[], journal: Observation[]): Ob
 export function lifeListSize(journal: Observation[]): number {
 	return speciesKeysOf(journal).size;
 }
+
+/** The listed species seen at least once, to mark them in the species list. */
+export function seenSpeciesIds(journal: Observation[]): Set<string> {
+	return new Set(journal.flatMap(({ species }) => species.speciesId ?? []));
+}

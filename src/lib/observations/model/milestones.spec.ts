@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { firstSightings, lifeListSize } from './milestones';
+import { firstSightings, lifeListSize, seenSpeciesIds } from './milestones';
 import type { Observation, ObservedSpecies } from './observation';
 
 const kingfisher = { name: 'Martin-pêcheur', speciesId: '3571', scientificName: 'Alcedo atthis' };
@@ -57,5 +57,17 @@ describe('lifeListSize', () => {
 		];
 
 		expect(lifeListSize(journal)).toBe(2);
+	});
+});
+
+describe('seenSpeciesIds', () => {
+	it('lists each listed species seen, once', () => {
+		const journal = [sighting(kingfisher), sighting(kingfisher), sighting(egret)];
+
+		expect(seenSpeciesIds(journal)).toEqual(new Set(['3571', '2622']));
+	});
+
+	it('leaves out unlisted species, which have no place in the list', () => {
+		expect(seenSpeciesIds([sighting({ name: 'Some odd gull' })])).toEqual(new Set());
 	});
 });

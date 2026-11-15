@@ -28,6 +28,8 @@
 	import { rankByLikelihood } from '$lib/birdnet/model/likely';
 	import { findLikelySpeciesHere, type LikelySpeciesHere } from '$lib/birdnet/data/likely-here';
 	import { m } from '$lib/paraglide/messages';
+	import { journal } from '$lib/observations/data/journal.svelte';
+	import { seenSpeciesIds } from '$lib/observations/model/milestones';
 
 	let storedCount = $state<number | null>(null);
 	let visibleSpecies = $state<Species[]>([]);
@@ -41,6 +43,7 @@
 	let likelihoods = $derived(
 		aroundMe && likelySpeciesHere?.kind === 'found' ? likelySpeciesHere.likelihoods : undefined
 	);
+	let seenIds = $derived(seenSpeciesIds(journal.observations));
 	let listedSpecies = $derived(
 		likelihoods ? rankByLikelihood(visibleSpecies, likelihoods) : visibleSpecies
 	);
@@ -84,6 +87,7 @@
 	});
 
 	onMount(async () => {
+		journal.load();
 		await loadSpeciesInMemory();
 		await refreshStoredSpecies();
 	});
@@ -160,6 +164,7 @@
 			{query}
 			hasFilters={aroundMe || countSelectedFilters(filters) > 0}
 			{likelihoods}
+			seenSpeciesIds={seenIds}
 		/>
 	{:else if storedCount === 0}
 		<div class="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
