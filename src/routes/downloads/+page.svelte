@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageTitle from '$lib/components/PageTitle.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		addSpecies,
@@ -33,7 +34,7 @@
 </script>
 
 <div class="mx-auto max-w-120 p-4 pb-(--bottom-nav-clearance)">
-	<h1 class="text-3xl">{m.downloads_title()}</h1>
+	<PageTitle>{m.downloads_title()}</PageTitle>
 
 	<Button onclick={downloadAndStoreSpecies} disabled={isDownloading}>
 		{isDownloading ? m.downloads_species_progress() : m.downloads_species_start()}

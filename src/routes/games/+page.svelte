@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageTitle from '$lib/components/PageTitle.svelte';
     import {getSpeciesList, loadSpeciesInMemory} from '$lib/species/data/repository';
     import type {Species} from '$lib/species/model/model';
     import {onMount} from 'svelte';
@@ -72,7 +73,7 @@
 </script>
 
 <div class="mx-auto max-w-120 p-4 pb-(--bottom-nav-clearance)">
-    <h1 class="text-3xl">{m.games_title()}</h1>
+    <PageTitle>{m.games_title()}</PageTitle>
 
     <p class="text-muted-foreground">{m.games_score({ score, attempts })}</p>
 

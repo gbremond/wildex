@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageTitle from '$lib/components/PageTitle.svelte';
 	import { onMount } from 'svelte';
 	import type { Species } from '$lib/species/model/model';
 	import {
@@ -130,7 +131,7 @@
 {/snippet}
 
 <div class="mx-auto flex h-dvh max-w-120 flex-col gap-4 px-4 pt-6">
-	<h1 class="text-3xl">{m.home_title()}</h1>
+	<PageTitle>{m.home_title()}</PageTitle>
 
 	{#if storedCount}
 		<SpeciesSearchField bind:query onchange={rememberSearchInUrl} />

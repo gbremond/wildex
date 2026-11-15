@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageTitle from '$lib/components/PageTitle.svelte';
 	import { onMount, type Component } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -51,7 +52,7 @@
 </script>
 
 <div class="mx-auto flex max-w-120 flex-col gap-4 px-4 pt-6 pb-(--bottom-nav-clearance)">
-	<h1 class="text-3xl">{m.observations_title()}</h1>
+	<PageTitle>{m.observations_title()}</PageTitle>
 
 	<TripBar selectedTripId={filter.tripId} onSelect={toggleTrip} />
 

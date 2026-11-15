@@ -7,7 +7,6 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import PwaUpdatePrompt from '$lib/components/PWAUpdatePrompt.svelte';
 	import BottomNavBar from '$lib/components/BottomNavBar.svelte';
-	import LanguageSwitch from '$lib/components/LanguageSwitch.svelte';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 
@@ -42,12 +41,6 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 <svelte:window ononline={updateNetworkStatus} onoffline={updateNetworkStatus} />
-
-<div class="relative mx-auto max-w-120">
-	<div class="absolute top-2 right-2 z-10">
-		<LanguageSwitch />
-	</div>
-</div>
 
 <main>
 	{@render children()}
